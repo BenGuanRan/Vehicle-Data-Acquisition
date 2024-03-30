@@ -1,7 +1,7 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import {Form, Input, Button} from 'antd';
 import './index.css';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 interface FormData {
     username: string;
@@ -13,7 +13,7 @@ const Login: React.FC = () => {
     const onFinish = (formData: FormData) => {
         //设置token
         localStorage.setItem('token', `${formData.username}&-&${formData.password}`)
-        navigate('/', { replace: true })
+        navigate('/', {replace: true})
     };
 
     return (
@@ -24,19 +24,19 @@ const Login: React.FC = () => {
                 <Form
                     name="login-form"
                     onFinish={onFinish}
-                    initialValues={{ remember: true }}
+                    initialValues={{remember: true}}
                 >
                     <Form.Item
                         name="username"
-                        rules={[{ required: true, message: 'Please input your username!' }]}
+                        rules={[{required: true, message: 'Please input your username!'}]}
                     >
-                        <Input placeholder="Username" />
+                        <Input placeholder="Username"/>
                     </Form.Item>
                     <Form.Item
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        rules={[{required: true, message: 'Please input your password!'}]}
                     >
-                        <Input.Password placeholder="Password" />
+                        <Input.Password placeholder="Password"/>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" className="login-button">

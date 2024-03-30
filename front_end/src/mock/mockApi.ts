@@ -11,6 +11,7 @@ export interface IMockDataItem {
 }
 
 export function getMockData() {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<IMockDataItem[]>(async (resolve) => {
         await sleep(3000)
         resolve(mockData)

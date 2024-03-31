@@ -14,7 +14,7 @@ function App() {
     return (
         <Routes>
             {renderRoutes(ROUTES_MAP)}
-            <Route path="*" element={<Navigate to="/process-management"/>}/>
+            <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
     )
 }

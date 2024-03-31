@@ -28,15 +28,15 @@ function getItem(
 
 const itemList = [
     {
-        key: 'process-management',
+        key: '/process-management',
         label: '测试流程管理',
     },
     {
-        key: 'data-display',
+        key: '/data-display',
         label: '测试数据展示',
     },
     {
-        key: 'physical-topology',
+        key: '/physical-topology',
         label: '物理拓扑配置',
     },
 ]
@@ -58,17 +58,22 @@ const SystemTotalPage: React.FC = () => {
             <Menu
                 onClick={onClick}
                 style={{width: '15vw', height: '100vh'}}
-                defaultSelectedKeys={['process-management']}
+                defaultSelectedKeys={[window.location.pathname, '/process-management']}
                 mode="inline"
                 items={items}
             />
-            <Routes>
-                <Route path={'/process-management'} element={<TestProcessPage/>}></Route>
-                <Route path={'/process-management/edit'} element={<ProcessEdit/>}></Route>
-                <Route path={'/process-management/show'} element={<ProcessShow/>}></Route>
-                <Route path={'/data-display'} element={<DataDisplay/>}/>
-                <Route path={'/physical-topology'} element={<PhyTopology/>}/>
-            </Routes>
+            <div style={{
+                width: '85vw',
+                height: '100vh',
+            }}>
+                <Routes>
+                    <Route path={'/process-management'} element={<TestProcessPage/>}></Route>
+                    <Route path={'/process-management/edit'} element={<ProcessEdit/>}></Route>
+                    <Route path={'/process-management/show'} element={<ProcessShow/>}></Route>
+                    <Route path={'/data-display'} element={<DataDisplay/>}/>
+                    <Route path={'/physical-topology'} element={<PhyTopology/>}/>
+                </Routes>
+            </div>
         </Flex>
     );
 };

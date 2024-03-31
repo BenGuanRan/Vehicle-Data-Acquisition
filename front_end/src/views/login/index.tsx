@@ -13,7 +13,7 @@ const Login: React.FC = () => {
     const onFinish = (formData: FormData) => {
         //设置token
         localStorage.setItem('token', `${formData.username}&-&${formData.password}`)
-        navigate('/', {replace: true})
+        navigate('/process-management', {replace: true})
     };
 
     return (

@@ -56,6 +56,7 @@ const MultiSelect: React.FC = () => {
                 maxTagCount="responsive"
                 showCheckedStrategy={SHOW_CHILD}
                 defaultValue={[]}
+                variant={'filled'}
             />
         </>
     );

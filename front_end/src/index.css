@@ -10,6 +10,8 @@
     -khtml-user-select: none;
     /*早期浏览器*/
     user-select: none;
+
+    box-sizing: border-box;
 }
 
 html {

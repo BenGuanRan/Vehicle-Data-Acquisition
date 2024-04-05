@@ -5,6 +5,7 @@ import SearchBox from "@/views/demo/test_process/components/search.tsx";
 import {useNavigate} from "react-router-dom";
 import '../../../mock/mockApi.ts'
 import axios from "axios";
+import {deleteTest} from "@/apis/request/test.ts";
 
 export interface TestItem {
     key: string;
@@ -15,36 +16,6 @@ export interface TestItem {
     test_parameter: string;
     status: string;
     create_at: string;
-}
-
-
-const Operation: React.FC = () => {
-    const navigate = useNavigate();
-    const onEdit = () => {
-        navigate('/process-management/edit');
-    }
-    const onDelete = () => {
-        console.log('delete');
-    }
-    const onDetail = () => {
-        navigate('/process-management/show');
-    }
-    const onDownload = () => {
-        console.log('download');
-    }
-    return (
-        <Flex style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around'
-        }
-        }>
-            <Button type="primary" onClick={onEdit}>编辑</Button>
-            <Button type="primary" onClick={onDelete}>删除</Button>
-            <Button type="primary" onClick={onDetail}>查看</Button>
-            <Button type="primary" onClick={onDownload}>下载</Button>
-        </Flex>
-    );
 }
 
 const columns: TableProps<TestItem>['columns'] = [
@@ -86,15 +57,38 @@ const columns: TableProps<TestItem>['columns'] = [
     {
         title: '操作',
         key: 'action',
-        render: (_, record) => <Operation key={record.id}/>,
     }
 ];
-
 const TestProcessPage: React.FC = () => {
-
     const navigate = useNavigate();
-    //使用mock模拟数据，并且将数据存储在dataSource中
     const [dataList, setDataList] = React.useState([] as TestItem[]);
+
+    const onDelete = (id: string) => {
+        deleteTest(id).then(() => {
+            setDataList(dataList.filter((item) => item.id !== id));
+        });
+    }
+
+    const onEdit = (id: string) => {
+        navigate(`/process-management/edit/${id}`);
+    }
+
+    const onShow = (id: string) => {
+        navigate(`/process-management/show/${id}`);
+    }
+
+    columns[columns.length - 1].render = (_, record) => (
+        <div>
+            <Button type="link" onClick={() => onEdit(record.id)}>编辑</Button>
+            <Button type="link" onClick={() => {
+                onShow(record.id)
+            }}>详情</Button>
+            <Button type="link" onClick={() => {
+                onDelete(record.id)
+            }}>删除</Button>
+        </div>
+    );
+
 
     useEffect(() => {
         console.log('get data')
@@ -119,7 +113,7 @@ const TestProcessPage: React.FC = () => {
             }}>
                 <SearchBox onSearch={onSearch}/>
                 <Button type="primary" onClick={() => {
-                    navigate('/process-management/edit');
+                    navigate('/process-management/edit/0');
                 }}>新建测试流程</Button>
             </div>
             <Table id={"process_table"} dataSource={dataList} columns={columns}

@@ -27,7 +27,7 @@ const getTestDetail = async (id: string) => {
 //删除测试
 const deleteTest = async (id: string) => {
     return request({
-        url: `/test/${id}`,
+        url: `/test/delete/${id}`,
         method: 'DELETE'
     });
 }

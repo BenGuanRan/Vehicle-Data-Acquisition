@@ -30,12 +30,12 @@ export const ROUTES_MAP: IRoute[] = [
                     {
                         //编辑
                         name: 'edit',
-                        path: '/process-management/edit',
+                        path: '/process-management/edit/:id',
                         rfc: <ProcessDetail/>
                     },
                     {
                         name: 'show',
-                        path: '/process-management/show',
+                        path: '/process-management/show/:id',
                         rfc: <ProcessDetail/>
                     }
                 ]

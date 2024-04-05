@@ -3,12 +3,12 @@ import {BASE_URL} from "../apis/url";
 
 export const request = ({url, method, params}: { url: string; method: string; params?: any }) => {
     return axios({
-        headers: {
-        },
+        headers: {},
         baseURL: BASE_URL,
         url: url,
         method: method,
-        params: params
+        params: method === 'GET' ? params : null,
+        data: method === 'POST' ? params : null,
     }).then(response => {
         return response.data;
     }).catch(error => {

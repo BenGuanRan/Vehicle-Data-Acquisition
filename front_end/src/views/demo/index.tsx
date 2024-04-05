@@ -58,7 +58,7 @@ const SystemTotalPage: React.FC = () => {
             <Menu
                 onClick={onClick}
                 style={{width: '15vw', height: '100vh'}}
-                defaultSelectedKeys={[window.location.pathname, '/process-management']}
+                defaultSelectedKeys={[window.location.pathname]}
                 mode="inline"
                 items={items}
             />
@@ -68,8 +68,8 @@ const SystemTotalPage: React.FC = () => {
             }}>
                 <Routes>
                     <Route path={'/process-management'} element={<TestProcessPage/>}></Route>
-                    <Route path={'/process-management/edit'} element={<ProcessEdit/>}></Route>
-                    <Route path={'/process-management/show'} element={<ProcessShow/>}></Route>
+                    <Route path={'/process-management/edit/:id'} element={<ProcessEdit/>}></Route>
+                    <Route path={'/process-management/show/:id'} element={<ProcessShow/>}></Route>
                     <Route path={'/data-display'} element={<DataDisplay/>}/>
                     <Route path={'/physical-topology'} element={<PhyTopology/>}/>
                 </Routes>

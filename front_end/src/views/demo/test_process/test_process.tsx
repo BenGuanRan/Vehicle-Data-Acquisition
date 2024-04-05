@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Button, Flex, Table, TableProps} from "antd";
 import './test_process.css';
 import SearchBox from "@/views/demo/test_process/components/search.tsx";
 import {useNavigate} from "react-router-dom";
+import '../../../mock/mockApi.ts'
+import axios from "axios";
 
-interface ItemType {
+export interface TestItem {
     key: string;
     id: string;
     title: string;
@@ -14,6 +16,7 @@ interface ItemType {
     status: string;
     create_at: string;
 }
+
 
 const Operation: React.FC = () => {
     const navigate = useNavigate();
@@ -44,90 +47,7 @@ const Operation: React.FC = () => {
     );
 }
 
-const dataSource: ItemType[] = [
-    {
-        key: "1",
-        id: '1',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "2",
-        id: '2',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "3",
-        id: '3',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "4",
-        id: '4',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "5",
-        id: '5',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "6",
-        id: '6',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "7",
-        id: '7',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-    {
-        key: "8",
-        id: '8',
-        title: '测试名称',
-        equipment_number: '1',
-        equipment_category: '类别',
-        test_parameter: '参数',
-        status: '状态',
-        create_at: '2021-10-01',
-    },
-];
-
-const columns: TableProps<ItemType>['columns'] = [
+const columns: TableProps<TestItem>['columns'] = [
     {
         title: 'ID',
         dataIndex: 'id',
@@ -170,11 +90,26 @@ const columns: TableProps<ItemType>['columns'] = [
     }
 ];
 
-const TestProcessTable: React.FC = () => <Table id={"process_table"} dataSource={dataSource} columns={columns}
-                                                style={{width: '100%'}}
-                                                pagination={{pageSize: 7, hideOnSinglePage: true}}/>;
 const TestProcessPage: React.FC = () => {
+
     const navigate = useNavigate();
+    //使用mock模拟数据，并且将数据存储在dataSource中
+    const [dataList, setDataList] = React.useState([] as TestItem[]);
+
+    useEffect(() => {
+        console.log('get data')
+        axios.get('api/test').then((res) => {
+            setDataList(res.data['list'])
+        })
+    }, []);
+
+    const onSearch = (value: string) => {
+        const newData = dataList.filter((item) => {
+            return item.title.includes(value);
+        });
+        setDataList(newData);
+    }
+
     return (
         <Flex id={"process_page"} flex={1} align={"start"} vertical={true}>
             <div style={{
@@ -182,13 +117,17 @@ const TestProcessPage: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
             }}>
-                <SearchBox/>
+                <SearchBox onSearch={onSearch}/>
                 <Button type="primary" onClick={() => {
                     navigate('/process-management/edit');
                 }}>新建测试流程</Button>
             </div>
-            <TestProcessTable/>
+            <Table id={"process_table"} dataSource={dataList} columns={columns}
+                   style={{width: '100%'}}
+                   pagination={{pageSize: 7, hideOnSinglePage: true}}
+            />
         </Flex>
     );
 }
+
 export default TestProcessPage;

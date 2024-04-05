@@ -20,6 +20,7 @@ export const ROUTES_MAP: IRoute[] = [
         name: 'total-page',
         path: '/',
         rfc: <RequirAuthRoute><SystemTotalPage/></RequirAuthRoute>,
+        redirect: '/process-management',
         children: [
             {
                 name: 'process-management',

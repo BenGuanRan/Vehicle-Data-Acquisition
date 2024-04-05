@@ -11,6 +11,7 @@ function renderRoutes(routes: IRoute[]) {
 }
 
 function App() {
+
     return (
         <Routes>
             {renderRoutes(ROUTES_MAP)}

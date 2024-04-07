@@ -1,22 +1,9 @@
-import {IRoute, ROUTES_MAP} from '@/routes'
-import {Route, Routes} from 'react-router-dom'
-import {Navigate} from "react-router";
-
-function renderRoutes(routes: IRoute[]) {
-    return routes.map(({path, rfc, name, children}) => (
-        <Route key={name} path={path} element={rfc}>
-            {children && renderRoutes(children)}
-        </Route>
-    ));
-}
+import {my_router} from '@/routes'
+import {RouterProvider} from 'react-router-dom'
 
 function App() {
-
     return (
-        <Routes>
-            {renderRoutes(ROUTES_MAP)}
-            <Route path="*" element={<Navigate to="/"/>}/>
-        </Routes>
+        <RouterProvider router={my_router}/>
     )
 }
 

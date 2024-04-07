@@ -1,11 +1,8 @@
 import React, {useEffect} from "react";
-import {Button, Flex, Table, TableProps} from "antd";
+import {Button, Flex, Input, Table, TableProps} from "antd";
 import './test_process.css';
-import SearchBox from "@/views/demo/test_process/components/search.tsx";
 import {useNavigate} from "react-router-dom";
-import '../../../mock/mockApi.ts'
-import axios from "axios";
-import {deleteTest} from "@/apis/request/test.ts";
+import {deleteTest, getTestList} from "@/apis/request/test.ts";
 
 export interface TestItem {
     key: string;
@@ -59,6 +56,7 @@ const columns: TableProps<TestItem>['columns'] = [
         key: 'action',
     }
 ];
+
 const TestProcessPage: React.FC = () => {
     const navigate = useNavigate();
     const [dataList, setDataList] = React.useState([] as TestItem[]);
@@ -70,7 +68,7 @@ const TestProcessPage: React.FC = () => {
     }
 
     const onEdit = (id: string) => {
-        navigate(`/process-management/edit/${id}`);
+        navigate(`/process-management/edit/${id}`, {state: {id}});
     }
 
     const onShow = (id: string) => {
@@ -92,12 +90,18 @@ const TestProcessPage: React.FC = () => {
 
     useEffect(() => {
         console.log('get data')
-        axios.get('api/test').then((res) => {
-            setDataList(res.data['list'])
-        })
+        getTestList({}).then((res) => {
+            setDataList(res['list'])
+        });
     }, []);
 
     const onSearch = (value: string) => {
+        if (!value || value == '') {
+            getTestList({}).then((res) => {
+                setDataList(res['list'])
+            });
+            return;
+        }
         const newData = dataList.filter((item) => {
             return item.title.includes(value);
         });
@@ -111,7 +115,13 @@ const TestProcessPage: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
             }}>
-                <SearchBox onSearch={onSearch}/>
+                <Input.Search size={"large"}
+                              placeholder="搜索测试流程"
+                              onSearch={onSearch}
+                              style={{width: '50%'}}
+                              enterButton
+                ></Input.Search>
+
                 <Button type="primary" onClick={() => {
                     navigate('/process-management/edit/0');
                 }}>新建测试流程</Button>

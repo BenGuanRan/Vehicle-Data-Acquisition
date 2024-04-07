@@ -1,15 +1,14 @@
 import {request} from "@/utils/request.ts";
-import {TestList} from "@/apis/url/test.ts";
 
 interface getListParams {
-    page: number;
-    limit: number;
+    page?: number;
+    limit?: number;
 }
 
 //获取测试列表
 const getTestList = async (params: getListParams) => {
     return request({
-        url: TestList,
+        url: 'api/test',
         method: 'GET',
         params: params
     });
@@ -18,8 +17,9 @@ const getTestList = async (params: getListParams) => {
 
 //查看详情
 const getTestDetail = async (id: string) => {
+    console.log(id)
     return request({
-        url: `/test/${id}`,
+        url: `api/test/detail`,
         method: 'GET'
     });
 }

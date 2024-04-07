@@ -1,12 +1,7 @@
 import React from 'react';
 import './index.css';
 import {Flex, Menu, MenuProps} from "antd";
-import {NavigateFunction, Route, Routes, useNavigate} from "react-router-dom";
-import TestProcessPage from "@/views/demo/test_process/test_process.tsx";
-import DataDisplay from "@/views/demo/data_display/display.tsx";
-import PhyTopology from "@/views/demo/topology/phy_topology.tsx";
-import ProcessEdit from "@/views/demo/test_process/detail/edit/edit.tsx";
-import ProcessShow from "@/views/demo/test_process/detail/show/show.tsx";
+import {NavigateFunction, Outlet,  useNavigate} from "react-router-dom";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -66,13 +61,7 @@ const SystemTotalPage: React.FC = () => {
                 width: '85vw',
                 height: '100vh',
             }}>
-                <Routes>
-                    <Route path={'/process-management'} element={<TestProcessPage/>}></Route>
-                    <Route path={'/process-management/edit/:id'} element={<ProcessEdit/>}></Route>
-                    <Route path={'/process-management/show/:id'} element={<ProcessShow/>}></Route>
-                    <Route path={'/data-display'} element={<DataDisplay/>}/>
-                    <Route path={'/physical-topology'} element={<PhyTopology/>}/>
-                </Routes>
+                <Outlet/>
             </div>
         </Flex>
     );

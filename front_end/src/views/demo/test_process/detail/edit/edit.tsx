@@ -1,10 +1,8 @@
-import ProcessDetail from "@/views/demo/test_process/detail/process_detail.tsx";
 import React, {useEffect} from "react";
 import {Graph} from "@antv/x6";
 import {data} from "./data.ts";
 
 const ProcessEdit = () => {
-
     const container = React.useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -44,39 +42,34 @@ const ProcessEdit = () => {
     }, []);
 
     return (
-        <ProcessDetail>
+        <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+            <div ref={container} style={{
+                flex: 1,
+                width: '30%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRight: '1px solid black',
+            }}>
+            </div>
             <div style={{
-                width: '100%',
+                flex: 2,
+                width: '70%',
                 height: '100%',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <div ref={container} style={{
-                    flex: 1,
-                    width: '30%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRight: '1px solid black',
-                }}>
-                </div>
-
-                <div style={{
-                    flex: 2,
-                    width: '70%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <p>编辑区</p>
-
-                </div>
-
+                <p>编辑区</p>
             </div>
-        </ProcessDetail>
+        </div>
     );
 }
 export default ProcessEdit;

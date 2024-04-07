@@ -1,4 +1,3 @@
-import ProcessDetail from "@/views/demo/test_process/detail/process_detail.tsx";
 import React, {useEffect} from "react";
 import {Graph} from "@antv/x6";
 import {data} from "@/views/demo/topology/data.ts";
@@ -45,7 +44,6 @@ const ProcessShow: React.FC = () => {
     }, []);
 
     return (
-        <ProcessDetail>
             <div ref={container} style={{
                 flex: 1,
                 width: '100%',
@@ -55,7 +53,6 @@ const ProcessShow: React.FC = () => {
                 alignItems: 'center',
             }}>
             </div>
-        </ProcessDetail>
     );
 }
 

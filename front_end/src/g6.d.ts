@@ -1,8 +1,6 @@
-import {Graph} from "@antv/x6";
-
 declare module '@antv/g6';
 
-export type GraphOptions = {
+export type BaseGraphOptions = {
     container: string,
     width: number,
     height: number,

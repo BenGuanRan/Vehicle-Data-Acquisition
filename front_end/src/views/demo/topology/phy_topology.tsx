@@ -27,18 +27,18 @@ const graphConfig: GraphOptions = {
 }
 
 const PhyTopology: React.FC = () => {
-    const hasInit = useRef(false)
     const container = useRef<HTMLDivElement>(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [nodeData, setNodeData] = useState(data)
     let graph: Graph
 
     useEffect(() => {
-        graphConfig.container = container.current!
-        graph = new G6.Graph(graphConfig)
-        graph.data(nodeData)
-        graph.render();
-        hasInit.current = true
+        if (!graph) {
+            graphConfig.container = container.current!
+            graph = new G6.Graph(graphConfig)
+            graph.data(nodeData)
+            graph.render();
+        }
     }, [nodeData])
 
     const onAddConfig = () => {

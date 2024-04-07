@@ -1,10 +1,8 @@
 import axios from 'axios';
-import {BASE_URL} from "../apis/url";
 
 export const request = ({url, method, params}: { url: string; method: string; params?: any }) => {
     return axios({
         headers: {},
-        baseURL: BASE_URL,
         url: url,
         method: method,
         params: method === 'GET' ? params : null,

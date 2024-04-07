@@ -1,7 +1,7 @@
 import React from "react"
-import { Navigate } from "react-router"
+import {Navigate} from "react-router"
 
-const RequirAuthRoute: React.FC<React.PropsWithChildren> = ({ children }) => {
+const RequireAuthRoute: React.FC<React.PropsWithChildren> = ({children}) => {
     //获取到locationStorage中的token
     const token = localStorage.getItem('token')
 
@@ -13,4 +13,4 @@ const RequirAuthRoute: React.FC<React.PropsWithChildren> = ({ children }) => {
     return children
 }
 
-export default RequirAuthRoute
+export default RequireAuthRoute

@@ -1,19 +1,4 @@
 declare module '@antv/g6';
-
-export type BaseGraphOptions = {
-    container: string,
-    width: number,
-    height: number,
-    layout: {
-        type: string,
-    },
-    defaultNode: {
-        type: string,
-        width: number,
-        height: number,
-        style: {
-            stroke: string,
-            lineWidth: number,
-        },
-    },
-}
+declare module 'g2';
+declare module 'g2-react';
+declare module '@antv/g2plot';

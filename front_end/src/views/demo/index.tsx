@@ -1,7 +1,7 @@
 import React from 'react';
 import './index.css';
 import {Flex, Menu, MenuProps} from "antd";
-import {NavigateFunction, Outlet,  useNavigate} from "react-router-dom";
+import {NavigateFunction, Outlet, useNavigate} from "react-router-dom";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -34,6 +34,26 @@ const itemList = [
         key: '/physical-topology',
         label: '物理拓扑配置',
     },
+    //折线图
+    {
+        key: '/line-chart',
+        label: '折线图',
+    },
+    //柱状图
+    {
+        key: '/his-chart',
+        label: '柱状图',
+    },
+    //饼图
+    {
+        key: '/pie-chart',
+        label: '饼图',
+    },
+    //散点图
+    {
+        key: '/scatter-chart',
+        label: '散点图',
+    }
 ]
 
 

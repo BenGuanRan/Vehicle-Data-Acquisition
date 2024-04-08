@@ -1,19 +1,18 @@
 import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import OT_CONFIG from '../config/ot_config'
 
 interface IUserModel {
     id?: number
     username: string
     password: string
     disabled?: boolean
-    is_root_user?: boolean
+    root_user_id?: number | null
 }
 
 @Table({
     tableName: 'users',
     timestamps: false
 })
-export class User extends Model<IUserModel> {
+export default class User extends Model<IUserModel> {
 
     @PrimaryKey
     @AutoIncrement
@@ -33,25 +32,9 @@ export class User extends Model<IUserModel> {
     disabled!: boolean
 
     @Column({
-        type: DataType.BOOLEAN,
-        defaultValue: false
+        type: DataType.INTEGER,
+        defaultValue: null,
+        allowNull: true
     })
-    is_root_user!: boolean
-
-    static async initRootUser() {
-        try {
-            await this.bulkCreate([{
-                username: OT_CONFIG.ROOT_USERNAME,
-                password: OT_CONFIG.ROOT_PASSWORD,
-                is_root_user: true
-            }, {
-                username: OT_CONFIG.TEST_ROOT_USERNAME,
-                password: OT_CONFIG.TEST_ROOT_PASSWORD,
-                is_root_user: true
-            }]);
-            console.log('The super user table was successfully initialized. Procedure.');
-        } catch (error) {
-            console.error('Description Failed to initialize the super user table:', error);
-        }
-    }
+    root_user_id?: number | null
 }

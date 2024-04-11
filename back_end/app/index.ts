@@ -3,7 +3,6 @@ import router from './router'
 import { Server } from 'http'
 import DB from '../app/db'
 import koaBodyParser from 'koa-bodyparser'
-import RequestBodyVerifyMiddleware from './middleware/RequestBodyVerifyMiddleware'
 
 DB.connectDB()
 DB.initDB()

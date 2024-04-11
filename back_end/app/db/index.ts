@@ -1,4 +1,3 @@
-import path from 'path';
 import { Sequelize } from 'sequelize-typescript'
 import DB_CONFIG from '../config/db_config'
 import User from '../model/User.model'
@@ -24,8 +23,8 @@ const DB_OPT = {
   },
   async initDB() {
     try {
-      await sequelize.sync({ force: true })
-      await userService.initRootUser()
+      // await sequelize.sync({ force: true })
+      // await userService.initRootUser()
       console.log('The database table has been initialized.');
       // 初始化超级用户表
     } catch (error) {

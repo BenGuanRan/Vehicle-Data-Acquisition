@@ -17,14 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-router": "^7.4.8",
     "@types/log4js": "^2.3.5",
     "dotenv": "^16.4.5",
-    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "koa": "^2.15.2",
     "koa-bodyparser": "^4.4.1",
@@ -36,8 +34,13 @@
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.12.2",
+    "@types/supertest": "^6.0.2",
     "@types/validator": "^13.11.9",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   }

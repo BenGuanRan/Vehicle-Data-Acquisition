@@ -17,5 +17,6 @@ router.post('/closeUser', UserController.closeUser)
 router.post('/openUser', UserController.openUser)
 router.post('/deleteUser', UserController.deleteUser)
 router.post('/changePassword', UserController.changePassword)
+router.post('/logout', UserController.logout)
 
 export default router

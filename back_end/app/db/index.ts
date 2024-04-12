@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript'
 import DB_CONFIG from '../config/db_config'
 import User from '../model/User.model'
 import UserService from '../service/UserService'
+import TokenBlackListItem from '../model/TokenBlackListItem.model'
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = DB_CONFIG
 
@@ -9,7 +10,7 @@ const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
   port: DB_PORT,
-  models: [User]
+  models: [User, TokenBlackListItem]
 });
 
 const DB_OPT = {

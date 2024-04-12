@@ -4,7 +4,7 @@ import BE_CONFIG from '../app/config/be_config'
 import OT_CONFIG from '../app/config/ot_config'
 import { Server } from 'http'
 import DB_OPT from '../app/db'
-import { TOKEN_USER_HAS_BEEN_DISABLED_CODE, WRITE_SUCCESS_MSG } from '../app/constants'
+import { TOKEN_USER_HAS_BEEN_DISABLED_CODE, TOKEN_USER_LOGOUT, WRITE_SUCCESS_MSG } from '../app/constants'
 
 describe('测试用户接口', () => {
     let backendServer: Server
@@ -63,6 +63,40 @@ describe('测试用户接口', () => {
         const { status, body: { code } } = await tokenRequest.get('/')
         expect(status).toBe(200)
         expect(code).toBe(TOKEN_USER_HAS_BEEN_DISABLED_CODE)
+    })
+
+    // 管理员登录
+    it('POST:/login', async () => {
+        // 登录root账户
+        const { body: { data: { token } } } = await request(backendServer).post('/login').send({
+            username: OT_CONFIG.TEST_ROOT_USERNAME,
+            password: OT_CONFIG.TEST_ROOT_PASSWORD
+        })
+        expect(token).toBeDefined
+        tokenRequest = request.agent(backendServer).set('Authorization', token)
+    })
+
+    // 开启子用户权限
+    it('POST:/openUser', async () => {
+        const { status, body: { msg } } = await tokenRequest.post('/openUser').send({
+            childUserId: '3'
+        })
+        expect(status).toBe(200)
+        expect(msg).toBe(WRITE_SUCCESS_MSG)
+    })
+
+    // 管理员退出登录
+    it('POST:/logout', async () => {
+        const { status, body: { msg } } = await tokenRequest.post('/logout')
+        expect(status).toBe(200)
+        expect(msg).toBe(WRITE_SUCCESS_MSG)
+    })
+
+    // 管理员token加入黑名单
+    it('GET:/', async () => {
+        const { status, body: { code } } = await tokenRequest.get('/')
+        expect(status).toBe(200)
+        expect(code).toBe(TOKEN_USER_LOGOUT)
     })
 
     afterAll(async () => {

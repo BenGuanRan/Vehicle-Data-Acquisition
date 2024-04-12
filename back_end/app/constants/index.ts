@@ -13,7 +13,8 @@ export const TOKEN_NOTFOUND_CODE = 3 // token不存在
 export const TOKEN_USER_HAS_BEEN_DISABLED_CODE = 4 // 用户被禁用
 export const TOKEN_USER_HAS_BEEN_DELETED_CODE = 5 // 用户已被删除
 export const TOKEN_USER_PASSWORD_HAS_BEEN_CHANGED_CODE = 6 // 用户密码已被修改，请重新登录
-export const TOKEN_INNER_ERROR_CODE = 7 // 服务器内部错误
+export const TOKEN_USER_LOGOUT = 7 // 用户退出登录
+export const TOKEN_INNER_ERROR_CODE = 8 // 服务器内部错误
 export const TOKEN_MSG = [
     'TOKEN_VALID:token有效',
     'TOKEN_EXPIRED:token过期',
@@ -22,6 +23,7 @@ export const TOKEN_MSG = [
     'TOKEN_USER_HAS_BEEN_DISABLED:用户已经被禁用，token失效',
     'TOKEN_USER_HAS_BEEN_DELETED:该用户已被管理员删除',
     'TOKEN_USER_PASSWORD_HAS_BEEN_CHANGED:用户密码已被修改，请重新登录',
+    'TOKEN_USER_LOGOUT:用户已退出登录，原token失效',
     'TOKEN_INNER_ERROR:服务器内部错误'
 ]
 export const QUERY_INCOMPLETENESS = 'query参数不完整'

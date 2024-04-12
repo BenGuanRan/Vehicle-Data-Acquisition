@@ -2,10 +2,10 @@ import { Context, Next } from 'koa'
 import tokenUtils from '../../utils/token'
 import { TOKEN_MSG, TOKEN_NOTFOUND_CODE } from '../constants'
 
-function AuthMiddleware(ctx: Context, next: Next) {
+async function AuthMiddleware(ctx: Context, next: Next) {
     const token = ctx.headers['authorization']
     if (!!token) {
-        const { err } = tokenUtils.verify(token)
+        const { err } = await tokenUtils.verify(token)
         if (!!err) {
             ctx.body = { ...err, data: null }
             return

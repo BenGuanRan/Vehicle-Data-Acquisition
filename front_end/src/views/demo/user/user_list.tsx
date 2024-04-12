@@ -10,7 +10,18 @@ import {useUserActions} from "@/views/demo/user/user_function.ts";
 
 const UserManage: React.FC = () => {
     const [open, setOpen] = React.useState(false);
-    const {data, getUserListData, onOpen, onClose, onDelete, onCreate, contextHolder} = useUserActions(user_list_data);
+
+    const {
+        data,
+        getUserListData,
+        onOpen,
+        onClose,
+        onDelete,
+        onCreate,
+        onReset,
+        contextHolder
+    } = useUserActions(user_list_data);
+
     const [form] = Form.useForm();
 
     const columns: TableProps<SubUser>['columns'] = [
@@ -34,8 +45,7 @@ const UserManage: React.FC = () => {
             dataIndex: 'action',
             render: (_, record) => {
                 return <Managements onOpen={() => onOpen(record)} onClose={() => onClose(record)}
-                                    onDelete={() => onDelete(record)} onReset={() => {
-                }}/>
+                                    onDelete={() => onDelete(record)} onReset={() => onReset(record)}/>
             }
         }
     ];

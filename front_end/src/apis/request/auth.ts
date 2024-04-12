@@ -12,11 +12,10 @@ export const loginApi = async (data: loginParams) => {
     });
 }
 
-export const register = async (data: loginParams) => {
-    const api = MyUrl.user.register;
+export const logout = async () => {
+    const api = MyUrl.user.logout;
     return request({
         url: api.url,
-        method: api.method,
-        params: data
+        method: api.method
     });
 }

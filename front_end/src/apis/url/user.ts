@@ -6,6 +6,10 @@ export const USER: UrlMap = {
         url: '/login',
         method: 'POST'
     },
+    logout: {
+        url: '/logout',
+        method: 'POST'
+    },
     getUserList: {
         url: '/getUserList',
         method: 'GET'

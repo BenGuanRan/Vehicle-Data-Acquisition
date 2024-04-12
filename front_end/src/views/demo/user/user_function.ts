@@ -1,7 +1,7 @@
 // useUserActions.ts
 import {useCallback, useReducer} from 'react';
 import {SubUser} from "@/apis/standard/user.ts"
-import {closeUser, createUser, deleteUser, getUserList, openUser} from "@/apis/request/user.ts";
+import {changePassword, closeUser, createUser, deleteUser, getUserList, openUser} from "@/apis/request/user.ts";
 import {message} from "antd";
 import {SUCCESS_CODE} from "@/constants";
 
@@ -83,8 +83,24 @@ export const useUserActions = (initialState: SubUser[]) => {
         })
     }, [messageApi]);
 
+    // TODO:修改用户密码
+    const onReset = useCallback((record: SubUser) => {
+        const test = window.prompt("请输入新密码")
+        //如果test为null或者空字符串，说明用户点击了取消按钮
+        if (test === null || test === "") {
+            return
+        }
+        changePassword({childUserId: record.id, password: test}).then((e) => {
+            if (e.code === SUCCESS_CODE) {
+                messageApi.success(e.msg);
+                alert("密码修改成功")
+            } else {
+                messageApi.error(e.msg);
+            }
+        })
+    }, [])
 
-    return {data, getUserListData, onOpen, onClose, onDelete, onCreate, contextHolder};
+    return {data, getUserListData, onOpen, onClose, onDelete, onCreate, onReset, contextHolder};
 };
 
 

@@ -62,8 +62,8 @@ export const deleteUser = async (data: ocdUserProps) => {
     });
 }
 
-interface changePassProps {
-    childUseId?: number
+export interface changePassProps {
+    childUserId?: number
     password: string
 }
 

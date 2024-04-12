@@ -5,6 +5,8 @@ interface Url {
     method: string;
 }
 
+export const BASE_URL = 'http://localhost:88';
+
 export interface UrlMap {
     [key: string]: Url;
 }

@@ -6,6 +6,7 @@ import { IResBody } from "../types";
 import User from "../model/User.model";
 import { getUserIdFromCtx, getUsernameFromCtx } from "../../utils/getUserInfoFromCtx";
 import UserService from "../service/UserService";
+import TokenBlackListItemService from "../service/TokenBlackListItemService";
 
 class UserController {
     // 用户登录
@@ -213,9 +214,7 @@ class UserController {
         })
 
     }
-
-
-
+    // 删除子用户
     async deleteUser(ctx: Context) {
         const { childUserId } = ctx.request.body as any
         if (childUserId === undefined) {
@@ -339,6 +338,22 @@ class UserController {
                     data: null
                 }
         }
+    }
+    // 登出
+    async logout(ctx: Context) {
+        const token = ctx.header.authorization
+        const f1 = await TokenBlackListItemService.addToken2BlackList(token!)
+        const f2 = await TokenBlackListItemService.deleteExpiredToken()
+            ; (f1 && f2) && ((ctx.body as IResBody) = {
+                code: SUCCESS_CODE,
+                msg: WRITE_SUCCESS_MSG,
+                data: null
+            })
+            ; !(f1 && f2) && ((ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: WRITE_FAIL_MSG,
+                data: null
+            })
     }
 }
 

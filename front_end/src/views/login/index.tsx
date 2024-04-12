@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import {loginApi} from "@/apis/request/auth.ts";
 import {loginParams} from "@/apis/standard/auth.ts";
 import {throttle} from "@/utils";
+import tokenUtils from "@/utils/tokenUtils.ts";
 
 interface FormData {
     username: string;
@@ -19,7 +20,8 @@ const Login: React.FC = () => {
             const response = await loginApi(data)
             console.log(response)
             if (response["code"] === 200 || response["data"] != null) {
-                localStorage.setItem('token', response["data"]["token"])
+                console.log(response["data"]["token"])
+                tokenUtils.setToken(response["data"]["token"])
                 navigate('/process-management', {replace: true})
             } else {
                 alert(response["msg"])

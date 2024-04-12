@@ -1,15 +1,29 @@
 import axios from 'axios';
+import tokenUtils from "@/utils/tokenUtils.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const request = ({url, method, params}: { url: string; method: string; params?: any }) => {
+    //正在通过method向url发送请求，请求参数为params
+    console.log("正在通过", method + "方法", "向", url, "发送请求，请求参数为", params)
+
+    if (params) {
+        let paramsStr = '';
+        for (const key in params) {
+            paramsStr += `${key}=${params[key]}&`;
+        }
+        params = paramsStr.slice(0, -1);
+    }
+
     return axios({
         baseURL: 'http://localhost:88',
-        headers: {},
+        headers: {
+            'authorization': tokenUtils.getToken(),
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
         url: url,
         method: method,
-        params: method === 'GET' ? params : null,
-        data: method === 'POST' ? params : null,
+        [method === 'GET' ? 'params' : 'data']: params
     }).then(response => {
+        console.log(method, "     response.data", response.data)
         return response.data;
     }).catch(error => {
         console.error('There was an error with the request:', error);

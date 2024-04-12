@@ -10,13 +10,14 @@ export const getUserList = async () => {
 }
 
 interface createProps {
-    childrenUsername: string,
+    childUsername: string,
     childPassword: string
 }
 
 //创建子用户
 export const createUser = async (data: createProps) => {
     const api = MyUrl.user.createUser;
+    console.log(data)
     return request({
         url: api.url,
         method: api.method,
@@ -24,32 +25,40 @@ export const createUser = async (data: createProps) => {
     });
 }
 
+
+interface ocdUserProps {
+    childUserId: number
+}
+
 //关闭子用户服务
-export const closeUser = async (childrenUserId: string) => {
+export const closeUser = async (data: ocdUserProps) => {
     const api = MyUrl.user.closeUser;
     return request({
         url: api.url,
         method: api.method,
-        params: childrenUserId
+        params: data
     });
 }
 
-export const openUser = async (childrenUserId: string) => {
+
+//开启子用户服务
+export const openUser = async (data: ocdUserProps) => {
     const api = MyUrl.user.openUser;
+    console.log(data)
     return request({
         url: api.url,
         method: api.method,
-        params: childrenUserId
+        params: data
     })
 }
 
 //删除用户
-export const deleteUser = async (childrenUserId: string) => {
+export const deleteUser = async (data: ocdUserProps) => {
     const api = MyUrl.user.deleteUser;
     return request({
         url: api.url,
         method: api.method,
-        params: childrenUserId
+        params: data
     });
 }
 

@@ -1,66 +1,56 @@
 import type {TableProps} from 'antd';
 import Search from "antd/es/input/Search";
 import {SubUser} from "@/apis/standard/user.ts"
-import {Button, Table} from "antd";
-import React, {useEffect, useReducer} from "react";
+import {Button, Form, Input, Modal, Table} from "antd";
+import React, {useEffect} from "react";
 import {user_list_data} from "@/views/demo/user/user_list_data.ts";
 import Managements from "@/views/demo/user/user_managements.tsx";
-import {ADD_USER, CLOSE_USER, DELETE_USER, OPEN_USER, userReducer} from "@/views/demo/user/user_manage_reducer.ts";
+import {useUserActions} from "@/views/demo/user/user_function.ts";
 
-const columns: TableProps<SubUser>['columns'] = [
-    {
-        title: 'ID',
-        dataIndex: 'id',
-    },
-    {
-        title: 'Username',
-        dataIndex: 'username',
-    },
-    {
-        title: 'Disabled',
-        dataIndex: 'disabled',
-        render: (_, record) => {
-            return <span>{record.disabled ? "Disabled" : "Enabled"}</span>
+
+const UserManage: React.FC = () => {
+    const [open, setOpen] = React.useState(false);
+    const {data, getUserListData, onOpen, onClose, onDelete, onCreate, contextHolder} = useUserActions(user_list_data);
+    const [form] = Form.useForm();
+
+    const columns: TableProps<SubUser>['columns'] = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+        },
+        {
+            title: 'Username',
+            dataIndex: 'username',
+        },
+        {
+            title: 'Disabled',
+            dataIndex: 'disabled',
+            render: (_, record) => {
+                return <span>{record.disabled ? "Disabled" : "Enabled"}</span>
+            }
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            render: (_, record) => {
+                return <Managements onOpen={() => onOpen(record)} onClose={() => onClose(record)}
+                                    onDelete={() => onDelete(record)} onReset={() => {
+                }}/>
+            }
         }
-    },
-    {
-        title: 'Action',
-        dataIndex: 'action',
-    }
-];
-
-export const UserManage: React.FC = () => {
-    const [data, setData] = useReducer(userReducer, user_list_data);
-
-    useEffect(() => {
-        columns[3].render = (_, record) => {
-            return <Managements onOpen={() => onOpen(record)} onClose={() => onClose(record)}
-                                onDelete={() => onDelete(record)}/>
-        }
-    }, [])
+    ];
 
     const onSearch = (value: string) => {
         console.log(value);
     }
 
-    const onOpen = (record: SubUser) => {
-        setData({type: OPEN_USER, payload: record});
-    }
-
-    const onClose = (record: SubUser) => {
-        setData({type: CLOSE_USER, payload: record});
-    }
-
-    const onDelete = (record: SubUser) => {
-        setData({type: DELETE_USER, payload: record});
-    }
-
-    const onAdd = (record: SubUser) => {
-        setData({type: ADD_USER, payload: record});
-    }
+    useEffect(() => {
+        getUserListData();
+    }, [getUserListData])
 
     return (
         <div style={{padding: "20px"}}>
+            {contextHolder}
             <div style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -68,16 +58,32 @@ export const UserManage: React.FC = () => {
             }}>
                 <Search placeholder="input search text" enterButton size={"large"} onSearch={onSearch}
                         style={{width: "300px"}}/>
-                <Button type="primary" size={"large"} onClick={() => onAdd({
-                    id: data.length + 1,
-                    username: "test",
-                    disabled: false
-                })}>Add</Button>
+                <Button type="primary" size={"large"} onClick={() => setOpen(true)}>Add</Button>
             </div>
-            <Table columns={columns} dataSource={data} key={data.length} style={{marginTop: "20px"}} size={"middle"}
-                   pagination={{pageSize: 10}} rowKey={(record) => record.id.toString()}/>
 
+            <Modal title="创建子用户" open={open} onOk={() => {
+                onCreate({
+                    childUsername: form.getFieldValue("username"),
+                    childPassword: form.getFieldValue("password")
+                });
+                setOpen(false)
+            }} onCancel={() => {
+                setOpen(false)
+            }}>
+                <Form form={form} layout="vertical">
+                    <Form.Item label="Username" name={"username"}>
+                        <Input name="username"/>
+                    </Form.Item>
+                    <Form.Item label="Password" name={"password"}>
+                        <Input name="password"/>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Table columns={columns} dataSource={data} key={data.length} style={{marginTop: "20px"}} size={"middle"}
+                   pagination={{pageSize: 10}} rowKey={(record) => record.id}/>
         </div>
     )
 }
+
+export default UserManage;
 

@@ -2,6 +2,9 @@ import React from 'react';
 import {Form, Input, Button} from 'antd';
 import './index.css';
 import {useNavigate} from 'react-router-dom';
+import {loginApi} from "@/apis/request/auth.ts";
+import {loginParams} from "@/apis/standard/auth.ts";
+import {throttle} from "@/utils";
 
 interface FormData {
     username: string;
@@ -10,10 +13,28 @@ interface FormData {
 
 const Login: React.FC = () => {
     const navigate = useNavigate()
-    const onFinish = (formData: FormData) => {
-        //设置token
-        localStorage.setItem('token', `${formData.username}&-&${formData.password}`)
-        navigate('/process-management', {replace: true})
+
+    const onLogin = async (data: loginParams) => {
+        try {
+            const response = await loginApi(data)
+            console.log(response)
+            if (response["code"] === 200 || response["data"] != null) {
+                localStorage.setItem('token', response["data"]["token"])
+                navigate('/process-management', {replace: true})
+            } else {
+                alert(response["msg"])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    const onFinish = async (formData: FormData) => {
+        console.log('Received values of form: ', formData)
+        const data: loginParams = {
+            username: formData.username,
+            password: formData.password
+        }
+        await onLogin(data)
     };
 
     return (
@@ -23,7 +44,7 @@ const Login: React.FC = () => {
                 <h1>车辆数据采集系统</h1>
                 <Form
                     name="login-form"
-                    onFinish={onFinish}
+                    onFinish={throttle(onFinish, 1000)}
                     initialValues={{remember: true}}
                 >
                     <Form.Item

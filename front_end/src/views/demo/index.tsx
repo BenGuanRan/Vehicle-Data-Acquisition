@@ -34,25 +34,9 @@ const itemList = [
         key: '/physical-topology',
         label: '物理拓扑配置',
     },
-    //折线图
     {
-        key: '/line-chart',
-        label: '折线图',
-    },
-    //柱状图
-    {
-        key: '/his-chart',
-        label: '柱状图',
-    },
-    //饼图
-    {
-        key: '/pie-chart',
-        label: '饼图',
-    },
-    //散点图
-    {
-        key: '/scatter-chart',
-        label: '散点图',
+        key: '/user-management',
+        label: '用户管理',
     }
 ]
 

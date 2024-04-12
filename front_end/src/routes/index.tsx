@@ -8,16 +8,13 @@ import {createBrowserRouter} from "react-router-dom";
 import ProcessEdit from "@/views/demo/test_process/detail/edit/edit.tsx";
 import ProcessShow from "@/views/demo/test_process/detail/show/show.tsx";
 import ProcessDetail from "@/views/demo/test_process/detail/process_detail.tsx";
-import HisChart from "@/views/demo/data_display/paint/histogram_chart/histogram.tsx";
-import LineChart from "@/views/demo/data_display/paint/line_chart/line_chart.tsx";
-import PieChart from "@/views/demo/data_display/paint/pie_chart/pie.tsx";
-import ScatterChart from "@/views/demo/data_display/paint/scatter_chart/scatter.tsx";
+import UserManage from "@/views/demo/user/user_list.tsx";
 
 
 export const my_router = createBrowserRouter([
         {
             path: "/login",
-            element: <Login/>
+            element: <Login/>,
         },
         {
             path: "/",
@@ -51,25 +48,9 @@ export const my_router = createBrowserRouter([
                     path: "/physical-topology",
                     element: <PhyTopology/>
                 },
-                //折线图
                 {
-                    path: "/line-chart",
-                    element: <LineChart/>
-                },
-                //柱状图
-                {
-                    path: "/his-chart",
-                    element: <HisChart/>
-                },
-                //饼图
-                {
-                    path: "/pie-chart",
-                    element: <PieChart/>
-                },
-                //散点图
-                {
-                    path: "/scatter-chart",
-                    element: <ScatterChart/>
+                    path: "/user-management",
+                    element: <UserManage/>
                 }
             ]
         }

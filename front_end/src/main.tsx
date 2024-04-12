@@ -1,8 +1,11 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import '../src/mock/mockApi.ts'
-import App from "@/views/app";
+import MyApp from "@/views/app";
+import {App} from "antd";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <App/>
+    <App>
+        <MyApp/>
+    </App>
 )

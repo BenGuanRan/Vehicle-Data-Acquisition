@@ -2,7 +2,7 @@ import type {TableProps} from 'antd';
 import Search from "antd/es/input/Search";
 import {SubUser} from "@/apis/standard/user.ts"
 import {Button, Form, Input, Modal, Table} from "antd";
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {user_list_data} from "@/views/demo/user/user_list_data.ts";
 import Managements from "@/views/demo/user/user_managements.tsx";
 import {useUserActions} from "@/views/demo/user/user_function.ts";
@@ -10,6 +10,7 @@ import {useUserActions} from "@/views/demo/user/user_function.ts";
 
 const UserManage: React.FC = () => {
     const [open, setOpen] = React.useState(false);
+    const hasGetUserListData = useRef(false);
 
     const {
         data,
@@ -55,7 +56,10 @@ const UserManage: React.FC = () => {
     }
 
     useEffect(() => {
-        getUserListData();
+        if (!hasGetUserListData.current) {
+            getUserListData();
+            hasGetUserListData.current = true;
+        }
     }, [getUserListData])
 
     return (

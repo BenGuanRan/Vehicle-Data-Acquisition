@@ -33,11 +33,13 @@ const PhyTopology: React.FC = () => {
     let graph: Graph
 
     useEffect(() => {
-        if (!graph) {
-            graphConfig.container = container.current!
-            graph = new G6.Graph(graphConfig)
-            graph.data(nodeData)
-            graph.render();
+        graphConfig.container = container.current!
+        graph = new G6.Graph(graphConfig)
+        graph.data(nodeData)
+        graph.render();
+
+        return () => {
+            graph.destroy()
         }
     }, [nodeData])
 

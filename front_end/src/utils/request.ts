@@ -1,6 +1,6 @@
 import axios from 'axios';
-import tokenUtils from "@/utils/tokenUtils.ts";
 import {BASE_URL} from "@/apis/url/myUrl.ts";
+import userUtils from "@/utils/userUtils.ts";
 
 export const request = ({url, method, params}: { url: string; method: string; params?: any }) => {
     //正在通过method向url发送请求，请求参数为params
@@ -17,7 +17,7 @@ export const request = ({url, method, params}: { url: string; method: string; pa
     return axios({
         baseURL: BASE_URL,
         headers: {
-            'authorization': tokenUtils.getToken(),
+            'authorization': userUtils.getToken(),
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         url: url,

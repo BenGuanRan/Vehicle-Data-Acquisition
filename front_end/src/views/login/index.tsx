@@ -5,7 +5,6 @@ import {useNavigate} from 'react-router-dom';
 import {loginApi} from "@/apis/request/auth.ts";
 import {loginParams} from "@/apis/standard/auth.ts";
 import {throttle} from "@/utils";
-import tokenUtils from "@/utils/tokenUtils.ts";
 import {useForm} from "antd/es/form/Form";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
@@ -85,13 +84,8 @@ const ToLogin = () => {
     const onLogin = async (data: loginParams) => {
         try {
             const response = await loginApi(data)
-            console.log(response)
-            if (response["code"] === 200 || response["data"] != null) {
-                console.log(response["data"]["token"])
-                tokenUtils.setToken(response["data"]["token"])
+            if (response.code === SUCCESS_CODE && response.data != null) {
                 navigate('/process-management', {replace: true})
-            } else {
-                alert(response["msg"])
             }
         } catch (error) {
             console.error(error)

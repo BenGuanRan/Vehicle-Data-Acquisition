@@ -2,9 +2,9 @@ import React from "react";
 import {Form, Menu, MenuProps, Modal, Input} from "antd";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {logout} from "@/apis/request/auth.ts";
-import tokenUtils from "@/utils/tokenUtils.ts";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
+import userUtils from "@/utils/userUtils.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -66,7 +66,7 @@ export const HomeMenu = () => {
         else if (e.key === 'logout') {
             if (window.confirm("确定退出登录吗？"))
                 logout().then(() => {
-                    tokenUtils.removeToken()
+                    userUtils.removeUserInfo()
                     navigate('/login')
                 })
         } else if (e.key === 'changePassword') {

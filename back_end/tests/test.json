@@ -1,0 +1,33 @@
+{
+    "testName": "test_process_01",
+    "testObjects": [
+        {
+            "objectName": "test_object_01",
+            "collectorSignals": [
+                {
+                    "collectorSignalName": "signal_name_01-01",
+                    "controllerId": 0,
+                    "collectorId": 0,
+                    "signal": "signal_01-01"
+                }
+            ]
+        },
+        {
+            "objectName": "test_object_02",
+            "collectorSignals": [
+                {
+                    "collectorSignalName": "signal_name_02-01",
+                    "controllerId": 1,
+                    "collectorId": 2,
+                    "signal": "signal_02-01"
+                },
+                {
+                    "collectorSignalName": "signal_name_02-02",
+                    "controllerId": 3,
+                    "collectorId": 3,
+                    "signal": "signal_02-02"
+                }
+            ]
+        }
+    ]
+}

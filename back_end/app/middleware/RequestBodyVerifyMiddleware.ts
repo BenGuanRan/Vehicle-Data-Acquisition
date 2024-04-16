@@ -7,7 +7,7 @@ function RequestBodyVerifyMiddleware(ctx: Context, next: Next) {
     if (ctx.method !== 'POST') return next()
     const requestBody = ctx.request.body as Object
     // 检查请求体中各个参数是否无意义
-    const pass = Object.values(requestBody).every(v => ![null, undefined].includes(v) && (typeof v === 'string' && v.trim() !== ''))
+    const pass = Object.values(requestBody).every(v => ![null, undefined].includes(v) || (typeof v === 'string' && v.trim() !== ''))
     if (pass) {
         return next()
     } else {

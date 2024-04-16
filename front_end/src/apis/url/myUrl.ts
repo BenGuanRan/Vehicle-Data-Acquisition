@@ -1,4 +1,5 @@
 import {USER} from "@/apis/url/user.ts";
+import {TEST} from "@/apis/url/test.ts";
 
 interface Url {
     url: string;
@@ -12,5 +13,6 @@ export interface UrlMap {
 }
 
 export const MyUrl = {
-    user: USER,
+    USER,
+    TEST,
 }

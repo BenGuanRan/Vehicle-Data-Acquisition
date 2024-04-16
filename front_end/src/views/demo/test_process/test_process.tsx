@@ -3,6 +3,7 @@ import {Button, Flex, Input, Table, TableProps} from "antd";
 import './test_process.css';
 import {useNavigate} from "react-router-dom";
 import {deleteTest, getTestList} from "@/apis/request/test.ts";
+import {CreateTest} from "@/views/demo/test_process/create/create_test.tsx";
 
 export interface TestItem {
     key: string;
@@ -60,6 +61,19 @@ const columns: TableProps<TestItem>['columns'] = [
 const TestProcessPage: React.FC = () => {
     const navigate = useNavigate();
     const [dataList, setDataList] = React.useState([] as TestItem[]);
+    const [openCreate, setOpenCreate] = React.useState(false);
+
+    const onCreateTest = () => {
+        setOpenCreate(true);
+    }
+
+    const onCreateOk = () => {
+        setOpenCreate(false);
+    }
+
+    const onCreateCancel = () => {
+        setOpenCreate(false);
+    }
 
     const onDelete = (id: string) => {
         deleteTest(id).then(() => {
@@ -87,11 +101,12 @@ const TestProcessPage: React.FC = () => {
         </div>
     );
 
-
     useEffect(() => {
         console.log('get data')
         getTestList({}).then((res) => {
             setDataList(res['list'])
+        }).catch((err) => {
+            console.log(err)
         });
     }, []);
 
@@ -121,15 +136,12 @@ const TestProcessPage: React.FC = () => {
                               style={{width: '50%'}}
                               enterButton
                 ></Input.Search>
-
-                <Button type="primary" onClick={() => {
-                    navigate('/process-management/edit/0');
-                }}>新建测试流程</Button>
+                <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
             </div>
-            <Table id={"process_table"} dataSource={dataList} columns={columns}
-                   style={{width: '100%'}}
+            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
                    pagination={{pageSize: 7, hideOnSinglePage: true}}
             />
+            <CreateTest open={openCreate} onOk={onCreateOk} onCancel={onCreateCancel}/>
         </Flex>
     );
 }

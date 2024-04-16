@@ -1,11 +1,9 @@
 import {Button, Flex, Form, Input} from "antd";
 import "./process_detail.css";
-import MutiSelect from "@/views/demo/test_process/components/multi_select.tsx";
 import React, {useEffect} from "react";
 import {Outlet, useParams} from "react-router-dom";
 import '../../../../mock/mockApi.ts'
 import {getTestDetail} from "@/apis/request/test.ts";
-import {indexOptions, targetOptions} from "@/views/demo/test_process/components/muti_select_data.ts";
 import {useForm} from "antd/es/form/Form";
 
 // Process interface
@@ -44,12 +42,6 @@ const ProcessDetail: React.FC = () => {
             }} form={form}>
                 <Form.Item label="测试名称" name="title">
                     <Input placeholder="Test Title"/>
-                </Form.Item>
-                <Form.Item label="测试对象" name="equipment_number">
-                    <MutiSelect options={targetOptions}/>
-                </Form.Item>
-                <Form.Item label="测试类型" name="equipment_category">
-                    <MutiSelect options={indexOptions}/>
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" onClick={onSubmit}>确定</Button>

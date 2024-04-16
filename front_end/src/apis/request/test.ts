@@ -1,4 +1,5 @@
 import {request} from "@/utils/request.ts";
+import {MyUrl} from "@/apis/url/myUrl.ts";
 
 interface getListParams {
     page?: number;
@@ -32,37 +33,45 @@ const deleteTest = async (id: string) => {
     });
 }
 
-interface addTestParams {
-    title: string;
-    equipment_number: string;
-    equipment_category: string;
-    test_parameter: string;
-    status: string;
+/// TODO createTest  by   Post
+export interface ICreateTestProcess {
+    testProcessName: string
+    testContents: {
+        testObjectName: string
+        collectItems: {
+            collectorSignalName: string
+            controllerId: number
+            collectorId: number
+            signal: string
+        }[]
+    }[]
 }
 
-//新增测试
-const addTest = async (data: addTestParams) => {
+export interface ICreateTestObject {
+    testObjectName: string
+    collectItems: {
+        collectorSignalName: string
+        controllerId: number
+        collectorId: number
+        signal: string
+    }[]
+}
+
+
+/// finish
+const createTest = (icreateTestProcess: ICreateTestProcess) => {
+    const api = MyUrl.TEST.createTestProcess
     return request({
-        url: '/test',
-        method: 'POST',
-        params: data
-    });
+        url: api.url,
+        method: api.method,
+        params: icreateTestProcess
+    })
 }
 
-
-//编辑测试
-const editTest = async (id: string, data: addTestParams) => {
-    return request({
-        url: `/test/${id}`,
-        method: 'PUT',
-        params: data
-    });
-}
 
 export {
     getTestList,
     getTestDetail,
     deleteTest,
-    addTest,
-    editTest
+    createTest,
 }

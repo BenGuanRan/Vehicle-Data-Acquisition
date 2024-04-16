@@ -1,0 +1,64 @@
+.create-modal {
+    height: 80vh;
+    width: 80vw;
+}
+
+.show-container {
+    width: 100%;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.show-container * {
+    margin: 0;
+    padding: 0;
+}
+
+.test-object-delete {
+    color: red;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+    border: none;
+    background: white;
+}
+
+.add-test-object {
+    background: white;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    border: none;
+    color: skyblue;
+}
+
+
+.add-test-collect {
+    background: white;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    border: none;
+    color: skyblue;
+}
+
+.test-collect-item {
+    padding: 5px;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.delete-collect-item {
+    color: red;
+    cursor: pointer;
+    padding: 5px;
+    border: none;
+    background: white;
+}

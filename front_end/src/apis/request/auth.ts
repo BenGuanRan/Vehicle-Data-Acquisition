@@ -6,7 +6,7 @@ import userUtils from "@/utils/userUtils.ts";
 
 
 export const loginApi = async (data: loginParams) => {
-    const api = MyUrl.user.login;
+    const api = MyUrl.USER.login;
     const response = await request({
         url: api.url,
         method: api.method,
@@ -24,7 +24,7 @@ export const loginApi = async (data: loginParams) => {
 }
 
 export const logout = async () => {
-    const api = MyUrl.user.logout;
+    const api = MyUrl.USER.logout;
     return request({
         url: api.url,
         method: api.method

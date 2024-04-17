@@ -35,4 +35,5 @@ export const USER_UNEXIST = '此用户不存在'
 export const HAS_BEEN_DISABLED = '此用户已处于禁用状态，请勿重复操作'
 export const HAS_BEEN_START = '此用户已处于启用状态，请勿重复操作'
 export const PLEASE_BAN_FIRST = '此用户正处于启用状态，请先将其禁用'
+export const SEARCH_NO_DATA = '查无此数据'
 

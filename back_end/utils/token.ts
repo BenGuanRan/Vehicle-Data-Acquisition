@@ -3,7 +3,7 @@ import OT_CONFIG from '../app/config/ot_config'
 import { TOKEN_EXPIRED_CODE, TOKEN_ILLEGAL_CODE, TOKEN_INNER_ERROR_CODE, TOKEN_MSG, TOKEN_USER_HAS_BEEN_DELETED_CODE, TOKEN_USER_HAS_BEEN_DISABLED_CODE, TOKEN_USER_LOGOUT, TOKEN_USER_PASSWORD_HAS_BEEN_CHANGED_CODE } from '../app/constants'
 import { get } from 'http'
 import UserService from '../app/service/UserService'
-import TokenBlackListItemService from '../app/service/TokenBlackListItemService'
+import TokenBlackListService from '../app/service/TokenBlackListService'
 
 const tokenUtils = {
     sign(data: {
@@ -58,7 +58,7 @@ const tokenUtils = {
                 }
             } else { // 验证通过
                 // 校验用户是否退出登录了
-                if (await TokenBlackListItemService.checkIfTokenInBlackList(token)) {
+                if (await TokenBlackListService.checkIfTokenInBlackList(token)) {
                     return {
                         admin: null,
                         err: {

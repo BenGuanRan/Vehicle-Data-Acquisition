@@ -2,7 +2,7 @@ import TokenBlackListItem from "../model/TokenBlackListItem.model"
 import OT_CONFIG from '../config/ot_config'
 import Sequelize from "sequelize"
 
-class TokenBlackListItemService {
+class TokenBlackListService {
     // 将当前用户token添加到黑名单中，并携带时间戳
     async addToken2BlackList(token: string): Promise<boolean> {
         try {
@@ -45,4 +45,4 @@ class TokenBlackListItemService {
         }
     }
 }
-export default new TokenBlackListItemService
+export default new TokenBlackListService

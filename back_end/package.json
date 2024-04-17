@@ -29,6 +29,7 @@
     "koa-router": "^12.0.1",
     "log4js": "^6.9.1",
     "mysql2": "^3.9.3",
+    "process": "^0.11.10",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.2",
     "sequelize-typescript": "^2.1.6"

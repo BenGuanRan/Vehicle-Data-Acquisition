@@ -8,12 +8,13 @@ import {createBrowserRouter} from "react-router-dom";
 import ProcessEdit from "@/views/demo/test_process/detail/edit/edit.tsx";
 import ProcessShow from "@/views/demo/test_process/detail/show/show.tsx";
 import ProcessDetail from "@/views/demo/test_process/detail/process_detail.tsx";
+import UserManage from "@/views/demo/user/user_list.tsx";
 
 
 export const my_router = createBrowserRouter([
         {
             path: "/login",
-            element: <Login/>
+            element: <Login/>,
         },
         {
             path: "/",
@@ -46,6 +47,10 @@ export const my_router = createBrowserRouter([
                 {
                     path: "/physical-topology",
                     element: <PhyTopology/>
+                },
+                {
+                    path: "/user-management",
+                    element: <UserManage/>
                 }
             ]
         }

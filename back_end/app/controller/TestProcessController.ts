@@ -1,41 +1,32 @@
 import { Context } from "koa"
 import { IResBody } from "../types"
-import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_SUCCESS_MSG } from "../constants"
+import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
 import { sequelize } from '../db'
 import TestProcessService, { ITestProcess } from "../service/TestProcessService"
 import TestObjectService from "../service/TestObjectService"
 import CollectorSignalService from "../service/CollectorSignalService"
+import TestProcess from "../model/TestProcess.model"
 
 class TestProcessController {
     // 新建一个测试流程
     async createTestProcess(ctx: Context) {
         try {
             const jsonData: ITestProcess = ctx.request.body as ITestProcess
-
-            const { testName, testObjects } = jsonData
-            const transaction = await sequelize.transaction()
-            try {
-                const { id: testProcessId } = (await TestProcessService.createTestProcess({ testName: testName }))?.dataValues!
-                for (const { objectName, collectorSignals } of testObjects) {
-                    const { id: testObjectId } = (await TestObjectService.createTestObject({ objectName: objectName, testProcessId: testProcessId! }))?.dataValues!
-                    for (const collectItem of collectorSignals) {
-                        await CollectorSignalService.createSignal({ ...collectItem, testObjectId: testObjectId! })
-                    }
+            const res = await TestProcessService.createTestProcess(jsonData)
+            if (res) {
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: null
                 }
-                await transaction.commit()
-                    ; (ctx.body as IResBody) = {
-                        code: SUCCESS_CODE,
-                        msg: WRITE_SUCCESS_MSG,
-                        data: null
-                    }
-            } catch (error) {
-                console.log(error);
+            } else {
                 (ctx.body as IResBody) = {
                     code: FAIL_CODE,
-                    msg: (error as Error).toString(),
+                    msg: WRITE_FAIL_MSG,
                     data: null
                 }
             }
+
         } catch (error) {
             console.log(error);
             (ctx.body as IResBody) = {
@@ -68,6 +59,58 @@ class TestProcessController {
                 data: null
             }
 
+        }
+    }
+    // 编辑测试流程
+    async editTestProcess(ctx: Context) {
+        try {
+            const jsonData = ctx.request.body as ITestProcess
+            const { testProcessId } = jsonData
+            if (testProcessId === undefined) { throw new Error(BODY_INCOMPLETENESS); }
+            const testProcess = await TestProcess.findByPk(Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            const res = await TestProcessService.editProcessById({ ...jsonData, testProcessId: Number(testProcessId) })
+
+            if (res) {
+                const testProcess = await TestProcessService.getTestProcessById(Number(testProcessId));
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: testProcess
+                }
+            } else {
+                throw new Error(WRITE_FAIL_MSG)
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+        }
+    }
+    // 获取测试流程列表
+    async getTestProcessList(ctx: Context) {
+        try {
+            const res = await TestProcessService.getTestProcessList()
+            if (res) {
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: SEARCH_SUCCESS_MSG,
+                    data: res
+                }
+            } else {
+                throw new Error(SEARCH_FAIL_MSG)
+            }
+        } catch (error) {
+            (ctx.body as IResBody) = {
+                code: SUCCESS_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
         }
     }
 }

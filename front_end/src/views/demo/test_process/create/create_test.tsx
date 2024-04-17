@@ -65,7 +65,7 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, onOk, onCancel}) =>
                     <button className={"add-test-object"} onClick={onAddTestObject}>添加测试对象</button>
                     <div className={"show-content"}>
                         {testContextValue.cTestData.testContents.map((item, index) => {
-                            return <TestObjects testObject={item} index={index}/>
+                            return <TestObjects testObject={item} index={index} key={index}/>
                         })}
                     </div>
                 </div>
@@ -108,7 +108,7 @@ const TestObjects = ({testObject, index}: TestObjectItemProps) => {
         <div>
             {
                 testObject.collectItems.map((item, index) => {
-                    return <TestObjectItem collectItem={item} index={index} fatherIndex={fatherIndex}/>
+                    return <TestObjectItem collectItem={item} index={index} fatherIndex={fatherIndex} key={index}/>
                 })
             }
         </div>

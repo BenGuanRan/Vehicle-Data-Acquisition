@@ -3,8 +3,6 @@ import {BASE_URL} from "@/apis/url/myUrl.ts";
 import userUtils from "@/utils/userUtils.ts";
 
 export const request = ({url, method, params}: { url: string; method: string; params?: any }) => {
-    //正在通过method向url发送请求，请求参数为params
-
     if (params) {
         let paramsStr = '';
         for (const key in params) {
@@ -12,7 +10,7 @@ export const request = ({url, method, params}: { url: string; method: string; pa
         }
         params = paramsStr.slice(0, -1);
     }
-    console.log("正在通过", method + "方法", "向", url, "发送请求，请求参数为", params)
+    console.log("正在通过", method + "方法", "向", url, "发送请求，请求参数为", params.toString())
 
     return axios({
         baseURL: BASE_URL,

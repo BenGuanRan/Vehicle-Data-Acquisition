@@ -99,5 +99,17 @@ class TestProcessService {
             return null
         }
     }
+    // 根据id删除测试流程
+    async deleteTestProcessById(id: number): Promise<boolean> {
+        try {
+            const res = await TestProcess.destroy({
+                where: { id }
+            })
+            return res !== 0
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
 }
 export default new TestProcessService

@@ -27,5 +27,6 @@ router.post('/createTestProcess', TestProcessController.createTestProcess)
 router.get('/getTestProcessDetails', TestProcessController.getTestProcessDetails)
 router.post('/editTestProcess', TestProcessController.editTestProcess)
 router.get('/getTestProcessList', TestProcessController.getTestProcessList)
+router.post('/deleteTestProcess', TestProcessController.deleteTestProcess)
 
 export default router

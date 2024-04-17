@@ -113,6 +113,29 @@ class TestProcessController {
             }
         }
     }
+    // 删除测试流程
+    async deleteTestProcess(ctx: Context) {
+        try {
+            const { testProcessId } = ctx.request.body as any
+            if (testProcessId === undefined) { throw new Error(BODY_INCOMPLETENESS); }
+            const res = await TestProcessService.deleteTestProcessById(Number(testProcessId))
+            res &&
+                ((ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: null
+                })
+            if (!res) throw new Error(WRITE_FAIL_MSG)
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
 }
 
 export default new TestProcessController

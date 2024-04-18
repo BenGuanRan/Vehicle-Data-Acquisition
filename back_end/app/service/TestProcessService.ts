@@ -1,3 +1,4 @@
+import { getUserIdFromCtx } from '../../utils/getUserInfoFromCtx'
 import { sequelize } from '../db'
 import CollectorSignal from '../model/CollectorSignal.model'
 import TestObject from '../model/TestObject.model'
@@ -23,11 +24,11 @@ export interface ITestProcess {
 
 class TestProcessService {
     // 创建一个测试流程
-    async createTestProcess(param: ITestProcess): Promise<boolean> {
+    async createTestProcess(userId: number, param: ITestProcess): Promise<boolean> {
         const { testName, testObjects } = param
         const transaction = await sequelize.transaction()
         try {
-            const { id: testProcessId } = (await TestProcess.create({ testName }))?.dataValues!
+            const { id: testProcessId } = (await TestProcess.create({ testName, userId }))?.dataValues!
             for (const { objectName, collectorSignals } of testObjects) {
                 const { id: testObjectId } = (await TestObjectService.createTestObject({ objectName: objectName, testProcessId: testProcessId! }))?.dataValues!
                 for (const collectItem of collectorSignals) {
@@ -42,10 +43,10 @@ class TestProcessService {
         }
     }
     // 通过id查询一个测试流程
-    async getTestProcessById(id: number): Promise<TestProcess | null> {
+    async getTestProcessById(userId: number, id: number): Promise<TestProcess | null> {
         try {
             const testProcess = await TestProcess.findOne({
-                where: { id },
+                where: { id, userId },
                 attributes: [['id', 'testProcessId'], 'testName'],
                 include: {
                     model: TestObject,
@@ -63,7 +64,7 @@ class TestProcessService {
         }
     }
     // 通过id编辑一个测试流程
-    async editProcessById(data: ITestProcess & { testProcessId: number }): Promise<any | null> {
+    async editProcessById(userId: number, data: ITestProcess & { testProcessId: number }): Promise<any | null> {
         const { testProcessId, testObjects, testName } = data
         const transaction = await sequelize.transaction()
         try {
@@ -72,6 +73,7 @@ class TestProcessService {
             // 修改testName
             await TestProcess.update({ testName }, {
                 where: {
+                    userId,
                     id: testProcessId
                 }
             })
@@ -90,9 +92,11 @@ class TestProcessService {
         }
     }
     // 获取测试流程列表
-    async getTestProcessList(): Promise<TestProcess[] | null> {
+    async getTestProcessList(userId: number): Promise<TestProcess[] | null> {
         try {
-            const tests = await TestProcess.findAll()
+            const tests = await TestProcess.findAll({
+                where: { userId }
+            })
             return tests
         } catch (error) {
             console.log(error);
@@ -100,10 +104,10 @@ class TestProcessService {
         }
     }
     // 根据id删除测试流程
-    async deleteTestProcessById(id: number): Promise<boolean> {
+    async deleteTestProcessById(userId: number, id: number): Promise<boolean> {
         try {
             const res = await TestProcess.destroy({
-                where: { id }
+                where: { id, userId }
             })
             return res !== 0
         } catch (error) {

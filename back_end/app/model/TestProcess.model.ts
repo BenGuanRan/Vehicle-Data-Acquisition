@@ -1,8 +1,10 @@
-import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import TestObject from './TestObject.model';
+import User from './User.model';
 
 export interface ITestProcessModel {
     id?: number
+    userId: number
     testName: string
     createAt?: Date
     updateAt?: Date
@@ -23,4 +25,11 @@ export default class TestProcess extends Model<ITestProcessModel> {
 
     @HasMany(() => TestObject)
     testObjects!: TestObject[]
+
+    @ForeignKey(() => User)
+    @Column
+    userId!: number
+
+    @BelongsTo(() => User)
+    user!: User
 }

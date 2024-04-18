@@ -111,7 +111,7 @@ const tokenUtils = {
     getUserIdByToken(token: string): number | null {
         try {
             const { userId } = jwt.verify(token, OT_CONFIG.TOKEN_PRIVATE_KEY) as jwt.JwtPayload
-            return userId ? userId : null
+            return userId ? Number(userId) : null
         } catch (e) {
             console.log(e);
             return null

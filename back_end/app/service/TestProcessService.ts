@@ -1,6 +1,10 @@
+import { getUserIdFromCtx } from '../../utils/getUserInfoFromCtx'
+import { sequelize } from '../db'
 import CollectorSignal from '../model/CollectorSignal.model'
 import TestObject from '../model/TestObject.model'
 import TestProcess, { ITestProcessModel } from '../model/TestProcess.model'
+import CollectorSignalService from './CollectorSignalService'
+import TestObjectService from './TestObjectService'
 
 export interface ITestProcess {
     testProcessId?: number
@@ -20,20 +24,29 @@ export interface ITestProcess {
 
 class TestProcessService {
     // 创建一个测试流程
-    async createTestProcess(param: ITestProcessModel): Promise<TestProcess | null> {
+    async createTestProcess(userId: number, param: ITestProcess): Promise<boolean> {
+        const { testName, testObjects } = param
+        const transaction = await sequelize.transaction()
         try {
-            const testProcess = await TestProcess.create(param)
-            return testProcess
+            const { id: testProcessId } = (await TestProcess.create({ testName, userId }))?.dataValues!
+            for (const { objectName, collectorSignals } of testObjects) {
+                const { id: testObjectId } = (await TestObjectService.createTestObject({ objectName: objectName, testProcessId: testProcessId! }))?.dataValues!
+                for (const collectItem of collectorSignals) {
+                    await CollectorSignalService.createSignal({ ...collectItem, testObjectId: testObjectId! })
+                }
+            }
+            await transaction.commit()
+            return true
         } catch (error) {
             console.log(error);
-            return null
+            return false
         }
     }
     // 通过id查询一个测试流程
-    async getTestProcessById(id: number): Promise<TestProcess | null> {
+    async getTestProcessById(userId: number, id: number): Promise<TestProcess | null> {
         try {
             const testProcess = await TestProcess.findOne({
-                where: { id },
+                where: { id, userId },
                 attributes: [['id', 'testProcessId'], 'testName'],
                 include: {
                     model: TestObject,
@@ -48,6 +61,58 @@ class TestProcessService {
         } catch (error) {
             console.log(error);
             return null
+        }
+    }
+    // 通过id编辑一个测试流程
+    async editProcessById(userId: number, data: ITestProcess & { testProcessId: number }): Promise<any | null> {
+        const { testProcessId, testObjects, testName } = data
+        const transaction = await sequelize.transaction()
+        try {
+            // 删除所有testProcessId的testObject
+            await TestObjectService.deleteTestObjectsByTestProcessId(Number(testProcessId))
+            // 修改testName
+            await TestProcess.update({ testName }, {
+                where: {
+                    userId,
+                    id: testProcessId
+                }
+            })
+            // 创建新的testObjects和采集信号
+            for (const { objectName, collectorSignals } of testObjects) {
+                const { id: testObjectId } = (await TestObjectService.createTestObject({ objectName: objectName, testProcessId: testProcessId! }))?.dataValues!
+                for (const collectItem of collectorSignals) {
+                    await CollectorSignalService.createSignal({ ...collectItem, testObjectId: testObjectId! })
+                }
+            }
+            await transaction.commit()
+            return true
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+    // 获取测试流程列表
+    async getTestProcessList(userId: number): Promise<TestProcess[] | null> {
+        try {
+            const tests = await TestProcess.findAll({
+                where: { userId }
+            })
+            return tests
+        } catch (error) {
+            console.log(error);
+            return null
+        }
+    }
+    // 根据id删除测试流程
+    async deleteTestProcessById(userId: number, id: number): Promise<boolean> {
+        try {
+            const res = await TestProcess.destroy({
+                where: { id, userId }
+            })
+            return res !== 0
+        } catch (error) {
+            console.log(error);
+            return false
         }
     }
 }

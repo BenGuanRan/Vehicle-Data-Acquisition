@@ -6,4 +6,8 @@ export const TEST: UrlMap = {
         url: '/createTestProcess',
         method: 'POST'
     },
+    getTestProcessDetails: {
+        url: '/getTestProcessDetails',
+        method: 'GET'
+    },
 }

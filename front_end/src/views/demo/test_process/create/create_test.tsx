@@ -1,9 +1,10 @@
 import {Form, Input, Modal} from "antd";
 import React, {useContext} from "react";
 import "./create_test.css"
-import {createTest, ICreateTestObject} from "@/apis/request/test.ts";
-import {CloseOutlined} from "@ant-design/icons";
-import {CreateTestContext, CreateTestFunctions} from "./create_test_function";
+import {CreateTestContext} from "@/views/demo/test_process/create/create_test_function.ts";
+import {hasDuplicate} from "@/utils";
+import {v4 as uuidv4} from 'uuid';
+import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
 
 interface CreateTestProps {
     open: boolean,
@@ -19,124 +20,148 @@ const formatInput = (input: string) => {
 }
 
 export const CreateTest: React.FC<CreateTestProps> = ({open, onOk, onCancel}) => {
-    const [form] = Form.useForm()
-    const testContextValue = CreateTestFunctions({
-        testProcessName: "",
-        testContents: []
-    })
 
-    const CreateTest = async () => {
-        createTest(testContextValue.cTestData).then((response) => {
-            if (response.code === 200) {
-                alert("创建成功")
-            } else {
-                alert(response.msg)
+    const createTestObject = useContext(CreateTestContext)
+
+    const onAddObjects = () => {
+        const objects = prompt("请输入测试对象名称，多个对象用逗号分隔")
+        if (objects) {
+            const objectArray = formatInput(objects)
+            const currentList = createTestObject.testObjects.map((object: TestObjectsFormat) => object.objectName)
+            if (hasDuplicate([...currentList, ...objectArray])) {
+                alert("测试对象名称不能重复")
+                return
             }
-        })
-    }
-
-    const onAddTestObject = () => {
-        const objects = prompt("请输入测试对象名称,多个对象用逗号分割")
-        if (!objects) return
-        formatInput(objects).forEach(item => {
-            testContextValue.addTestObject({testObjectName: item})
-        })
-    }
-
-    return <CreateTestContext.Provider value={testContextValue}>
-        <Modal className={"create-modal"} open={open} title="Create Test Process" onOk={async () => {
-            onOk()
-            await CreateTest()
-            testContextValue.clearCollection()
-        }} onCancel={() => {
-            onCancel()
-            testContextValue.clearCollection()
-        }} width={"80vw"}>
-
-            <Form form={form}>
-                <Form.Item>
-                    <Input placeholder={"Test Process Name"} prefix={<div>测试名称:</div>} onChange={(e) => {
-                        testContextValue.setTestProcessName(e.target.value)
-                    }}/>
-                </Form.Item>
-
-                <div className={"show-container"}>
-                    <b style={{display: "inline"}}>采集项设置</b>
-                    <button className={"add-test-object"} onClick={onAddTestObject}>添加测试对象</button>
-                    <div className={"show-content"}>
-                        {testContextValue.cTestData.testContents.map((item, index) => {
-                            return <TestObjects testObject={item} index={index} key={index}/>
-                        })}
-                    </div>
-                </div>
-            </Form>
-        </Modal>
-    </CreateTestContext.Provider>
-}
-
-interface TestObjectItemProps {
-    testObject: ICreateTestObject;
-    index: number;
-}
-
-const TestObjects = ({testObject, index}: TestObjectItemProps) => {
-
-    const fatherIndex = index
-    const testObjectItem = useContext(CreateTestContext)
-
-    const onDeleteObject = (index: number) => {
-        testObjectItem.deleteTestObject({index})
-    }
-
-    const onAddCollect = (index: number) => {
-        const itemsName = prompt("请输入采集项名称,多个采集项用逗号分割")
-        if (!itemsName) return
-        formatInput(itemsName).forEach(item => {
-            testObjectItem.addTestCollection({collectorSignalName: item, index})
-        })
-    }
-
-
-    return <div>
-        <b style={{display: "inline"}}>{testObject.testObjectName}</b>
-        <button className={"test-object-delete"} onClick={() => onDeleteObject(index)}>删除
-        </button>
-        <button className={"add-test-collect"} onClick={() => {
-            onAddCollect(index)
-        }}>添加采集项
-        </button>
-        <div>
-            {
-                testObject.collectItems.map((item, index) => {
-                    return <TestObjectItem collectItem={item} index={index} fatherIndex={fatherIndex} key={index}/>
-                })
-            }
-        </div>
-    </div>
-}
-
-interface TestCollectItemProps {
-    collectItem: {
-        collectorSignalName: string
-        controllerId: number
-        collectorId: number
-        signal: string
-    }
-    fatherIndex: number
-    index: number
-}
-
-const TestObjectItem = ({collectItem, fatherIndex}: TestCollectItemProps) => {
-
-    const testObjectContext = useContext(CreateTestContext)
-
-    return <div style={{display: "inline-block"}} className={"test-collect-item"}>
-        <b style={{display: "inline"}}>{collectItem.collectorSignalName}</b>
-        <CloseOutlined onClick={() => {
-            testObjectContext.deleteTestCollection({
-                collectorSignalName: collectItem.collectorSignalName,
-                index: fatherIndex
+            objectArray.forEach(item => {
+                createTestObject.addTestObject({objectName: item, formatId: uuidv4()})
             })
-        }} className={"delete-collect-item"}/>
-    </div>
+        }
+    }
+
+    return <Modal className={"create-modal"} open={open} title="Create Test Process" onOk={async () => {
+        onOk()
+    }} onCancel={() => {
+        onCancel()
+    }} width={"80vw"}>
+
+        <Form.Item>
+            <Input placeholder={"Test Process Name"} prefix={<div>测试名称:</div>} onChange={(e) => {
+                createTestObject.onChangeTestName(e.target.value)
+            }}/>
+        </Form.Item>
+
+        <div className={"show-content-total"}>
+            <div className={"show-container"}>
+                <b style={{display: "inline"}}>采集项设置</b>
+                <button className={"add-test-object"} onClick={onAddObjects}>添加测试对象</button>
+                <div className={"show-content"}>
+                    {createTestObject.testObjects.map((object: TestObjectsFormat, index: number) => {
+                        return <TestObjectsItem object={object} key={index}/>
+                    })}
+                </div>
+            </div>
+            <div className={"show-container"}>
+                <CollectorSignalSelect/>
+            </div>
+        </div>
+    </Modal>
+}
+
+
+const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object}) => {
+    const createTestObject = useContext(CreateTestContext)
+
+    const onAddSignals = (fatherId: string) => {
+        const signals = prompt("请输入采集指标名称，多个指标用逗号分隔")
+        if (signals) {
+            const signalArray = formatInput(signals)
+
+            const currentList = createTestObject.collectorSignals
+                .filter((signal: CollectorSignalFormat) => signal.fatherFormatId === fatherId)
+                .map((signal: CollectorSignalFormat) => signal.collectorSignalName)
+
+            if (hasDuplicate([...currentList, ...signalArray])) {
+                alert("采集指标名称不能重复")
+                return
+            }
+
+            signalArray.forEach(item => {
+                createTestObject.addCollectorSignal({
+                    collectorId: 0,
+                    controllerId: 0,
+                    signal: "",
+                    collectorSignalName: item, formatId: uuidv4(), fatherFormatId: fatherId,
+                })
+            })
+        }
+    }
+
+    return (
+        <div className={"object-item"}>
+            <div className={"object-item-function"}>
+                <b style={{display: "inline"}}>{object.objectName}</b>
+
+                <button className={"add-test-object"} onClick={() => {
+                    onAddSignals(object.formatId)
+                }} style={{marginRight: "10px"}}>添加采集指标
+                </button>
+
+                <button className={"delete-button"} onClick={() => {
+                    createTestObject.deleteTestObject(object.formatId)
+                }}>删除测试对象
+                </button>
+            </div>
+            <div className={"show-content"}>
+                {createTestObject.collectorSignals.filter((signal: CollectorSignalFormat) => signal.fatherFormatId === object.formatId).map((signal: CollectorSignalFormat, index: number) => {
+                    return <CollectorSignalItem signal={signal} key={index}/>
+                })}
+            </div>
+        </div>
+    )
+}
+
+const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
+    const createTestObject = useContext(CreateTestContext)
+
+    return (
+        <div className={"signal-item"} onClick={() => {
+            createTestObject.switchCollectorSignal(signal)
+        }}>
+            <b style={{display: "inline"}}>{signal.collectorSignalName}</b>
+            <button className={"delete-button"} onClick={() => {
+                createTestObject.deleteCollectorSignal(signal.formatId)
+            }}>删除采集指标
+            </button>
+        </div>
+    )
+}
+
+const CollectorSignalSelect = () => {
+    const createTestObject = useContext(CreateTestContext)
+    const currentObject = createTestObject.testObjects.find((e: TestObjectsFormat) => e.formatId === createTestObject.currentSignal?.fatherFormatId)?.objectName
+    const currentSignal = createTestObject.currentSignal ? createTestObject.currentSignal.collectorSignalName : ""
+
+
+    if (!createTestObject.currentSignal) {
+        return <div style={{padding: '10px', fontSize: '16px', color: 'red'}}>请先选择一个采集指标</div>
+    }
+
+    return (
+        <section style={{padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '5px', height: '100%'}}>
+            <header style={{marginBottom: '10px', fontSize: '20px', fontWeight: 'bold'}}>核心板卡设置</header>
+
+            <p style={{marginBottom: '5px', fontSize: '16px'}}>当前测试对象:<span
+                style={{color: 'blue'}}>{currentObject}</span></p>
+
+            <p style={{marginBottom: '5px', fontSize: '16px'}}>当前配置指标:<span
+                style={{color: 'blue'}}>{currentSignal}</span></p>
+
+            <header style={{marginBottom: '5px', fontSize: '16px'}}>采集项板卡选择</header>
+            <article style={{display: 'flex', justifyContent: 'space-between'}}>
+                <p style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡1</p>
+                <p style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡2</p>
+                <p style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡3</p>
+            </article>
+        </section>
+    )
 }

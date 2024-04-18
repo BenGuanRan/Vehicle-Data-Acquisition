@@ -3,37 +3,74 @@
     width: 80vw;
 }
 
-.show-container {
+.show-content-total {
     width: 100%;
-    border: 1px solid #e8e8e8;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e8e8e8;
+}
+
+.show-container {
+    width: 50%;
     border-radius: 5px;
     padding: 10px;
+    border: 1px solid #e8e8e8;
+}
+
+.object-item {
+    align-items: center;
     margin-bottom: 10px;
-}
-
-.show-container * {
-    margin: 0;
-    padding: 0;
-}
-
-.test-object-delete {
-    color: red;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
-    margin-left: 10px;
-    border: none;
-    background: white;
+    transition: background-color 0.3s ease;
 }
+
+.object-item-function {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+.signal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-left: 5%;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.object-item b {
+    margin-right: auto;
+}
+
+.signal-item:hover {
+    background-color: #e8e8e8;
+}
+
+.signal-item b {
+    margin-right: auto;
+}
+
 
 .add-test-object {
-    background: white;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
-    margin-left: 10px;
+    color: white;
+    background-color: #4caf50;
     border: none;
-    color: skyblue;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 
@@ -47,13 +84,10 @@
     color: skyblue;
 }
 
-.test-collect-item {
-    padding: 5px;
-    border: 1px solid #e8e8e8;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    margin-right: 10px;
+.add-test-object:hover {
+    background-color: #45a049;
 }
+
 
 .delete-collect-item {
     color: red;
@@ -61,4 +95,19 @@
     padding: 5px;
     border: none;
     background: white;
+}
+
+
+.delete-button {
+    color: white;
+    background-color: #ff4d4f;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #cc3232;
 }

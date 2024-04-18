@@ -1,9 +1,10 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Button, Flex, Input, Table, TableProps} from "antd";
 import './test_process.css';
 import {useNavigate} from "react-router-dom";
-import {deleteTest, getTestList} from "@/apis/request/test.ts";
+import {deleteTest} from "@/apis/request/test.ts";
 import {CreateTest} from "@/views/demo/test_process/create/create_test.tsx";
+import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/create/create_test_function.ts";
 
 export interface TestItem {
     key: string;
@@ -63,6 +64,8 @@ const TestProcessPage: React.FC = () => {
     const [dataList, setDataList] = React.useState([] as TestItem[]);
     const [openCreate, setOpenCreate] = React.useState(false);
 
+    const createTestContext = CreateTestFunctions()
+
     const onCreateTest = () => {
         setOpenCreate(true);
     }
@@ -101,20 +104,8 @@ const TestProcessPage: React.FC = () => {
         </div>
     );
 
-    useEffect(() => {
-        console.log('get data')
-        getTestList({}).then((res) => {
-            setDataList(res['list'])
-        }).catch((err) => {
-            console.log(err)
-        });
-    }, []);
-
     const onSearch = (value: string) => {
         if (!value || value == '') {
-            getTestList({}).then((res) => {
-                setDataList(res['list'])
-            });
             return;
         }
         const newData = dataList.filter((item) => {
@@ -141,7 +132,10 @@ const TestProcessPage: React.FC = () => {
             <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
                    pagination={{pageSize: 7, hideOnSinglePage: true}}
             />
-            <CreateTest open={openCreate} onOk={onCreateOk} onCancel={onCreateCancel}/>
+
+            <CreateTestContext.Provider value={createTestContext}>
+                < CreateTest open={openCreate} onOk={onCreateOk} onCancel={onCreateCancel}/>
+            </CreateTestContext.Provider>
         </Flex>
     );
 }

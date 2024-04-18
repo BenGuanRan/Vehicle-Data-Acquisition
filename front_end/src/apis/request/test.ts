@@ -1,29 +1,6 @@
 import {request} from "@/utils/request.ts";
 import {MyUrl} from "@/apis/url/myUrl.ts";
 
-interface getListParams {
-    page?: number;
-    limit?: number;
-}
-
-//获取测试列表
-const getTestList = async (params: getListParams) => {
-    return request({
-        url: 'api/test',
-        method: 'GET',
-        params: params
-    });
-}
-
-
-//查看详情
-const getTestDetail = async (id: string) => {
-    console.log(id)
-    return request({
-        url: `api/test/detail`,
-        method: 'GET'
-    });
-}
 
 //删除测试
 const deleteTest = async (id: string) => {
@@ -68,9 +45,32 @@ const createTest = (icreateTestProcess: ICreateTestProcess) => {
     })
 }
 
+export interface ITestProcess {
+    testProcessId?: number
+    testName: string
+    testObjects: {
+        objectId?: number
+        objectName: string
+        collectorSignals: {
+            collectorSignalId?: number
+            collectorSignalName: string
+            controllerId: number
+            collectorId: number
+            signal: string
+        }[]
+    }[]
+}
+
+const getTestDetail = async (id: string):Promise<ITestProcess> => {
+    const api = MyUrl.TEST.getTestProcessDetails
+    return request({
+        url: api.url,
+        method: api.method,
+        params: id
+    });
+}
 
 export {
-    getTestList,
     getTestDetail,
     deleteTest,
     createTest,

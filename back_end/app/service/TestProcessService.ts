@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { getUserIdFromCtx } from '../../utils/getUserInfoFromCtx'
 import { sequelize } from '../db'
 import CollectorSignal from '../model/CollectorSignal.model'
@@ -92,12 +93,35 @@ class TestProcessService {
         }
     }
     // 获取测试流程列表
-    async getTestProcessList(userId: number): Promise<TestProcess[] | null> {
+    async getTestProcessList(userId: number, config: {
+        keywords?: string
+        pageNum: number
+        pageSize: number
+    }): Promise<{ total: number, list: TestProcess[] } | null> {
         try {
-            const tests = await TestProcess.findAll({
-                where: { userId }
+            const { keywords, pageNum, pageSize } = config
+            const total = await TestProcess.count({
+                where: {
+                    userId,
+                    testName: {
+                        [Op.like]: `%${keywords || ''}%`
+                    }
+                }
             })
-            return tests
+            const list = await TestProcess.findAll({
+                where: {
+                    userId,
+                    testName: {
+                        [Op.like]: `%${keywords || ''}%`
+                    }
+                },
+                attributes: {
+                    exclude: ['userId']
+                },
+                offset: pageNum !== undefined ? Number(pageNum) - 1 : 0,
+                limit: Number(pageSize)
+            })
+            return ({ total, list })
         } catch (error) {
             console.log(error);
             return null

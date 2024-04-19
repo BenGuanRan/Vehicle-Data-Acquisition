@@ -3,7 +3,6 @@ import userService from "../service/UserService"
 import tokenUtils from "../../utils/token";
 import { BODY_INCOMPLETENESS, FAIL_CODE, HAS_BEEN_DISABLED, HAS_BEEN_START, HORIZONTAL_OVERREACH_IS_PROHIBITED, INSUFFICIENT_AUTHORITY, LOGIN_FAIL, LOGIN_SUCCESS, PLEASE_BAN_FIRST, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_SUCCESS_MSG, SUCCESS_CODE, USER_EXISTED, USER_UNEXIST, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from '../constants'
 import { IResBody } from "../types";
-import User from "../model/User.model";
 import { getUserIdFromCtx, getUsernameFromCtx } from "../../utils/getUserInfoFromCtx";
 import UserService from "../service/UserService";
 import TokenBlackListService from "../service/TokenBlackListService";
@@ -34,7 +33,8 @@ class UserController {
     // 根据root用户id获取子用户列表
     async getUserList(ctx: Context) {
         const userId = getUserIdFromCtx(ctx)
-        if (userId === undefined) {
+        const { keywords, pageNum, pageSize } = ctx.request.query as any
+        if ([userId, pageNum, pageSize].includes(undefined) || ![userId, pageNum, pageSize].every(i => /^\d+$/.test(i)) || Number(pageNum) < 1 || Number(pageSize) < 1) {
             (ctx.body as IResBody) = {
                 code: FAIL_CODE,
                 msg: QUERY_INCOMPLETENESS,
@@ -42,11 +42,8 @@ class UserController {
             }
         } else {
             await userService.onlyRootCanDo(ctx, async (ctx) => {
-                const userList = await User.findAll({
-                    attributes: { exclude: ['root_user_id', 'password'] },
-                    where: {
-                        root_user_id: userId
-                    }
+                const userList = await UserService.getUserList(userId, {
+                    keywords, pageNum, pageSize
                 });
                 (ctx.body as IResBody) = {
                     code: SUCCESS_CODE,

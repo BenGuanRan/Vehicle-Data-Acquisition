@@ -1,11 +1,7 @@
 import { Context } from "koa"
 import { IResBody } from "../types"
 import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
-import { sequelize } from '../db'
 import TestProcessService, { ITestProcess } from "../service/TestProcessService"
-import TestObjectService from "../service/TestObjectService"
-import CollectorSignalService from "../service/CollectorSignalService"
-import TestProcess from "../model/TestProcess.model"
 import { getUserIdFromCtx } from "../../utils/getUserInfoFromCtx"
 
 class TestProcessController {
@@ -69,12 +65,12 @@ class TestProcessController {
         try {
             const jsonData = ctx.request.body as ITestProcess
             const { testProcessId } = jsonData
+            const userId = getUserIdFromCtx(ctx)
             if (testProcessId === undefined) { throw new Error(BODY_INCOMPLETENESS); }
-            const testProcess = await TestProcess.findByPk(Number(testProcessId))
+            const testProcess = await TestProcessService.getTestProcessById(userId, Number(testProcessId))
             if (!testProcess) {
                 { throw new Error(SEARCH_NO_DATA); }
             }
-            const userId = getUserIdFromCtx(ctx)
             const res = await TestProcessService.editProcessById(userId, { ...jsonData, testProcessId: Number(testProcessId) })
 
             if (res) {
@@ -100,7 +96,13 @@ class TestProcessController {
     async getTestProcessList(ctx: Context) {
         try {
             const userId = getUserIdFromCtx(ctx)
-            const res = await TestProcessService.getTestProcessList(userId)
+            const { keywords, pageNum, pageSize } = ctx.request.query as any
+            if ([pageNum, pageSize].includes(undefined) || ![pageNum, pageSize].every(i => /^\d+$/.test(i)) || Number(pageNum) < 1 || Number(pageSize) < 1) {
+                throw new Error(BODY_INCOMPLETENESS)
+            }
+            const res = await TestProcessService.getTestProcessList(userId, {
+                keywords, pageNum, pageSize
+            })
             if (res) {
                 (ctx.body as IResBody) = {
                     code: SUCCESS_CODE,

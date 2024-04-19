@@ -56,10 +56,8 @@ const UserManage: React.FC = () => {
     }
 
     useEffect(() => {
-        if (!hasGetUserListData.current) {
-            getUserListData();
-            hasGetUserListData.current = true;
-        }
+        getUserListData();
+        hasGetUserListData.current = true;
     }, [getUserListData])
 
     return (

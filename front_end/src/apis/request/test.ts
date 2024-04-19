@@ -1,77 +1,67 @@
-import {request} from "@/utils/request.ts";
+import {ContentType, request} from "@/utils/request.ts";
 import {MyUrl} from "@/apis/url/myUrl.ts";
+import {ITestProcess} from "@/apis/standard/test.ts";
 
-
-//删除测试
-const deleteTest = async (id: string) => {
-    return request({
-        url: `/test/delete/${id}`,
-        method: 'DELETE'
-    });
-}
 
 /// TODO createTest  by   Post
-export interface ICreateTestProcess {
-    testProcessName: string
-    testContents: {
-        testObjectName: string
-        collectItems: {
-            collectorSignalName: string
-            controllerId: number
-            collectorId: number
-            signal: string
-        }[]
-    }[]
-}
 
-export interface ICreateTestObject {
-    testObjectName: string
-    collectItems: {
-        collectorSignalName: string
-        controllerId: number
-        collectorId: number
-        signal: string
-    }[]
-}
-
-
-/// finish
-const createTest = (icreateTestProcess: ICreateTestProcess) => {
+//创建测试
+const createTest = (icreateTestProcess: ITestProcess) => {
     const api = MyUrl.TEST.createTestProcess
     return request({
         url: api.url,
         method: api.method,
-        params: icreateTestProcess
+        params: icreateTestProcess,
+        format: ContentType.JSON
     })
 }
 
-export interface ITestProcess {
-    testProcessId?: number
-    testName: string
-    testObjects: {
-        objectId?: number
-        objectName: string
-        collectorSignals: {
-            collectorSignalId?: number
-            collectorSignalName: string
-            controllerId: number
-            collectorId: number
-            signal: string
-        }[]
-    }[]
-}
-
-const getTestDetail = async (id: string):Promise<ITestProcess> => {
+//获取测试详情
+const fetchTestDetail = async (id: string) => {
     const api = MyUrl.TEST.getTestProcessDetails
+    const res = {"testProcessId": Number(id)}
     return request({
         url: api.url,
         method: api.method,
-        params: id
+        params: res,
+    });
+}
+
+//删除测试
+const deleteTest = async (id: string) => {
+    const api = MyUrl.TEST.deleteTestProcess
+    const res = {"testProcessId": Number(id)}
+    return request({
+        url: api.url,
+        method: api.method,
+        params: res,
+    });
+}
+
+//编辑测试
+const editTest = async (data: ITestProcess) => {
+    const api = MyUrl.TEST.editTestProcess
+    return request({
+        url: api.url,
+        method: api.method,
+        params: data,
+        format: ContentType.JSON
+    });
+}
+
+//获取测试列表
+const getTestList = async () => {
+    const api = MyUrl.TEST.getTestProcessList
+    return request({
+        url: api.url,
+        method: api.method
     });
 }
 
 export {
-    getTestDetail,
-    deleteTest,
     createTest,
+    fetchTestDetail,
+    deleteTest,
+    editTest,
+    getTestList
 }

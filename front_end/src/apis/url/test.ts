@@ -10,4 +10,16 @@ export const TEST: UrlMap = {
         url: '/getTestProcessDetails',
         method: 'GET'
     },
+    editTestProcess: {
+        url: '/editTestProcess',
+        method: 'POST'
+    },
+    deleteTestProcess: {
+        url: '/deleteTestProcess',
+        method: 'POST'
+    },
+    getTestProcessList: {
+        url: '/getTestProcessList',
+        method: 'GET'
+    }
 }

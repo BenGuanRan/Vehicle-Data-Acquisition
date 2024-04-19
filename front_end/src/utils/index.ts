@@ -27,9 +27,6 @@ export const throttle = (fn: (...args: any[]) => void, delay: number) => {
     }
 }//防抖
 
-//检查一个string列表里面是否有重复的元素
-//检查重复
-
 export const hasDuplicate = (list: string[]) => {
     console.log("检查 list:" + list)
     return new Set(list).size !== list.length;

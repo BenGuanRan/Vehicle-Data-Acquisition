@@ -6,6 +6,7 @@ export default {
     ROOT_PASSWORD: process.env.ROOT_PASSWORD!,
     TEST_ROOT_USERNAME: process.env.TEST_ROOT_USERNAME!,
     TEST_ROOT_PASSWORD: process.env.TEST_ROOT_PASSWORD!,
+    BASE_USER_COUNT: Number(process.env.BASE_USER_COUNT!),
     TOKEN_PRIVATE_KEY: process.env.TOKEN_PRIVATE_KEY!,
     TOKEN_EXPIRE: Number(process.env.TOKEN_EXPIRE!)
 }

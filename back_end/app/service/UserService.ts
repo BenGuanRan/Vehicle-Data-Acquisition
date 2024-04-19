@@ -4,6 +4,7 @@ import { Context } from 'koa';
 import tokenUtils from '../../utils/token';
 import { IResBody } from '../types';
 import { FAIL_CODE, HORIZONTAL_OVERREACH_IS_PROHIBITED, INSUFFICIENT_AUTHORITY, SEARCH_SUCCESS_MSG, SUCCESS_CODE } from '../constants';
+import { Op } from 'sequelize';
 
 
 class UserService {
@@ -226,6 +227,34 @@ class UserService {
             console.log(error);
             return null
         }
+    }
+    // 获取用户列表
+    async getUserList(userId: number, config: {
+        keywords?: string
+        pageNum: number
+        pageSize: number
+    }): Promise<{ total: number, list: User[] }> {
+        const { keywords, pageNum, pageSize } = config
+        const total = await User.count({
+            where: {
+                root_user_id: userId,
+                username: {
+                    [Op.like]: `%${keywords || ''}%`
+                }
+            }
+        })
+        const list = await User.findAll({
+            attributes: { exclude: ['root_user_id', 'password'] },
+            where: {
+                root_user_id: userId,
+                username: {
+                    [Op.like]: `%${keywords || ''}%`
+                }
+            },
+            offset: pageNum !== undefined ? Number(pageNum) - 1 : 0,
+            limit: Number(pageSize)
+        })
+        return ({ total, list })
     }
 }
 export default new UserService

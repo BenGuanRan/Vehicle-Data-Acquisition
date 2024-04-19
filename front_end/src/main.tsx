@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import '../src/mock/mockApi.ts'
 import MyApp from "@/views/app";
 import {App} from "antd";
 

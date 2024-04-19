@@ -26,3 +26,8 @@ export const throttle = (fn: (...args: any[]) => void, delay: number) => {
         }, delay);
     }
 }//防抖
+
+export const hasDuplicate = (list: string[]) => {
+    console.log("检查 list:" + list)
+    return new Set(list).size !== list.length;
+}

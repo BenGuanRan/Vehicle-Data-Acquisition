@@ -1,127 +1,119 @@
 import React, {useEffect} from "react";
 import {Button, Flex, Input, Table, TableProps} from "antd";
 import './test_process.css';
-import {useNavigate} from "react-router-dom";
 import {deleteTest, getTestList} from "@/apis/request/test.ts";
-import {CreateTest} from "@/views/demo/test_process/create/create_test.tsx";
+import {CreateTest} from "@/views/demo/test_process/test_modal/create_test.tsx";
+import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import {SUCCESS_CODE} from "@/constants";
+import {ITestProcess} from "@/apis/standard/test.ts";
 
 export interface TestItem {
-    key: string;
     id: string;
-    title: string;
-    equipment_number: string;
-    equipment_category: string;
-    test_parameter: string;
-    status: string;
-    create_at: string;
+    testName: string;
+    createAt: string;
+    update: string;
+}
+
+interface ModalData {
+    open: boolean;
+    mode: "create" | "edit" | "show";
+    testId?: string;
 }
 
 const columns: TableProps<TestItem>['columns'] = [
     {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
+        title: '测试流程名称',
+        dataIndex: 'testName',
+        key: 'testName',
+        render: (value) => {
+            if (!value) return <p>默认名称</p>
+            return <p>{value}</p>
+        }
     },
     {
-        title: '测试名称',
-        dataIndex: 'title',
-        key: 'title',
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (value) => {
+            return <p>{new Date(value).toLocaleString()}</p>
+        }
     },
     {
-        title: '设备编号',
-        dataIndex: 'equipment_number',
-        key: 'equipment_number',
-    },
-    {
-        title: '设备类别',
-        dataIndex: 'equipment_category',
-        key: 'equipment_category',
-    },
-    {
-        title: '测试参数',
-        dataIndex: 'test_parameter',
-        key: 'test_parameter',
-    },
-    {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-    },
-    {
-        title: '创建日期',
-        dataIndex: 'create_at',
-        key: 'create_at',
+        title: '上次修改时间',
+        dataIndex: 'updatedAt',
+        key: 'updateAt',
+        render: (value) => {
+            return <p>{new Date(value).toLocaleString()}</p>
+        }
     },
     {
         title: '操作',
         key: 'action',
-    }
+    },
 ];
 
 const TestProcessPage: React.FC = () => {
-    const navigate = useNavigate();
+    const createTestContext = CreateTestFunctions()
+
     const [dataList, setDataList] = React.useState([] as TestItem[]);
-    const [openCreate, setOpenCreate] = React.useState(false);
+    const [modalData, setModalData] = React.useState<ModalData>({
+        open: false,
+        mode: "create"
+    });
+
+
+    useEffect(() => {
+        getTestList().then((response) => {
+            setDataList(response.data);
+        });
+    }, []);
 
     const onCreateTest = () => {
-        setOpenCreate(true);
-    }
-
-    const onCreateOk = () => {
-        setOpenCreate(false);
-    }
-
-    const onCreateCancel = () => {
-        setOpenCreate(false);
+        setModalData({
+            open: true,
+            mode: "create"
+        });
     }
 
     const onDelete = (id: string) => {
-        deleteTest(id).then(() => {
-            setDataList(dataList.filter((item) => item.id !== id));
+        if (prompt("请输入delete确认") !== "delete") return;
+        deleteTest(id).then((response) => {
+            if (response.code !== SUCCESS_CODE) {
+                alert("删除失败" + response.msg);
+                return;
+            }
+            setDataList(dataList.filter(item => item.id !== id));
+        });
+    }
+
+    const onShowDetail = (id: string) => {
+        setModalData({
+            open: true,
+            mode: "show",
+            testId: id
         });
     }
 
     const onEdit = (id: string) => {
-        navigate(`/process-management/edit/${id}`, {state: {id}});
+        setModalData({
+            open: true,
+            mode: "edit",
+            testId: id
+        });
     }
 
-    const onShow = (id: string) => {
-        navigate(`/process-management/show/${id}`);
-    }
 
     columns[columns.length - 1].render = (_, record) => (
         <div>
-            <Button type="link" onClick={() => onEdit(record.id)}>编辑</Button>
-            <Button type="link" onClick={() => {
-                onShow(record.id)
+            <Button type={"link"} onClick={() => onEdit(record.id)}>编辑</Button>
+            <Button type={"link"} onClick={() => {
+                onShowDetail(record.id)
             }}>详情</Button>
-            <Button type="link" onClick={() => {
+            <Button type={"link"} onClick={() => {
                 onDelete(record.id)
             }}>删除</Button>
         </div>
     );
-
-    useEffect(() => {
-        console.log('get data')
-        getTestList({}).then((res) => {
-            setDataList(res['list'])
-        }).catch((err) => {
-            console.log(err)
-        });
-    }, []);
-
-    const onSearch = (value: string) => {
-        if (!value || value == '') {
-            getTestList({}).then((res) => {
-                setDataList(res['list'])
-            });
-            return;
-        }
-        const newData = dataList.filter((item) => {
-            return item.title.includes(value);
-        });
-        setDataList(newData);
-    }
 
     return (
         <Flex id={"process_page"} flex={1} align={"start"} vertical={true}>
@@ -132,7 +124,8 @@ const TestProcessPage: React.FC = () => {
             }}>
                 <Input.Search size={"large"}
                               placeholder="搜索测试流程"
-                              onSearch={onSearch}
+                              onSearch={() => {
+                              }}
                               style={{width: '50%'}}
                               enterButton
                 ></Input.Search>
@@ -140,8 +133,30 @@ const TestProcessPage: React.FC = () => {
             </div>
             <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
                    pagination={{pageSize: 7, hideOnSinglePage: true}}
+                   rowKey={(record) => record.id}
             />
-            <CreateTest open={openCreate} onOk={onCreateOk} onCancel={onCreateCancel}/>
+
+            <CreateTestContext.Provider value={createTestContext}>
+                <CreateTest open={modalData.open}
+                            mode={modalData.mode}
+                            onFinished={(newTest?: ITestProcess) => {
+                                if (!newTest) {
+                                    setModalData({
+                                        open: false,
+                                        mode: "create"
+                                    });
+                                    return;
+                                }
+                                dataList.push({
+                                    id: newTest.testName,
+                                    testName: newTest.testName,
+                                    createAt: new Date().toLocaleString(),
+                                    update: new Date().toLocaleString()
+                                })
+                            }}
+                            testId={modalData.testId}
+                />
+            </CreateTestContext.Provider>
         </Flex>
     );
 }

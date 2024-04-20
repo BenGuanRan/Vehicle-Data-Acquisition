@@ -8,8 +8,7 @@ import userUtils from "@/utils/userUtils.ts";
 export const loginApi = async (data: loginParams) => {
     const api = MyUrl.USER.login;
     const response = await request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     });
     // 如果登录成功，将用户信息保存到本地
@@ -26,7 +25,6 @@ export const loginApi = async (data: loginParams) => {
 export const logout = async () => {
     const api = MyUrl.USER.logout;
     return request({
-        url: api.url,
-        method: api.method
+        api: api
     });
 }

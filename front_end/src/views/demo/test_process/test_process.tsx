@@ -56,6 +56,7 @@ const TestProcessPage: React.FC = () => {
     const createTestContext = CreateTestFunctions()
 
     const [dataList, setDataList] = React.useState([] as TestItem[]);
+    const [total, setTotal] = React.useState(0);
     const [modalData, setModalData] = React.useState<ModalData>({
         open: false,
         mode: "create"
@@ -63,8 +64,9 @@ const TestProcessPage: React.FC = () => {
 
 
     useEffect(() => {
-        getTestList().then((response) => {
-            setDataList(response.data);
+        getTestList(1).then((response) => {
+            setDataList(response.data.list);
+            setTotal(response.data.total);
         });
     }, []);
 
@@ -132,8 +134,13 @@ const TestProcessPage: React.FC = () => {
                 <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
             </div>
             <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
-                   pagination={{pageSize: 7, hideOnSinglePage: true}}
+                   pagination={{pageSize: 7, hideOnSinglePage: true, total: total}}
                    rowKey={(record) => record.id}
+                   onChange={(pagination) => {
+                       getTestList(pagination.current!).then((response) => {
+                           setDataList(response.data.list);
+                       });
+                   }}
             />
 
             <CreateTestContext.Provider value={createTestContext}>

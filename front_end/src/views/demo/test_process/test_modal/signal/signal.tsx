@@ -1,14 +1,15 @@
 ///TODO: 采集指标项目选择
 import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
-import React, {useContext} from "react";
+import {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
 import {
     BOARD_CARD_SELECTION,
-    COLLECT_BOARD_CARD_SELECTION, COLLECT_BOARD_SIGNAL_RELATION,
+    COLLECT_BOARD_CARD_SELECTION,
     COLLECT_SIGNAL,
     CORE_BOARD_CARD_SELECTION,
     TEST_OBJECT
 } from "@/constants/name.ts";
+import {BoardSelect} from "@/components/signal_select.tsx";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
@@ -47,50 +48,11 @@ export const CollectorSignalSelect = () => {
 
             <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
-                <BoardSelect boardName={CORE_BOARD_CARD_SELECTION} onClick={() => {
-                    console.log("板卡1")
-                }}/>
-                <BoardSelect boardName={COLLECT_BOARD_CARD_SELECTION} onClick={() => {
-                    console.log("板卡2")
-                }}/>
-                <BoardSelect boardName={COLLECT_BOARD_SIGNAL_RELATION} onClick={() => {
-                    console.log("板卡3")
-                }}/>
+                <BoardSelect title={CORE_BOARD_CARD_SELECTION} options={[]}/>
+                <BoardSelect title={BOARD_CARD_SELECTION} options={[]}/>
+                <BoardSelect title={COLLECT_BOARD_CARD_SELECTION} options={[]}/>
             </article>
         </section>
     )
 }
 
-interface BoardSelectProps {
-    boardName: string
-    onClick: () => void
-}
-
-///TODO: 板卡组件
-export const BoardSelect = ({boardName, onClick}: BoardSelectProps) => {
-    const [show, setShow] = React.useState(false)
-
-    return (
-        <div style={{position: "relative"}}>
-            <div style={{
-                display: show ? 'block' : 'none',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                position: "absolute",
-                top: '100%',
-                left: '0',
-            }}>
-                <ul style={{listStyle: 'none', padding: '0', margin: '0'}}>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡1</li>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡2</li>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡3</li>
-                </ul>
-            </div>
-            <div onClick={() => {
-                onClick()
-                setShow(!show)
-            }}>
-                <p style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>{boardName}</p>
-            </div>
-        </div>
-    )
-}

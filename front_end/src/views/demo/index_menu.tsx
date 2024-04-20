@@ -105,7 +105,6 @@ export const HomeMenu = () => {
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
-
             <Form form={form} style={{width: '30vw'}}>
                 <Form.Item
                     name="newPassword"
@@ -122,7 +121,6 @@ export const HomeMenu = () => {
                     <Input.Password placeholder="Confirm Password" name="confirmPassword"/>
                 </Form.Item>
             </Form>
-
         </Modal>
     </>
 }

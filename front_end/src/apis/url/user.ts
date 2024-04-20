@@ -1,37 +1,46 @@
 import {UrlMap} from "@/apis/url/myUrl.ts";
+import {ContentType, Method} from "@/apis/standard/all.ts";
 
 
 export const USER: UrlMap = {
     login: {
         url: '/login',
-        method: 'POST'
+        method: Method.GET,
+        format:  ContentType.WWW_FORM
     },
     logout: {
         url: '/logout',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     getUserList: {
         url: '/getUserList',
-        method: 'GET'
+        method: Method.GET,
+        format: ContentType.WWW_FORM
     },
     createUser: {
         url: '/createUser',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     closeUser: {
         url: '/closeUser',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     openUser: {
         url: '/openUser',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     deleteUser: {
         url: '/deleteUser',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     changePassword: {
         url: '/changePassword',
-        method: 'POST'
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     }
 }

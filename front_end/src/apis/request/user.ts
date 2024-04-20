@@ -1,11 +1,26 @@
 import {MyUrl} from "@/apis/url/myUrl.ts";
-import {request} from "@/utils/request.ts";
+import { request} from "@/utils/request.ts";
 
-export const getUserList = async () => {
+const defaultPageSize = 7;
+
+interface listParams {
+    pageSize: number
+    pageNum: number
+    keywords?: string
+}
+
+export const getUserList = async (pageNum: number, pageSize?: number, keywords?: string) => {
     const api = MyUrl.USER.getUserList;
+
+    const requestData: listParams = {
+        pageNum: pageNum,
+        pageSize: pageSize ?? defaultPageSize,
+        keywords: keywords ?? "test"
+    }
+
     return request({
-        url: api.url,
-        method: api.method
+        api: api,
+        params: requestData
     });
 }
 
@@ -19,8 +34,7 @@ export const createUser = async (data: createProps) => {
     const api = MyUrl.USER.createUser;
     console.log(data)
     return request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     });
 }
@@ -34,8 +48,7 @@ interface ocdUserProps {
 export const closeUser = async (data: ocdUserProps) => {
     const api = MyUrl.USER.closeUser;
     return request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     });
 }
@@ -46,8 +59,7 @@ export const openUser = async (data: ocdUserProps) => {
     const api = MyUrl.USER.openUser;
     console.log(data)
     return request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     })
 }
@@ -56,8 +68,7 @@ export const openUser = async (data: ocdUserProps) => {
 export const deleteUser = async (data: ocdUserProps) => {
     const api = MyUrl.USER.deleteUser;
     return request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     });
 }
@@ -70,8 +81,7 @@ export interface changePassProps {
 export const changePassword = async (data: changePassProps) => {
     const api = MyUrl.USER.changePassword
     return request({
-        url: api.url,
-        method: api.method,
+        api: api,
         params: data
     })
 }

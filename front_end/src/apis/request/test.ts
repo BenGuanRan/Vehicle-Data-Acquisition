@@ -1,68 +1,67 @@
-import {request} from "@/utils/request.ts";
+import {ContentType, request} from "@/utils/request.ts";
+import {MyUrl} from "@/apis/url/myUrl.ts";
+import {ITestProcess} from "@/apis/standard/test.ts";
 
-interface getListParams {
-    page?: number;
-    limit?: number;
+
+/// TODO createTest  by   Post
+
+//创建测试
+const createTest = (icreateTestProcess: ITestProcess) => {
+    const api = MyUrl.TEST.createTestProcess
+    return request({
+        url: api.url,
+        method: api.method,
+        params: icreateTestProcess,
+        format: ContentType.JSON
+    })
 }
 
-//获取测试列表
-const getTestList = async (params: getListParams) => {
+//获取测试详情
+const fetchTestDetail = async (id: string) => {
+    const api = MyUrl.TEST.getTestProcessDetails
+    const res = {"testProcessId": Number(id)}
     return request({
-        url: 'api/test',
-        method: 'GET',
-        params: params
-    });
-}
-
-
-//查看详情
-const getTestDetail = async (id: string) => {
-    console.log(id)
-    return request({
-        url: `api/test/detail`,
-        method: 'GET'
+        url: api.url,
+        method: api.method,
+        params: res,
     });
 }
 
 //删除测试
 const deleteTest = async (id: string) => {
+    const api = MyUrl.TEST.deleteTestProcess
+    const res = {"testProcessId": Number(id)}
     return request({
-        url: `/test/delete/${id}`,
-        method: 'DELETE'
+        url: api.url,
+        method: api.method,
+        params: res,
     });
 }
-
-interface addTestParams {
-    title: string;
-    equipment_number: string;
-    equipment_category: string;
-    test_parameter: string;
-    status: string;
-}
-
-//新增测试
-const addTest = async (data: addTestParams) => {
-    return request({
-        url: '/test',
-        method: 'POST',
-        params: data
-    });
-}
-
 
 //编辑测试
-const editTest = async (id: string, data: addTestParams) => {
+const editTest = async (data: ITestProcess) => {
+    const api = MyUrl.TEST.editTestProcess
     return request({
-        url: `/test/${id}`,
-        method: 'PUT',
-        params: data
+        url: api.url,
+        method: api.method,
+        params: data,
+        format: ContentType.JSON
+    });
+}
+
+//获取测试列表
+const getTestList = async () => {
+    const api = MyUrl.TEST.getTestProcessList
+    return request({
+        url: api.url,
+        method: api.method
     });
 }
 
 export {
-    getTestList,
-    getTestDetail,
+    createTest,
+    fetchTestDetail,
     deleteTest,
-    addTest,
-    editTest
+    editTest,
+    getTestList
 }

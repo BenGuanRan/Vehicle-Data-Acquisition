@@ -1,5 +1,4 @@
 import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import TestProcess from './TestProcess.model'
 import TestObject from './TestObject.model'
 
 export interface ICollectorSignalModel {

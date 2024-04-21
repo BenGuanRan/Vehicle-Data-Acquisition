@@ -8,5 +8,6 @@ export default {
     TEST_ROOT_PASSWORD: process.env.TEST_ROOT_PASSWORD!,
     BASE_USER_COUNT: Number(process.env.BASE_USER_COUNT!),
     TOKEN_PRIVATE_KEY: process.env.TOKEN_PRIVATE_KEY!,
-    TOKEN_EXPIRE: Number(process.env.TOKEN_EXPIRE!)
+    TOKEN_EXPIRE: Number(process.env.TOKEN_EXPIRE!),
+    TEST_CONFIG_FILE_NAME: process.env.TEST_CONFIG_FILE_NAME
 }

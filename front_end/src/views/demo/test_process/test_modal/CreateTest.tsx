@@ -16,7 +16,7 @@ import {
 } from "@/constants/name.ts";
 import {createTest, editTest, fetchTestDetail} from "@/apis/request/test.ts";
 import {SUCCESS_CODE} from "@/constants";
-import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/signal.tsx";
+import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
 import {TestObjectsItem} from "@/views/demo/test_process/test_modal/object/object.tsx";
 
 interface CreateTestProps {

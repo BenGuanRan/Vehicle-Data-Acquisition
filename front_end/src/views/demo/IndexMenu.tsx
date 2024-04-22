@@ -4,7 +4,7 @@ import {NavigateFunction, useNavigate} from "react-router-dom";
 import {logout} from "@/apis/request/auth.ts";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
-import userUtils from "@/utils/userUtils.ts";
+import userUtils from "@/utils/UserUtils.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
 

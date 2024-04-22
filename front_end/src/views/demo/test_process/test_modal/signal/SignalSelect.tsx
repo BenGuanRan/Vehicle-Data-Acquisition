@@ -1,7 +1,7 @@
 import {Select} from 'antd';
 import {getCollectorFromLocal, getControllerFromLocal} from "@/utils/DataUtils.ts";
-import {useContext, useEffect} from "react";
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import {useContext, useEffect, useRef} from "react";
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {getSignalListByCollectorId} from "@/apis/request/test.ts";
 
 const onChange = (value: string) => {
@@ -19,18 +19,15 @@ export enum BoardType {
 
 
 export const BoardSelect = ({type}: { type: BoardType }) => {
-
-    let options: { id: number, name: string }[] = []
+    const options = useRef<{ id: number, name: string }[]>([])
     const createTestObject = useContext(CreateTestContext)
 
     useEffect(() => {
         (async () => {
             if (type === BoardType.CORE_CONTROL) {
-                options = await getControllerFromLocal()
+                options.current = await getControllerFromLocal()
             } else if (type === BoardType.CORE_COLLECT) {
-                options = await getCollectorFromLocal()
-            } else if (type === BoardType.SIGNAL) {
-                options = await getSignalListByCollectorId(createTestObject.currentSignal?.collectorSignalId!)
+                options.current = await getCollectorFromLocal()
             }
         })()
     }, [type])
@@ -43,13 +40,16 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
             optionFilterProp="children"
             onChange={onChange}
             filterOption={filterOption}
-            options={switchToBoardOptions(options)}
-            onClick={() => {
-                if (type === BoardType.SIGNAL && !createTestObject.currentSignal?.collectorSignalId) {
+            options={switchToBoardOptions(options.current)}
+            onClick={async () => {
+                if (type !== BoardType.SIGNAL) return
+                if (!createTestObject.currentSignal?.collectorSignalId) {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     document.activeElement.blur();
                     alert('请先选择一个采集指标')
+                } else {
+                    options.current = await getSignalListByCollectorId(createTestObject.currentSignal.collectorSignalId)
                 }
             }}
         />

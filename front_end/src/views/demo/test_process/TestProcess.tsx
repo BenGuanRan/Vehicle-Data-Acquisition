@@ -1,9 +1,9 @@
 import React, {useEffect} from "react";
 import {Button, Flex, Input, Table, TableProps} from "antd";
-import './test_process.css';
+import './TestProcess.css';
 import {deleteTest, getTestList} from "@/apis/request/test.ts";
-import {CreateTest} from "@/views/demo/test_process/test_modal/create_test.tsx";
-import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import {CreateTest} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
+import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {SUCCESS_CODE} from "@/constants";
 import {ITestProcess} from "@/apis/standard/test.ts";
 

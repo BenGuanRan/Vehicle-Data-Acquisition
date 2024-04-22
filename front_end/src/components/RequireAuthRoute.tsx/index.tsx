@@ -1,6 +1,6 @@
 import React from "react"
 import {Navigate} from "react-router"
-import userUtils from "@/utils/userUtils.ts";
+import userUtils from "@/utils/UserUtils.ts";
 
 const RequireAuthRoute: React.FC<React.PropsWithChildren> = ({children}) => {
     const token = userUtils.getToken()

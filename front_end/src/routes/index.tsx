@@ -1,11 +1,11 @@
 import Login from "@/views/login"
 import RequirAuthRoute from "../components/RequireAuthRoute.tsx/index.tsx"
 import SystemTotalPage from "@/views/demo";
-import TestProcessPage from "@/views/demo/test_process/test_process.tsx";
+import TestProcessPage from "@/views/demo/test_process/TestProcess.tsx";
 import DataDisplay from "@/views/demo/data_display/display.tsx";
-import PhyTopology from "@/views/demo/topology/phy_topology.tsx";
+import PhyTopology from "@/views/demo/topology/PhyTopology.tsx";
 import {createBrowserRouter} from "react-router-dom";
-import UserManage from "@/views/demo/user/user_list.tsx";
+import UserManage from "@/views/demo/user/UserList.tsx";
 
 
 export const my_router = createBrowserRouter([

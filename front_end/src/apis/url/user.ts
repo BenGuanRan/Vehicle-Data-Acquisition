@@ -5,8 +5,8 @@ import {ContentType, Method} from "@/apis/standard/all.ts";
 export const USER: UrlMap = {
     login: {
         url: '/login',
-        method: Method.GET,
-        format:  ContentType.WWW_FORM
+        method: Method.POST,
+        format: ContentType.WWW_FORM
     },
     logout: {
         url: '/logout',

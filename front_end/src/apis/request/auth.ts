@@ -2,7 +2,7 @@ import {loginParams} from "@/apis/standard/auth.ts";
 import {request} from "@/utils/request.ts";
 import {MyUrl} from "@/apis/url/myUrl.ts";
 import {SUCCESS_CODE} from "@/constants";
-import userUtils from "@/utils/userUtils.ts";
+import userUtils from "@/utils/UserUtils.ts";
 
 
 export const loginApi = async (data: loginParams) => {

@@ -3,9 +3,9 @@ import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts"
 import {hasDuplicate} from "@/utils";
 import {v4 as uuidv4} from "uuid";
 import React, {useContext} from "react";
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
-import {CollectorSignalItem} from "@/views/demo/test_process/test_modal/signal/signal.tsx";
-import {formatInput} from "@/views/demo/test_process/test_modal/create_test.tsx";
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import {CollectorSignalItem} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
+import {formatInput} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
 
 export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object}) => {
     const createTestObject = useContext(CreateTestContext)

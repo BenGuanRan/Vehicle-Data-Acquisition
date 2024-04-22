@@ -1,15 +1,9 @@
 ///TODO: 采集指标项目选择
 import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
 import {useContext} from "react";
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
-import {
-    BOARD_CARD_SELECTION,
-    COLLECT_BOARD_CARD_SELECTION,
-    COLLECT_SIGNAL,
-    CORE_BOARD_CARD_SELECTION,
-    TEST_OBJECT
-} from "@/constants/name.ts";
-import {BoardSelect} from "@/components/signal_select.tsx";
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import {BOARD_CARD_SELECTION, COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
+import {BoardSelect, BoardType} from "@/views/demo/test_process/test_modal/signal/SignalSelect.tsx";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
@@ -48,9 +42,9 @@ export const CollectorSignalSelect = () => {
 
             <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
-                <BoardSelect title={CORE_BOARD_CARD_SELECTION} options={[]}/>
-                <BoardSelect title={BOARD_CARD_SELECTION} options={[]}/>
-                <BoardSelect title={COLLECT_BOARD_CARD_SELECTION} options={[]}/>
+                <BoardSelect type={BoardType.CORE_CONTROL} />
+                <BoardSelect type={BoardType.CORE_COLLECT} />
+                <BoardSelect type={BoardType.SIGNAL} />
             </article>
         </section>
     )

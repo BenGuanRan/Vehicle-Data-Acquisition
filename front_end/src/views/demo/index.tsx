@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 import {Flex} from "antd";
 import {Outlet} from "react-router-dom";
-import {HomeMenu} from "@/views/demo/index_menu.tsx";
+import {HomeMenu} from "@/views/demo/IndexMenu.tsx";
 
 
 const SystemTotalPage: React.FC = () => {

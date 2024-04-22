@@ -33,7 +33,6 @@ export interface TestObjectsFormat {
 
 
 //采集指标格式
-
 export interface CollectorSignalFormat {
     formatId: string
     fatherFormatId: string

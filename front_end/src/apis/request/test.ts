@@ -61,11 +61,38 @@ const editTest = async (data: ITestProcess) => {
     });
 }
 
+const getControllerList = async () => {
+    const api = MyUrl.TEST.getControllList
+    return request({
+        api: api,
+    });
+}
+
+const getCollectorList = async () => {
+    const api = MyUrl.TEST.getCollectorList
+    return request({
+        api: api,
+    });
+}
+
+const getSignalListByCollectorId = async (collectorId: number) => {
+    const api = MyUrl.TEST.getSignalListByCollectorId
+    return request({
+        api: api,
+        params: {
+            collectorId: collectorId
+        }
+    });
+}
+
 
 export {
     createTest,
     fetchTestDetail,
     deleteTest,
     editTest,
-    getTestList
+    getTestList,
+    getControllerList,
+    getCollectorList,
+    getSignalListByCollectorId
 }

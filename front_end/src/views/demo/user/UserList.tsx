@@ -3,9 +3,9 @@ import Search from "antd/es/input/Search";
 import {SubUser} from "@/apis/standard/user.ts"
 import {Button, Form, Input, Modal, Table} from "antd";
 import React, {useEffect, useRef} from "react";
-import {user_list_data} from "@/views/demo/user/user_list_data.ts";
-import Managements from "@/views/demo/user/user_managements.tsx";
-import {useUserActions} from "@/views/demo/user/user_function.ts";
+import {userListData} from "@/views/demo/user/UserListData.ts";
+import Managements from "@/views/demo/user/UserManagements.tsx";
+import {useUserActions} from "@/views/demo/user/UserFunction.ts";
 
 
 const UserManage: React.FC = () => {
@@ -21,7 +21,7 @@ const UserManage: React.FC = () => {
         onCreate,
         onReset,
         contextHolder
-    } = useUserActions(user_list_data);
+    } = useUserActions(userListData);
 
     const [form] = Form.useForm();
 

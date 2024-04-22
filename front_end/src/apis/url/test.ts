@@ -25,5 +25,17 @@ export const TEST: UrlMap = {
     getTestProcessList: {
         url: '/getTestProcessList',
         method: Method.GET
-    }
+    },
+    getControllList: {
+        url: '/getControllerList',
+        method: Method.GET
+    },
+    getCollectorList: {
+        url: '/getCollectorList',
+        method: Method.GET
+    },
+    getSignalListByCollectorId: {
+        url: '/getSignalListByCollectorId',
+        method: Method.GET
+    },
 }

@@ -4,6 +4,7 @@ import UserController from '../controller/UserController'
 import AuthMiddleware from '../middleware/AuthMiddleware'
 import RequestBodyVerifyMiddleware from '../middleware/RequestBodyVerifyMiddleware'
 import TestProcessController from '../controller/TestProcessController'
+import BaseInfoController from '../controller/BaseInfoController'
 
 const router = new KoaRouter({
     prefix: ''
@@ -28,5 +29,10 @@ router.get('/getTestProcessDetails', TestProcessController.getTestProcessDetails
 router.post('/editTestProcess', TestProcessController.editTestProcess)
 router.get('/getTestProcessList', TestProcessController.getTestProcessList)
 router.post('/deleteTestProcess', TestProcessController.deleteTestProcess)
+
+// 基本信息获取接口
+router.get('/getControllerList', BaseInfoController.getControllerList)
+router.get('/getCollectorList', BaseInfoController.getCollectorList)
+router.get('/getSignalListByCollectorId', BaseInfoController.getSignalListByCollectorId)
 
 export default router

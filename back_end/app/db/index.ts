@@ -6,6 +6,12 @@ import TokenBlackListItem from '../model/TokenBlackListItem.model'
 import TestProcess from '../model/TestProcess.model'
 import TestObject from '../model/TestObject.model'
 import CollectorSignal from '../model/CollectorSignal.model'
+import ControllerService from '../service/ControllerService'
+import CollectorService from '../service/CollectorService'
+import SignalService from '../service/SignalService'
+import Controller from '../model/Controller.model'
+import Collector from '../model/Collector.model'
+import Signal from '../model/Signal.model'
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = DB_CONFIG
 
@@ -13,7 +19,7 @@ export const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
   port: DB_PORT,
-  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal]
+  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal, Controller, Collector, Signal]
 });
 
 const DB_OPT = {
@@ -28,9 +34,15 @@ const DB_OPT = {
   async initDB() {
     try {
       await sequelize.sync({ force: true })
+      // 初始化核心板卡
+      await ControllerService.initControllers()
+      // 初始化采集板卡
+      await CollectorService.initCollectors()
+      // 初始化采集信号
+      await SignalService.initSignals()
+      // 初始化超级用户表
       await UserService.initRootUser()
       console.log('The database table has been initialized.');
-      // 初始化超级用户表
     } catch (error) {
       console.error('Description Database table initialization failed:', error);
     }

@@ -20,6 +20,7 @@ const getControllerFromLocal = async (): Promise<ControllerAndCollector[]> => {
         setControllerToLocal(response.data)
         return response.data
     }
+    console.log(data)
     return JSON.parse(data)
 }
 

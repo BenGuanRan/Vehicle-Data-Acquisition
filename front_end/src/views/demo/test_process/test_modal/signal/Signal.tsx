@@ -7,6 +7,7 @@ import {BoardSelect, BoardType} from "@/views/demo/test_process/test_modal/signa
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
+    //点击的时候
 
     return (
         <div className={"signal-item"} onClick={() => {
@@ -24,8 +25,10 @@ export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat })
 ///TODO: 采集对象指标配置
 export const CollectorSignalSelect = () => {
     const createTestObject = useContext(CreateTestContext)
+
     const currentObject = createTestObject.testObjects.find((e: TestObjectsFormat) => e.formatId === createTestObject.currentSignal?.fatherFormatId)?.objectName
     const currentSignal = createTestObject.currentSignal ? createTestObject.currentSignal.collectorSignalName : ""
+
 
     if (!createTestObject.currentSignal) {
         return <div style={{padding: '10px', fontSize: '16px', color: 'red'}}>请先选择一个采集指标</div>
@@ -42,9 +45,9 @@ export const CollectorSignalSelect = () => {
 
             <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
-                <BoardSelect type={BoardType.CORE_CONTROL} />
-                <BoardSelect type={BoardType.CORE_COLLECT} />
-                <BoardSelect type={BoardType.SIGNAL} />
+                <BoardSelect type={BoardType.CORE_CONTROL}/>
+                <BoardSelect type={BoardType.CORE_COLLECT}/>
+                <BoardSelect type={BoardType.SIGNAL}/>
             </article>
         </section>
     )

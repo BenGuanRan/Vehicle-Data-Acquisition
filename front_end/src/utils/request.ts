@@ -15,12 +15,11 @@ export const request = ({api, params}: {
     const method = api.method
     const format = api.format
 
-
     const axiosConfig = getAxiosConfig(url, method, params, format || ContentType.WWW_FORM)
     console.log("正在通过", method + "方法\n", "向", url, "发送请求\n，请求参数为", JSON.stringify(params), "\n格式为", format)
 
     return axios(axiosConfig).then(response => {
-        console.log(method, "     response.data", response.data)
+        console.log(method, "     response.data", JSON.stringify(response.data))
         return response.data;
     }).catch(error => {
         console.error('There was an error with the request:', error);

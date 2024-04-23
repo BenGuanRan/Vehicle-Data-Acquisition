@@ -1,12 +1,9 @@
-import {Select} from 'antd';
-import {getCollectorFromLocal, getControllerFromLocal} from "@/utils/DataUtils.ts";
+import {ControllerAndCollector, getCollectorFromLocal, getControllerFromLocal} from "@/utils/DataUtils.ts";
 import {useContext, useEffect, useState} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {getSignalListByCollectorId} from "@/apis/request/test.ts";
 import {CollectorSignalFormat} from "@/apis/standard/test.ts";
-
-const filterOption = (input: string, option?: { label: string; value: string }) =>
-    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+import './SignalSelect.css'
 
 export enum BoardType {
     CORE_CONTROL = '核心控制板卡',
@@ -17,8 +14,10 @@ export enum BoardType {
 export const BoardSelect = ({type}: { type: BoardType }) => {
 
     const [options, setOptions] = useState<{ id: number, name: string }[]>([])
+    const [showOptions, setShowOptions] = useState<boolean>(false)
 
-    const [defaultValue, setDefaultValue] = useState<string | undefined>(undefined)
+
+    const [defaultValue, setDefaultValue] = useState<string>()
     const createTestObject = useContext(CreateTestContext)
 
     useEffect(() => {
@@ -26,16 +25,20 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
             if (type === BoardType.CORE_CONTROL) {
                 const currentOptions = await getControllerFromLocal()
                 setOptions(currentOptions)
-                console.log("设置板卡为:"+currentOptions.find(option => option.id === createTestObject.currentSignal.controllerId)?.name)
-                setDefaultValue(currentOptions.find(option => option.id === createTestObject.currentSignal.controllerId)?.name)
+                console.log("设置板卡为:" + currentOptions.find(option => option.id == createTestObject.currentSignal.controllerId)?.name)
+                setDefaultValue(currentOptions.find(option => option.id == createTestObject.currentSignal.controllerId)?.name)
             } else if (type === BoardType.CORE_COLLECT) {
                 const currentOptions = await getCollectorFromLocal()
                 setOptions(currentOptions)
-                setDefaultValue(currentOptions.find(option => option.id === createTestObject.currentSignal.collectorId)?.name)
+                setDefaultValue(currentOptions.find(option => option.id == createTestObject.currentSignal.collectorId)?.name)
             } else if (type === BoardType.SIGNAL) {
-                if (!createTestObject.currentSignal.collectorId) return
-                const currentOptions = await getSignalListByCollectorId(createTestObject.currentSignal.collectorId)
-                let test = currentOptions.find(option => option.id === createTestObject.currentSignal.collectorSignalId)?.name
+                if (!createTestObject.currentSignal.collectorId) {
+                    setDefaultValue(undefined)
+                    return
+                }
+                const resp = await getSignalListByCollectorId(createTestObject.currentSignal.collectorId)
+                const currentOptions = resp.data as ControllerAndCollector[]
+                let test = currentOptions.find(option => option.id == createTestObject.currentSignal.signal)?.name
                 setDefaultValue(test)
                 setOptions(currentOptions)
             }
@@ -43,6 +46,7 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
     }, [type, JSON.stringify(createTestObject.currentSignal)])
 
     const onChange = async (value: string) => {
+        console.log("onChanged" + value)
         switch (type) {
             case BoardType.CORE_CONTROL: {
                 createTestObject.updateCollectorSignal({
@@ -69,11 +73,11 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
             case BoardType.SIGNAL: {
                 createTestObject.updateCollectorSignal({
                     ...createTestObject.currentSignal,
-                    collectorSignalId: value
+                    signal: value
                 } as CollectorSignalFormat)
                 createTestObject.setCurrentSignal({
                     ...createTestObject.currentSignal,
-                    collectorSignalId: value
+                    signal: value
                 } as CollectorSignalFormat)
                 break
             }
@@ -83,38 +87,38 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
 
     return <div>
         <h1>{type}</h1>
-        <Select
-            showSearch
-            placeholder="请选择"
-            optionFilterProp="children"
-            onChange={onChange}
-            defaultValue={defaultValue}
-            filterOption={filterOption}
-            options={switchToBoardOptions(options)}
-            onClick={async () => {
-                if (type !== BoardType.SIGNAL) return
-                if (!createTestObject.currentSignal.collectorId) {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    document.activeElement.blur();
-                    alert('请先选择一个采集指标')
-                } else {
-                    const signalList = await getSignalListByCollectorId(createTestObject.currentSignal.collectorId)
-                    setOptions(signalList.data)
+        <div className={".drop"}>
+            <div className={'options-input'} onClick={async () => {
+                if (type !== BoardType.SIGNAL) {
+                    setShowOptions(!showOptions)
+                    return
                 }
-            }}
-        />
+
+                if (!createTestObject.currentSignal.collectorId) {
+                    alert("请先选择采集板卡")
+                    return
+                }
+                const currentOptions = await getSignalListByCollectorId(createTestObject.currentSignal.collectorId)
+                setOptions(currentOptions.data)
+                setShowOptions(!showOptions)
+            }}>{defaultValue}</div>
+            <div className={'options-container' + (showOptions ? ' show' : ' hidden')}>
+                {
+                    options.map((item) => {
+                        return <div key={item.id + item.name}
+                                    className={'options-item'}
+                                    onClick={() => {
+                                        onChange(String(item.id)).then(
+                                            () => {
+                                                setShowOptions(false)
+                                            }
+                                        )
+                                    }}
+                        >{item.name}</div>
+                    })
+                }
+            </div>
+        </div>
+
     </div>
 };
-
-const switchToBoardOptions = (options: { id: number, name: string }[]): {
-    label: string,
-    value: string
-}[] => {
-    return options.map(option => {
-        return {
-            label: option.name,
-            value: String(option.id)
-        }
-    })
-}

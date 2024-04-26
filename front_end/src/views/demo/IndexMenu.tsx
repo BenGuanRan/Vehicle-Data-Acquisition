@@ -4,7 +4,7 @@ import {NavigateFunction, useNavigate} from "react-router-dom";
 import {logout} from "@/apis/request/auth.ts";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
-import userUtils from "@/utils/userUtils.ts";
+import userUtils from "@/utils/UserUtils.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -105,7 +105,6 @@ export const HomeMenu = () => {
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
-
             <Form form={form} style={{width: '30vw'}}>
                 <Form.Item
                     name="newPassword"
@@ -122,7 +121,6 @@ export const HomeMenu = () => {
                     <Input.Password placeholder="Confirm Password" name="confirmPassword"/>
                 </Form.Item>
             </Form>
-
         </Modal>
     </>
 }

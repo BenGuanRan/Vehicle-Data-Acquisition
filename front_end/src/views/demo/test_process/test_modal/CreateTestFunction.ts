@@ -4,10 +4,6 @@ import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts"
 export const CreateTestContext: React.Context<any> = React.createContext(null);
 
 
-//    testProcessId?: number
-//     testName: string
-
-
 export const CreateTestFunctions = () => {
 
     const [testName, setTestName] = React.useState<string>("");
@@ -56,11 +52,6 @@ export const CreateTestFunctions = () => {
         setCollectorSignals({type: ActionType.DELETE, payload: index})
     }
 
-    const updateCollectorSignal = (signal: CollectorSignalFormat) => {
-        console.log("更新采集指标:" + signal.collectorSignalName)
-        setCollectorSignals({type: ActionType.UPDATE, payload: signal})
-    }
-
     const switchCollectorSignal = useCallback((signal: CollectorSignalFormat) => {
         console.log("切换采集指标:" + signal.collectorSignalName)
         setCurrentSignal(signal)
@@ -71,6 +62,12 @@ export const CreateTestFunctions = () => {
         setCollectorSignals({type: ActionType.SET, payload: signals})
     }, [])
 
+    const updateCollectorSignal = useCallback((signal: CollectorSignalFormat) => {
+        console.log(JSON.stringify(signal))
+        console.log("更新采集指标:" + signal.collectorSignalName)
+        setCollectorSignals({type: ActionType.UPDATE, payload: signal})
+    }, [])
+
     const clearTestProcess = useCallback(() => {
         console.log("清空测试流程")
         setTestName("")
@@ -79,21 +76,23 @@ export const CreateTestFunctions = () => {
         setCurrentSignal(null)
     }, [])
 
+
     return {
         testName,
         testObjects,
         collectorSignals,
         currentSignal,
-        onChangeTestName,
-        addTestObject,
-        deleteTestObject,
-        addCollectorSignal,
-        deleteCollectorSignal,
         updateCollectorSignal,
         setObjects,
         setCollectorSignal,
         clearTestProcess,
         switchCollectorSignal,
+        setCurrentSignal,
+        onChangeTestName,
+        addTestObject,
+        deleteTestObject,
+        addCollectorSignal,
+        deleteCollectorSignal,
     }
 }
 
@@ -121,7 +120,10 @@ const objectsReducer = (statue: TestObjectsFormat[], action: { type: ActionType,
     }
 }
 
-const signalsReducer = (statue: CollectorSignalFormat[], action: { type: ActionType, payload: any }) => {
+const signalsReducer = (statue: CollectorSignalFormat[], action: {
+    type: ActionType,
+    payload: any
+}): CollectorSignalFormat[] => {
     switch (action.type) {
         case ActionType.ADD:
             return [...statue, action.payload]
@@ -133,6 +135,8 @@ const signalsReducer = (statue: CollectorSignalFormat[], action: { type: ActionT
             return []
         case ActionType.SET:
             return action.payload
+        case  ActionType.UPDATE:
+            return statue.map(item => item.formatId === action.payload.formatId ? action.payload : item)
         default:
             return statue
     }

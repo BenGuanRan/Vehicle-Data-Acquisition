@@ -1,17 +1,13 @@
 ///TODO: 采集指标项目选择
 import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
-import React, {useContext} from "react";
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
-import {
-    BOARD_CARD_SELECTION,
-    COLLECT_BOARD_CARD_SELECTION, COLLECT_BOARD_SIGNAL_RELATION,
-    COLLECT_SIGNAL,
-    CORE_BOARD_CARD_SELECTION,
-    TEST_OBJECT
-} from "@/constants/name.ts";
+import {useContext} from "react";
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import {BOARD_CARD_SELECTION, COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
+import {BoardSelect, BoardType} from "@/views/demo/test_process/test_modal/signal/SignalSelect.tsx";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
+    //点击的时候
 
     return (
         <div className={"signal-item"} onClick={() => {
@@ -29,8 +25,10 @@ export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat })
 ///TODO: 采集对象指标配置
 export const CollectorSignalSelect = () => {
     const createTestObject = useContext(CreateTestContext)
+
     const currentObject = createTestObject.testObjects.find((e: TestObjectsFormat) => e.formatId === createTestObject.currentSignal?.fatherFormatId)?.objectName
     const currentSignal = createTestObject.currentSignal ? createTestObject.currentSignal.collectorSignalName : ""
+
 
     if (!createTestObject.currentSignal) {
         return <div style={{padding: '10px', fontSize: '16px', color: 'red'}}>请先选择一个采集指标</div>
@@ -47,50 +45,11 @@ export const CollectorSignalSelect = () => {
 
             <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
-                <BoardSelect boardName={CORE_BOARD_CARD_SELECTION} onClick={() => {
-                    console.log("板卡1")
-                }}/>
-                <BoardSelect boardName={COLLECT_BOARD_CARD_SELECTION} onClick={() => {
-                    console.log("板卡2")
-                }}/>
-                <BoardSelect boardName={COLLECT_BOARD_SIGNAL_RELATION} onClick={() => {
-                    console.log("板卡3")
-                }}/>
+                <BoardSelect type={BoardType.CORE_CONTROL}/>
+                <BoardSelect type={BoardType.CORE_COLLECT}/>
+                <BoardSelect type={BoardType.SIGNAL}/>
             </article>
         </section>
     )
 }
 
-interface BoardSelectProps {
-    boardName: string
-    onClick: () => void
-}
-
-///TODO: 板卡组件
-export const BoardSelect = ({boardName, onClick}: BoardSelectProps) => {
-    const [show, setShow] = React.useState(false)
-
-    return (
-        <div style={{position: "relative"}}>
-            <div style={{
-                display: show ? 'block' : 'none',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                position: "absolute",
-                top: '100%',
-                left: '0',
-            }}>
-                <ul style={{listStyle: 'none', padding: '0', margin: '0'}}>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡1</li>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡2</li>
-                    <li style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>板卡3</li>
-                </ul>
-            </div>
-            <div onClick={() => {
-                onClick()
-                setShow(!show)
-            }}>
-                <p style={{padding: '10px', backgroundColor: '#ddd', borderRadius: '5px'}}>{boardName}</p>
-            </div>
-        </div>
-    )
-}

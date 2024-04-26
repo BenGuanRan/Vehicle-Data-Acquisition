@@ -33,7 +33,6 @@ export interface TestObjectsFormat {
 
 
 //采集指标格式
-
 export interface CollectorSignalFormat {
     formatId: string
     fatherFormatId: string
@@ -63,7 +62,7 @@ export const getTestProcess = (name: string, objects: TestObjectsFormat[], signa
                         collectorSignalName: collectorSignalFormat.collectorSignalName,
                         controllerId: collectorSignalFormat.controllerId !== 0 ? collectorSignalFormat.controllerId : 1,
                         collectorId: collectorSignalFormat.collectorId !== 0 ? collectorSignalFormat.collectorId : 3,
-                        signal: collectorSignalFormat.signal + "h"
+                        signal: collectorSignalFormat.signal
                     };
                     return collectorSignal
                 }

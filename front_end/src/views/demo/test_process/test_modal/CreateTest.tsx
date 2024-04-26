@@ -1,7 +1,7 @@
 import {Form, Input, Modal} from "antd";
 import React, {useContext, useEffect} from "react";
-import "./create_test.css"
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import "./CreateTest.css"
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {hasDuplicate} from "@/utils";
 import {v4 as uuidv4} from 'uuid';
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/constants/name.ts";
 import {createTest, editTest, fetchTestDetail} from "@/apis/request/test.ts";
 import {SUCCESS_CODE} from "@/constants";
-import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/signal.tsx";
+import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
 import {TestObjectsItem} from "@/views/demo/test_process/test_modal/object/object.tsx";
 
 interface CreateTestProps {

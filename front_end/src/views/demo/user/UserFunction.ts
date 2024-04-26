@@ -11,10 +11,10 @@ export const useUserActions = (initialState: SubUser[]) => {
     /// TODO:获取用户列表
     const getUserListData = useCallback(() => {
         setData({type: CLEAR_USER, payload: {id: 0, username: "", disabled: false}});
-        getUserList().then((e) => {
+        getUserList(1).then((e) => {
             if (e.code === SUCCESS_CODE) {
                 messageApi.success(e.msg);
-                e.data.forEach((item: SubUser) => {
+                e.data.list.forEach((item: SubUser) => {
                     setData({type: CREATE_USER, payload: item});
                 })
             } else {

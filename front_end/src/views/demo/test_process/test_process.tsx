@@ -145,7 +145,7 @@ const TestProcessPage: React.FC = () => {
                         const blob = new Blob([response], { type: ContentType.FILE })
 
                         //  创建一个 <a> 元素，并设置其属性
-                        const downloadLink = document.createElement('a')3;
+                        const downloadLink = document.createElement('a');
                         downloadLink.href = window.URL.createObjectURL(blob);
                         downloadLink.download = '测试预配置文件.xlsx';
 

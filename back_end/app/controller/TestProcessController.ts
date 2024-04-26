@@ -144,6 +144,31 @@ class TestProcessController {
 
         }
     }
+    // 获取测试配置
+    async getTestProcessConfig(ctx: Context) {
+        try {
+            const { testProcessId } = ctx.request.query as any
+            if (testProcessId === undefined) { throw new Error(QUERY_INCOMPLETENESS); }
+            const userId = getUserIdFromCtx(ctx)
+            const testProcess = await TestProcessService.getTestConfigById(userId, Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            ctx.body = {
+                code: SUCCESS_CODE,
+                msg: SEARCH_SUCCESS_MSG,
+                data: testProcess
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
 }
 
 export default new TestProcessController

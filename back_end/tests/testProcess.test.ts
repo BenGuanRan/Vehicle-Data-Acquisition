@@ -33,7 +33,7 @@ describe('测试用户接口', () => {
                             collectorSignalName: 'signal_name_01',
                             controllerId: 0,
                             collectorId: 0,
-                            signal: 'signal_01'
+                            signalId: 0
                         }
                     ]
                 }

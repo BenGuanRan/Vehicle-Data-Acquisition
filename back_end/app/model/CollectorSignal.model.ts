@@ -1,12 +1,15 @@
 import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import TestObject from './TestObject.model'
+import Controller from './Controller.model'
+import Collector from './Collector.model'
+import Signal from './Signal.model'
 
 export interface ICollectorSignalModel {
     id?: number
     collectorSignalName: string
     controllerId: number
     collectorId: number
-    signal: string
+    signalId: number
     testObjectId: number
 }
 
@@ -24,14 +27,26 @@ export default class CollectorSignal extends Model<ICollectorSignalModel> {
     @Column(DataType.STRING)
     collectorSignalName!: string;
 
+    @ForeignKey(() => Controller)
     @Column(DataType.INTEGER)
     controllerId!: number;
 
+    @BelongsTo(() => Controller)
+    controllerInfo!: Controller
+
+    @ForeignKey(() => Collector)
     @Column(DataType.INTEGER)
     collectorId!: number;
 
-    @Column(DataType.STRING)
-    signal!: string
+    @BelongsTo(() => Collector)
+    collectorInfo!: Controller
+
+    @ForeignKey(() => Signal)
+    @Column(DataType.INTEGER)
+    signalId!: number
+
+    @BelongsTo(() => Signal)
+    signalInfo!: Signal
 
     @ForeignKey(() => TestObject)
     @Column

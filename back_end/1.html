@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel 文件下载</title>
+</head>
+<body>
+  <button id="downloadBtn">下载 Excel 文件</button>
+
+  <script>
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+      try {
+        // 发送 GET 请求以下载 Excel 文件
+        const response = await fetch('http://localhost:3000/download');
+
+        // 将响应转换为 Blob 对象
+        const blob = await response.blob();
+
+        // 创建一个 <a> 元素，并设置其属性
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = 'example.xlsx';
+
+        // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+
+        // 下载完成后移除 <a> 元素
+        document.body.removeChild(downloadLink);
+      } catch (error) {
+        console.error('下载文件时出错：', error);
+      }
+    });
+  </script>
+</body>
+</html>

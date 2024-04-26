@@ -1,6 +1,6 @@
 import path from "node:path";
 import { excelReader } from "../../utils/excelReader";
-import { CONTROLLER_WORKSHEET, DEVICE_CONFIG_FILE_NAME, SIGNAL_WORKSHEET } from "../constants";
+import { DEVICE_CONFIG_FILE_NAME, SIGNAL_WORKSHEET } from "../constants";
 import Signal, { ISignalModel } from "../model/Signal.model";
 import CollectorService from "./CollectorService";
 
@@ -17,7 +17,7 @@ class SignalService {
             const data = (await excelReader({
                 path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
                 workSheetName: SIGNAL_WORKSHEET,
-                keys: ['collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
+                keys: ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
             })) as (ISignalModel & { collectorName?: string })[]
             const collectors = await CollectorService.getCollectorsData()
             data!.forEach((value) => {

@@ -1,5 +1,5 @@
-import axios from 'axios';
-import {BASE_URL} from "@/apis/url/myUrl.ts";
+import axios, { Axios, AxiosResponse } from 'axios';
+import { BASE_URL } from "@/apis/url/myUrl.ts";
 import userUtils from "@/utils/userUtils.ts";
 
 
@@ -8,11 +8,12 @@ import userUtils from "@/utils/userUtils.ts";
 //2.根据method判断放到data还是params
 //3.根据format判断Content-Type
 
-export const request = ({url, method, params, format}: {
+export const request = ({ url, method, params, format, responseType }: {
     url: string;
     method: string;
     params?: any,
     format?: ContentType
+    responseType?: 'arraybuffer' | 'json' | 'blob' | 'document' | 'text'
 }) => {
     if (!format) format = ContentType.FORM;
     if (params && format !== ContentType.JSON && method !== 'GET') {
@@ -29,11 +30,12 @@ export const request = ({url, method, params, format}: {
         baseURL: BASE_URL,
         headers: {
             'authorization': userUtils.getToken(),
-            'Content-Type': format
+            'Content-Type': format,
         },
         url: url,
         method: method,
-        [shouldUseData(method) ? 'data' : 'params']: params
+        [shouldUseData(method) ? 'data' : 'params']: params,
+        responseType: responseType || 'json'
     }).then(response => {
         console.log(method, "     response.data", response.data)
         return response.data;
@@ -48,5 +50,6 @@ function shouldUseData(method: string) {
 
 export enum ContentType {
     JSON = 'application/json',
-    FORM = 'application/x-www-form-urlencoded'
+    FORM = 'application/x-www-form-urlencoded',
+    FILE = 'application/octet-stream'
 }

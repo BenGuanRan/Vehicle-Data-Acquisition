@@ -1,11 +1,12 @@
-import React, {useEffect} from "react";
-import {Button, Flex, Input, Table, TableProps} from "antd";
+import React, { useEffect } from "react";
+import { Button, Flex, Input, Table, TableProps } from "antd";
 import './test_process.css';
-import {deleteTest, getTestList} from "@/apis/request/test.ts";
-import {CreateTest} from "@/views/demo/test_process/test_modal/create_test.tsx";
-import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/create_test_function.ts";
-import {SUCCESS_CODE} from "@/constants";
-import {ITestProcess} from "@/apis/standard/test.ts";
+import { deleteTest, getTestList } from "@/apis/request/test.ts";
+import { CreateTest } from "@/views/demo/test_process/test_modal/create_test.tsx";
+import { CreateTestContext, CreateTestFunctions } from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import { SUCCESS_CODE } from "@/constants";
+import { ITestProcess } from "@/apis/standard/test.ts";
+import { ContentType, request } from "@/utils/request";
 
 export interface TestItem {
     id: string;
@@ -123,38 +124,67 @@ const TestProcessPage: React.FC = () => {
                 justifyContent: 'space-between',
             }}>
                 <Input.Search size={"large"}
-                              placeholder="搜索测试流程"
-                              onSearch={() => {
-                              }}
-                              style={{width: '50%'}}
-                              enterButton
+                    placeholder="搜索测试流程"
+                    onSearch={() => {
+                    }}
+                    style={{ width: '50%' }}
+                    enterButton
                 ></Input.Search>
                 <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
+                <Button type="primary" onClick={async () => {
+                    try {
+                        const response = await request({
+                            url: '/downloadPreTestConfigFile',
+                            method: 'GET',
+                            responseType: 'arraybuffer',
+                            format: ContentType.FILE
+                        })
+
+                        // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
+                        // 将二进制ArrayBuffer转换成Blob
+                        const blob = new Blob([response], { type: ContentType.FILE })
+
+                        //  创建一个 <a> 元素，并设置其属性
+                        const downloadLink = document.createElement('a')3;
+                        downloadLink.href = window.URL.createObjectURL(blob);
+                        downloadLink.download = '测试预配置文件.xlsx';
+
+                        // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+
+                        // 下载完成后移除 <a> 元素
+                        document.body.removeChild(downloadLink);
+
+                    } catch (error) {
+                        console.error('下载文件时出错：', error);
+                    }
+                }}>下载测试配置文件</Button>
             </div>
-            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
-                   pagination={{pageSize: 7, hideOnSinglePage: true}}
-                   rowKey={(record) => record.id}
+            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{ width: '100%' }}
+                pagination={{ pageSize: 7, hideOnSinglePage: true }}
+                rowKey={(record) => record.id}
             />
 
             <CreateTestContext.Provider value={createTestContext}>
                 <CreateTest open={modalData.open}
-                            mode={modalData.mode}
-                            onFinished={(newTest?: ITestProcess) => {
-                                if (!newTest) {
-                                    setModalData({
-                                        open: false,
-                                        mode: "create"
-                                    });
-                                    return;
-                                }
-                                dataList.push({
-                                    id: newTest.testName,
-                                    testName: newTest.testName,
-                                    createAt: new Date().toLocaleString(),
-                                    update: new Date().toLocaleString()
-                                })
-                            }}
-                            testId={modalData.testId}
+                    mode={modalData.mode}
+                    onFinished={(newTest?: ITestProcess) => {
+                        if (!newTest) {
+                            setModalData({
+                                open: false,
+                                mode: "create"
+                            });
+                            return;
+                        }
+                        dataList.push({
+                            id: newTest.testName,
+                            testName: newTest.testName,
+                            createAt: new Date().toLocaleString(),
+                            update: new Date().toLocaleString()
+                        })
+                    }}
+                    testId={modalData.testId}
                 />
             </CreateTestContext.Provider>
         </Flex>

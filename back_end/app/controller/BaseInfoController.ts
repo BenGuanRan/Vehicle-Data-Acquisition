@@ -69,6 +69,25 @@ class BaseInfoController {
             }
         }
     }
+    // 获取测试设备信息
+    async getTestDevicesInfo(ctx: Context) {
+        try {
+            const controllersData = await ControllerService.getControllersData()
+            const collectorsData = await CollectorService.getCollectorsData()
+            const signalsData = await SignalService.getSignalsData();
+            (ctx.body as IResBody) = {
+                code: SUCCESS_CODE,
+                msg: SEARCH_SUCCESS_MSG,
+                data: { controllersData, collectorsData, signalsData }
+            }
+        } catch (error) {
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+        }
+    }
 }
 
 export default new BaseInfoController

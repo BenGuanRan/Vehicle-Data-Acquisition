@@ -3,6 +3,8 @@ import { excelReader } from "../../utils/excelReader";
 import { DEVICE_CONFIG_FILE_NAME, SIGNAL_WORKSHEET } from "../constants";
 import Signal, { ISignalModel } from "../model/Signal.model";
 import CollectorService from "./CollectorService";
+import Collector from "../model/Collector.model";
+import { sequelize } from "../db";
 
 class SignalService {
     async getSignalListByCollectorId(collectorId: number) {
@@ -35,6 +37,24 @@ class SignalService {
             console.log(error);
             return false
         }
+    }
+    async getSignalsData() {
+        return await Signal.findAll({
+            include: [{
+                model: Collector,
+                attributes: [],
+                as: 'collector'
+            }],
+            attributes: [
+                'id',
+                'signalName',
+                'signalUnit',
+                'signalType',
+                'remark',
+                'innerIndex',
+                [sequelize.literal('collector.collectorName'), 'collectorName'] // 使用sequelize.literal来引用关联模型的字段
+            ]
+        })
     }
 }
 export default new SignalService

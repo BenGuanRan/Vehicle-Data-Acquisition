@@ -24,5 +24,9 @@ class ControllerService {
         })
         return data
     }
+    async getControllersData() {
+        const data = await Controller.findAll()
+        return data
+    }
 }
 export default new ControllerService

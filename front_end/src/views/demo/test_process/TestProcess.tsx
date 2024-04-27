@@ -107,6 +107,41 @@ const TestProcessPage: React.FC = () => {
         });
     }
 
+    const onDownloadTestConfig = async (testName: string, id: string) => {
+        try {
+            const response = await request({
+                api: {
+                    url: '/downloadTestProcessConfigFileById',
+                    method: Method.GET,
+                    responseType: ResponseType.ARRAY_BUFFER,
+                    format: ContentType.FILE
+                },
+                params: {
+                    testProcessId: id
+                }
+            })
+
+            // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
+            // 将二进制ArrayBuffer转换成Blob
+            const blob = new Blob([response], { type: ContentType.FILE })
+
+            //  创建一个 <a> 元素，并设置其属性
+            const downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(blob);
+            downloadLink.download = `${testName}_测试流程配置文件.xlsx`;
+
+            // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+
+            // 下载完成后移除 <a> 元素
+            document.body.removeChild(downloadLink);
+
+        } catch (error) {
+            console.error('下载文件时出错：', error);
+        }
+    }
+
 
     columns[columns.length - 1].render = (_, record) => (
         <div>
@@ -117,6 +152,9 @@ const TestProcessPage: React.FC = () => {
             <Button type={"link"} onClick={() => {
                 onDelete(record.id)
             }}>删除</Button>
+            <Button type={"link"} onClick={async () => {
+                onDownloadTestConfig(record.testName, record.id)
+            }}>下载测试文件</Button>
         </div>
     );
 

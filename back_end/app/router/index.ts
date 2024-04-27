@@ -38,8 +38,10 @@ router.get('/getTestProcessConfig', TestProcessController.getTestProcessConfig)
 router.get('/getControllerList', BaseInfoController.getControllerList)
 router.get('/getCollectorList', BaseInfoController.getCollectorList)
 router.get('/getSignalListByCollectorId', BaseInfoController.getSignalListByCollectorId)
+router.get('/getTestDevicesInfo', BaseInfoController.getTestDevicesInfo)
 
 // 资源下载接口
 router.get('/downloadPreTestConfigFile', AssetsController.downloadPreTestConfigFile)
+router.get('/downloadTestProcessConfigFileById', AssetsController.downloadTestProcessConfigFileById)
 
 export default router

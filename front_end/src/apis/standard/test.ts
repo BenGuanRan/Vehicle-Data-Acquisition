@@ -36,7 +36,6 @@ export interface TestObjectsFormat {
 export interface CollectorSignalFormat {
     formatId: string
     fatherFormatId: string
-
     collectorSignalId?: number
     collectorSignalName: string
     controllerId: number

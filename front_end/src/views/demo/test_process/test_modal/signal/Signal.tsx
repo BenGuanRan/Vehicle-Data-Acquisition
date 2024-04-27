@@ -2,7 +2,7 @@
 import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
 import {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
-import { COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
+import {COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
 import NewBoardSelect from "@/views/demo/test_process/test_modal/signal/Select.tsx";
 import {Modal} from "antd";
 
@@ -10,7 +10,6 @@ export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat })
     const createTestObject = useContext(CreateTestContext)
     const [modal, contextHolder] = Modal.useModal();
 
-    //点击的时候
 
     return (
         <div className={"signal-item"

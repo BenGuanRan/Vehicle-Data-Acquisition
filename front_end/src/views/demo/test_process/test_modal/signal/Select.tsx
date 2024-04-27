@@ -130,12 +130,12 @@ const NewBoardSelect: React.FC = () => {
 
             <h3 style={{marginTop: 5}}>核心板卡设置</h3>
             <Cascader options={controllerOptions} onChange={onSelectController}
-                      showSearch={{matchInputWidth: true}}
                       style={{width: '100%'}}
                       defaultValue={[
                           createTestObject.currentSignal?.controllerId,
                       ]}
                       changeOnSelect
+                      key={createTestObject.currentSignal.formatId}
             />
 
             <h3 style={{marginTop: 5}}>采集板卡-采集项设置</h3>
@@ -146,6 +146,7 @@ const NewBoardSelect: React.FC = () => {
                           createTestObject.currentSignal?.signalId
                       ]}
                       changeOnSelect
+                      key={createTestObject.currentSignal.formatId}
             />
         </div>
     </>

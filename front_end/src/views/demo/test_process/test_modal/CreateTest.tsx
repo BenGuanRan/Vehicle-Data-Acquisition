@@ -1,11 +1,11 @@
-import {Form, Input, message, Modal} from "antd";
+import {Form, Input, Modal} from "antd";
 import React, {useContext, useEffect} from "react";
 import "./CreateTest.css"
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {hasDuplicate} from "@/utils";
 import {v4 as uuidv4} from 'uuid';
 import {
-    checkValid,
+    checkValid, CollectorSignalFormat,
     getTestProcess, ITestProcess,
     reverseTestProcess,
     TestObjectsFormat
@@ -140,15 +140,20 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
     }
 
     const JudgeValid = () => {
-        if (createTestObject.currentSignal?.collectorId === -1
-            || createTestObject.currentSignal?.controllerId === -1
-            || createTestObject.currentSignal?.signalId === -1) {
+        let result = true;
 
-            console.log(JSON.stringify(createTestObject.currentSignal))
-            message.error("请填写完整的采集指标")
-            return false
+        createTestObject.collectorSignals.forEach((signal: CollectorSignalFormat) => {
+            if (!signal.collectorId || !signal.signalId || !signal.controllerId) {
+                result = false
+                return
+            }
+        })
 
+        if (!result) {
+            alert("请完善采集指标信息")
         }
+
+        return result
     }
 
     return <Modal className={"test_modal-modal"} open={open} title={generateTitle(mode)} onOk={onSubmit}

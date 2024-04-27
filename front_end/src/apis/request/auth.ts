@@ -15,8 +15,6 @@ export const loginApi = async (data: loginParams) => {
     if (response.code === SUCCESS_CODE && response.data !== null) {
         response.data.lastLoginTime = new Date().getTime()
         userUtils.saveUserInfo(response.data)
-    } else {
-        alert(response.msg)
     }
 
     return response

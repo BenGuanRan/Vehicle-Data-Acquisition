@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Input, Button} from 'antd';
+import {Form, Input, Button, message} from 'antd';
 import './index.css';
 import {useNavigate} from 'react-router-dom';
 import {loginApi} from "@/apis/request/auth.ts";
@@ -8,6 +8,7 @@ import {throttle} from "@/utils";
 import {useForm} from "antd/es/form/Form";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
+import UserUtils from "@/utils/UserUtils.ts";
 
 interface FormData {
     username: string;
@@ -81,16 +82,29 @@ const ChangePassword = () => {
 
 const ToLogin = () => {
     const navigate = useNavigate()
+    const [messageApi, messageHandler] = message.useMessage()
     const onLogin = async (data: loginParams) => {
         try {
+
             const response = await loginApi(data)
-            if (response.code === SUCCESS_CODE && response.data != null) {
+            if (response.code === SUCCESS_CODE && response.data != null && !response.data.disabled) {
                 navigate('/process-management', {replace: true})
+            } else {
+
+                if (response.data?.disabled) {
+                    messageApi.error("登录失败，该用户不存在或已被禁用")
+                } else {
+                    messageApi.error(response?.msg)
+                }
+
+                UserUtils.removeUserInfo()
             }
+
         } catch (error) {
             console.error(error)
         }
     }
+
     const onFinish = async (formData: FormData) => {
         console.log('Received values of form: ', formData)
         const data: loginParams = {
@@ -104,6 +118,7 @@ const ToLogin = () => {
         onFinish={throttle(onFinish, 1000)}
         initialValues={{remember: true}}
     >
+        {messageHandler}
         <Form.Item
             name="username"
             rules={[{required: true, message: 'Please input your username!'}]}

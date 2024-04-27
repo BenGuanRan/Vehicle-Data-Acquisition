@@ -133,7 +133,6 @@ const NewBoardSelect: React.FC = () => {
                       defaultValue={[
                           createTestObject.currentSignal?.controllerId,
                       ]}
-                      changeOnSelect
                       key={createTestObject.currentSignal.controllerId}
                       disabled={createTestObject.isJustSee()}
             />
@@ -145,7 +144,6 @@ const NewBoardSelect: React.FC = () => {
                           createTestObject.currentSignal?.collectorId,
                           createTestObject.currentSignal?.signalId
                       ]}
-                      changeOnSelect
                       key={createTestObject.currentSignal.collectorId + "" + createTestObject.currentSignal.signalId}
                       disabled={createTestObject.isJustSee()}
             />

@@ -1,4 +1,4 @@
-import {Form, Input, Modal} from "antd";
+import {Form, Input, message, Modal} from "antd";
 import React, {useContext, useEffect} from "react";
 import "./CreateTest.css"
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
@@ -134,8 +134,21 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
     const onSubmit = () => {
         console.log(JSON.stringify(createTestObject.currentTestInfo))
         if (mode === "show") showModalSubmit()
+        if (!JudgeValid()) return
         if (mode === "create") createModalSubmit()
         if (mode === "edit") editModalSubmit()
+    }
+
+    const JudgeValid = () => {
+        if (createTestObject.currentSignal?.collectorId === -1
+            || createTestObject.currentSignal?.controllerId === -1
+            || createTestObject.currentSignal?.signalId === -1) {
+
+            console.log(JSON.stringify(createTestObject.currentSignal))
+            message.error("请填写完整的采集指标")
+            return false
+
+        }
     }
 
     return <Modal className={"test_modal-modal"} open={open} title={generateTitle(mode)} onOk={onSubmit}
@@ -145,15 +158,14 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
                   width={"80vw"}>
 
         <Form.Item>
-
             <Input addonBefore={TEST_NAME + ":"} onChange={(e) => {
                 createTestObject.onChangeTestName(e.target.value)
             }} value={createTestObject.testName}/>
-
         </Form.Item>
 
 
         <div className={"show-content-total"}>
+
             <div className={"show-container"}>
                 <b style={{display: "inline", marginRight: '10px'}}>{CONFIGURATION}</b>
                 <button className={"add-test-object"} onClick={onAddObjects}>添加{TEST_OBJECT}</button>
@@ -163,6 +175,7 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
                     })}
                 </div>
             </div>
+
             <div className={"show-container"}>
                 <CollectorSignalSelect/>
             </div>

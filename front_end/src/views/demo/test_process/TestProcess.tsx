@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Button, Flex, Input, Table, TableProps} from "antd";
+import {Button, Flex, Input, Modal, Table, TableProps} from "antd";
 import './TestProcess.css';
 import {deleteTest, getTestList} from "@/apis/request/test.ts";
 import {CreateTest} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
@@ -64,6 +64,7 @@ const TestProcessPage: React.FC = () => {
         open: false,
         mode: "create"
     });
+    const [modal, contextHolder] = Modal.useModal();
 
 
     useEffect(() => {
@@ -81,14 +82,23 @@ const TestProcessPage: React.FC = () => {
     }
 
     const onDelete = (id: string) => {
-        if (prompt("请输入delete确认") !== "delete") return;
-        deleteTest(id).then((response) => {
-            if (response.code !== SUCCESS_CODE) {
-                alert("删除失败" + response.msg);
-                return;
-            }
-            setDataList(dataList.filter(item => item.id !== id));
+        modal.confirm({
+            title: '删除测试流程',
+            content: '确定删除测试流程吗？',
+            onOk: () => {
+                deleteTest(id).then((response) => {
+                    if (response.code !== SUCCESS_CODE) {
+                        alert("删除失败" + response.msg);
+                        return;
+                    }
+                    setDataList(dataList.filter(item => item.id !== id));
+                });
+            },
+            onCancel: () => {
+                console.log('Cancel delete object');
+            },
         });
+
     }
 
     const onShowDetail = (id: string) => {
@@ -123,7 +133,7 @@ const TestProcessPage: React.FC = () => {
 
             // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
             // 将二进制ArrayBuffer转换成Blob
-            const blob = new Blob([response], { type: ContentType.FILE })
+            const blob = new Blob([response], {type: ContentType.FILE})
 
             //  创建一个 <a> 元素，并设置其属性
             const downloadLink = document.createElement('a');
@@ -160,6 +170,7 @@ const TestProcessPage: React.FC = () => {
 
     return (
         <Flex id={"process_page"} flex={1} align={"start"} vertical={true}>
+            {contextHolder}
             <div style={{
                 width: '100%',
                 display: 'flex',
@@ -220,6 +231,7 @@ const TestProcessPage: React.FC = () => {
                 <CreateTest open={modalData.open}
                             mode={modalData.mode}
                             onFinished={(newTest?: ITestProcess) => {
+
                                 if (!newTest) {
                                     setModalData({
                                         open: false,
@@ -227,6 +239,7 @@ const TestProcessPage: React.FC = () => {
                                     });
                                     return;
                                 }
+
                                 dataList.push({
                                     id: newTest.testName,
                                     testName: newTest.testName,

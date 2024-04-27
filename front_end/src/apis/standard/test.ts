@@ -20,7 +20,7 @@ export interface CollectorSignal {
     collectorSignalName: string
     controllerId: number
     collectorId: number
-    signal: string
+    signalId: number
 }
 
 
@@ -41,7 +41,7 @@ export interface CollectorSignalFormat {
     collectorSignalName: string
     controllerId: number
     collectorId: number
-    signal: string
+    signalId: number
 }
 
 //通过测试对象和采集指标合成测试过程
@@ -62,7 +62,7 @@ export const getTestProcess = (name: string, objects: TestObjectsFormat[], signa
                         collectorSignalName: collectorSignalFormat.collectorSignalName,
                         controllerId: collectorSignalFormat.controllerId !== 0 ? collectorSignalFormat.controllerId : 1,
                         collectorId: collectorSignalFormat.collectorId !== 0 ? collectorSignalFormat.collectorId : 3,
-                        signal: collectorSignalFormat.signal
+                        signalId: collectorSignalFormat.signalId
                     };
                     return collectorSignal
                 }

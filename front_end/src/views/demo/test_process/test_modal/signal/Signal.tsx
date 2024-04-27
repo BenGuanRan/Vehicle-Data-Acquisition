@@ -2,22 +2,37 @@
 import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts";
 import {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
-import {BOARD_CARD_SELECTION, COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
+import { COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
 import NewBoardSelect from "@/views/demo/test_process/test_modal/signal/Select.tsx";
+import {Modal} from "antd";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
+    const [modal, contextHolder] = Modal.useModal();
+
     //点击的时候
 
     return (
-        <div className={"signal-item"} onClick={() => {
+        <div className={"signal-item"
+            + (createTestObject.currentSignal?.formatId === signal.formatId ? " selected" : "")
+        } onClick={() => {
             createTestObject.switchCollectorSignal(signal)
         }}>
             <b style={{display: "inline"}}>{signal.collectorSignalName}</b>
             <button className={"delete-button"} onClick={() => {
-                createTestObject.deleteCollectorSignal(signal.formatId)
+                modal.confirm({
+                    title: '删除采集指标',
+                    content: '确定删除采集指标吗？',
+                    onOk: () => {
+                        createTestObject.deleteCollectorSignal(signal.formatId)
+                    },
+                    onCancel: () => {
+                        console.log('Cancel delete signal');
+                    },
+                });
             }}>删除采集指标
             </button>
+            {contextHolder}
         </div>
     )
 }
@@ -36,14 +51,11 @@ export const CollectorSignalSelect = () => {
 
     return (
         <section style={{padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '5px', height: '100%'}}>
-            <header style={{marginBottom: '10px', fontSize: '20px', fontWeight: 'bold'}}>核心板卡设置</header>
-
             <p style={{marginBottom: '5px', fontSize: '16px'}}>当前{TEST_OBJECT}:<span
                 style={{color: 'blue'}}>{currentObject}</span></p>
             <p style={{marginBottom: '5px', fontSize: '16px'}}>当前{COLLECT_SIGNAL}:<span
                 style={{color: 'blue'}}>{currentSignal}</span></p>
 
-            <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
                 <NewBoardSelect/>
             </article>

@@ -50,12 +50,16 @@
     transition: background-color 0.3s ease;
 }
 
+.selected {
+    background-color: white;
+}
+
 .object-item b {
     margin-right: auto;
 }
 
 .signal-item:hover {
-    background-color: #e8e8e8;
+    background-color: white;
 }
 
 .signal-item b {

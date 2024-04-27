@@ -6,15 +6,18 @@ import React, {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {CollectorSignalItem} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
 import {formatInput} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
+import {Modal} from "antd";
 
 export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object}) => {
     const createTestObject = useContext(CreateTestContext)
+    const [modal, contextHolder] = Modal.useModal();
 
     const onAddSignals = (fatherId: string) => {
         const signals = prompt("请输入采集指标名称，多个指标用逗号分隔")
         if (signals) {
             const signalArray = formatInput(signals)
 
+            //选出来当前fatherId下的采集指标名称，用来判断是否有重复
             const currentList = createTestObject.collectorSignals
                 .filter((signal: CollectorSignalFormat) => signal.fatherFormatId === fatherId)
                 .map((signal: CollectorSignalFormat) => signal.collectorSignalName)
@@ -25,18 +28,23 @@ export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object
             }
 
             signalArray.forEach(item => {
+
                 createTestObject.addCollectorSignal({
                     collectorId: 0,
                     controllerId: 0,
-                    signal: "",
-                    collectorSignalName: item, formatId: uuidv4(), fatherFormatId: fatherId,
+                    signalId: 0,
+                    collectorSignalName: item,
+                    formatId: uuidv4(),
+                    fatherFormatId: fatherId,
                 })
+
             })
         }
     }
 
     return (
         <div className={"object-item"}>
+            {contextHolder}
             <div className={"object-item-function"}>
                 <b style={{display: "inline"}}>{object.objectName}</b>
 
@@ -46,7 +54,16 @@ export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object
                 </button>
 
                 <button className={"delete-button"} onClick={() => {
-                    createTestObject.deleteTestObject(object.formatId)
+                    modal.confirm({
+                        title: '删除测试对象',
+                        content: '确定删除测试对象吗？',
+                        onOk: () => {
+                            createTestObject.deleteTestObject(object.formatId)
+                        },
+                        onCancel: () => {
+                            console.log('Cancel delete object');
+                        },
+                    });
                 }}>删除测试对象
                 </button>
             </div>

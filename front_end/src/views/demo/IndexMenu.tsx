@@ -1,9 +1,9 @@
 import React from "react";
-import { Form, Menu, MenuProps, Modal, Input } from "antd";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { logout } from "@/apis/request/auth.ts";
-import { changePassword } from "@/apis/request/user.ts";
-import { SUCCESS_CODE } from "@/constants";
+import {Form, Menu, MenuProps, Modal, Input} from "antd";
+import {NavigateFunction, useNavigate} from "react-router-dom";
+import {logout} from "@/apis/request/auth.ts";
+import {changePassword} from "@/apis/request/user.ts";
+import {SUCCESS_CODE} from "@/constants";
 import userUtils from "@/utils/UserUtils.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -53,16 +53,7 @@ const getItemList = () => {
 
 const items: MenuProps['items'] = [
     getItem('车辆信息采集系统', 'grp', null,
-<<<<<<< HEAD
-        itemList.map((item) => getItem(item.label, item.key)), 'group'),
-
-    getItem(<h3>当前用户<span>root</span></h3>, 'avatar', null, [
-        getItem('修改密码', 'changePassword', null),
-        getItem(<p style={{ color: 'red' }}>退出登录</p>, 'logout', null),
-    ])
-=======
         getItemList().map((item) => getItem(item.label, item.key)), 'group'),
->>>>>>> cab8fa7eaf2722cce6c20238e191d5f5c90f03b9
 ];
 
 
@@ -95,7 +86,7 @@ export const HomeMenu = () => {
             return
         }
 
-        changePassword({ password: newPass }).then((response) => {
+        changePassword({password: newPass}).then((response) => {
             if (response.code === SUCCESS_CODE) {
                 alert("修改成功")
             } else {
@@ -108,27 +99,27 @@ export const HomeMenu = () => {
     return <>
         <Menu
             onClick={onClick}
-            style={{ width: '15vw', height: '100vh' }}
+            style={{width: '15vw', height: '100vh'}}
             defaultSelectedKeys={[window.location.pathname]}
             mode="inline"
             items={items}
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
-            <Form form={form} style={{ width: '30vw' }}>
+            <Form form={form} style={{width: '30vw'}}>
                 <Form.Item
                     name="newPassword"
                     label="New Password"
-                    rules={[{ required: true, message: '请输入新密码' }]}
+                    rules={[{required: true, message: '请输入新密码'}]}
                 >
-                    <Input.Password placeholder="New Password" name="newPassword" />
+                    <Input.Password placeholder="New Password" name="newPassword"/>
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"
                     label="Confirm Password"
-                    rules={[{ required: true, message: '请确认输入新密码' }]}
+                    rules={[{required: true, message: '请确认输入新密码'}]}
                 >
-                    <Input.Password placeholder="Confirm Password" name="confirmPassword" />
+                    <Input.Password placeholder="Confirm Password" name="confirmPassword"/>
                 </Form.Item>
             </Form>
         </Modal>

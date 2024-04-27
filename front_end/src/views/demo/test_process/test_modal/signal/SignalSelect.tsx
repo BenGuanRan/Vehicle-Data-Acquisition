@@ -73,11 +73,11 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
             case BoardType.SIGNAL: {
                 createTestObject.updateCollectorSignal({
                     ...createTestObject.currentSignal,
-                    signal: value
+                    signalId: value
                 } as CollectorSignalFormat)
                 createTestObject.setCurrentSignal({
                     ...createTestObject.currentSignal,
-                    signal: value
+                    signalId: value
                 } as CollectorSignalFormat)
                 break
             }

@@ -25,59 +25,57 @@ const NewBoardSelect: React.FC = () => {
     const createTestObject = useContext(CreateTestContext)
 
     //获取采集器列表
-    const getControllers = useCallback(() => {
+    const getControllers = useCallback(async () => {
         let newOptions: Option[] = [];
-        getControllerList().then((res) => {
-            if (res.code !== SUCCESS_CODE) {
-                messageApi.error(res.msg + ERROR_MSG.NETWORK_ERROR);
-                return;
-            }
-
-            newOptions = res.data.map((item: Format) => {
-                return {
-                    value: item.id,
-                    label: item.name,
-                    isLeaf: true,
-                };
+        const response = await getControllerList()
+        if (response.code !== SUCCESS_CODE) {
+            messageApi.error(response.msg + ERROR_MSG.NETWORK_ERROR);
+            return;
+        }
+        for (const datum of response.data) {
+            newOptions.push({
+                value: datum.id,
+                label: datum.name,
+                isLeaf: true,
             });
-            setControllerOptions(newOptions);
-        });
+        }
+        setControllerOptions(newOptions)
     }, []);
 
     //获取采集器 - 采集项列表
-    const getCollectors = useCallback(() => {
-        let newOptions: Option[] = [];
-        getCollectorList().then((res) => {
-            if (res.code !== SUCCESS_CODE) {
-                messageApi.error(res.msg + ERROR_MSG.NETWORK_ERROR);
+    const getCollectors = useCallback(async () => {
+        const newOptions: Option[] = [];
+
+        const collectResponse = await getCollectorList()
+        if (collectResponse.code !== SUCCESS_CODE) {
+            messageApi.error(collectResponse.msg + ERROR_MSG.NETWORK_ERROR);
+            return;
+        }
+
+        for (const item of collectResponse.data) {
+            const signalResponse = await getSignalListByCollectorId(item.id)
+            if (signalResponse.code !== SUCCESS_CODE) {
+                messageApi.error(signalResponse.msg + ERROR_MSG.NETWORK_ERROR);
                 return;
             }
-
-            newOptions = res.data.map((item: Format) => {
+            const signalOptions = signalResponse.data.map((signal: Format) => {
                 return {
-                    value: item.id,
-                    label: item.name,
-                    isLeaf: false,
-                    children: [],
-                } as Option;
+                    value: signal.id,
+                    label: signal.name,
+                    isLeaf: true,
+                };
             });
-
-            newOptions.forEach((item, index) => {
-                getSignalListByCollectorId(Number(item.value)).then((res) => {
-                    newOptions[index].children = res.data.map((item: Format) => {
-                        return {
-                            value: item.id,
-                            label: item.name,
-                            isLeaf: true,
-                        } as Option;
-                    });
-                });
+            newOptions.push({
+                value: item.id,
+                label: item.name,
+                isLeaf: false,
+                children: signalOptions
             });
+        }
 
-            setCollectOptions(newOptions);
-        });
+        setCollectOptions(newOptions);
+
     }, []);
-
     //设置控制id
     const updateAllId = (result: number[]) => {
         console.log("设置控制id:" + result)
@@ -97,6 +95,7 @@ const NewBoardSelect: React.FC = () => {
 
     //获取核心、采集器列表
     useEffect(() => {
+        //这里异步请求数据
         getControllers();
         getCollectors();
     }, []);

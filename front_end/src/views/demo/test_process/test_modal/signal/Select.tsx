@@ -1,9 +1,9 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {Cascader, message} from 'antd';
-import {getCollectorList, getControllerList, getSignalListByCollectorId} from "@/apis/request/test.ts";
-import {ERROR_MSG, SUCCESS_CODE} from "@/constants";
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
-import {CollectorSignalFormat} from "@/apis/standard/test.ts";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Cascader, message } from 'antd';
+import { getCollectorList, getControllerList, getSignalListByCollectorId } from "@/apis/request/test.ts";
+import { ERROR_MSG, SUCCESS_CODE } from "@/constants";
+import { CreateTestContext } from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import { CollectorSignalFormat } from "@/apis/standard/test.ts";
 
 interface Option {
     value?: string | number | null;
@@ -128,25 +128,25 @@ const NewBoardSelect: React.FC = () => {
         {contextHolder}
         <div>
 
-            <h3 style={{marginTop: 5}}>核心板卡设置</h3>
+            <h3 style={{ marginTop: 5 }}>核心板卡设置</h3>
             <Cascader options={controllerOptions} onChange={onSelectController}
-                      style={{width: '100%'}}
-                      defaultValue={[
-                          createTestObject.currentSignal?.controllerId,
-                      ]}
-                      changeOnSelect
-                      key={createTestObject.currentSignal.formatId}
+                style={{ width: '100%' }}
+                defaultValue={[
+                    createTestObject.currentSignal?.controllerId,
+                ]}
+                changeOnSelect
+                key={createTestObject.currentSignal?.controllerId}
             />
 
-            <h3 style={{marginTop: 5}}>采集板卡-采集项设置</h3>
+            <h3 style={{ marginTop: 5 }}>采集板卡-采集项设置</h3>
             <Cascader options={collectOptions} onChange={onChange}
-                      style={{width: '100%'}}
-                      defaultValue={[
-                          createTestObject.currentSignal?.collectorId,
-                          createTestObject.currentSignal?.signalId
-                      ]}
-                      changeOnSelect
-                      key={createTestObject.currentSignal.formatId}
+                style={{ width: '100%' }}
+                defaultValue={[
+                    createTestObject.currentSignal?.collectorId,
+                    createTestObject.currentSignal?.signalId
+                ]}
+                changeOnSelect
+                key={createTestObject.currentSignal.formatId}
             />
         </div>
     </>

@@ -19,9 +19,9 @@ const ControllerInfoTable: React.FC<{
 
 
 
-    return <>
-        <Table pagination={false} rowKey={'id'} dataSource={dataSource} columns={columns} />;
-    </>
+    return <div style={{ height: 350 }}>
+        <Table scroll={{ y: 300 }} sticky={true} bordered={true} pagination={false} rowKey={'id'} dataSource={dataSource} columns={columns} />
+    </div>
 }
 
 export default ControllerInfoTable  

@@ -1,5 +1,13 @@
 .tm_container {
-    padding: 20px;
+    height: 100%;
 }
 
-.tm_tabs {}
+.tm_tabs {
+    margin-bottom: 20px;
+}
+
+.tm_card {
+    height: 100%;
+    overflow-y: scroll;
+
+}

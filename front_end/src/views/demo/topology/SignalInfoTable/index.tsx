@@ -39,9 +39,9 @@ const SignalInfoTable: React.FC<{
 
 
 
-    return <>
-        <Table pagination={false} rowKey={'id'} dataSource={dataSource} columns={columns} />;
-    </>
+    return <div style={{ height: 350 }}>
+        <Table sticky={true} scroll={{ y: 300 }} bordered={true} pagination={false} rowKey={'id'} dataSource={dataSource} columns={columns} />
+    </div>
 }
 
 export default SignalInfoTable  

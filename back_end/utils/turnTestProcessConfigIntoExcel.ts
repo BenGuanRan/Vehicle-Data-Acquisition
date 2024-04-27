@@ -108,7 +108,8 @@ export async function turnTestProcessConfigIntoExcel(config: ITestProcessConfig,
     await writeCollectorConfig(workboot, assetsPath)
     await writeSignalConfig(workboot, assetsPath)
     beautifyWorkboot(workboot)
-    await workboot.xlsx.writeFile(`${assetsPath}/${testName}_测试配置文件.xlsx`)
+    // await workboot.xlsx.writeFile(`${assetsPath}/${testName}_测试配置文件.xlsx`)
+    return await workboot.xlsx.writeBuffer()
 }
 
 export async function writeCollectorConfig(workboot: ExcelJs.Workbook, assetsPath: string = path.join(__dirname, `../assets`)) {

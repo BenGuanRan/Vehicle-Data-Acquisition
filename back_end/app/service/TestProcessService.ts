@@ -9,6 +9,7 @@ import TestObjectService from './TestObjectService'
 import Controller from '../model/Controller.model'
 import Collector from '../model/Collector.model'
 import Signal from '../model/Signal.model'
+import { ITestProcessConfig } from '../../utils/turnTestProcessConfigIntoExcel'
 
 export interface ITestProcess {
     testProcessId?: number
@@ -143,7 +144,7 @@ class TestProcessService {
         }
     }
     // 根据id查询测试配置文件
-    async getTestConfigById(userId: number, id: number) {
+    async getTestConfigById(userId: number, id: number): Promise<ITestProcessConfig | null> {
         try {
             const testProcessConfig = await TestProcess.findOne({
                 where: { id, userId },
@@ -169,7 +170,7 @@ class TestProcessService {
                     }]
                 }
             })
-            return testProcessConfig
+            return testProcessConfig?.dataValues as any
         } catch (error) {
             console.log(error);
             return null

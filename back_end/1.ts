@@ -12,6 +12,10 @@ import { turnTestProcessConfigIntoExcel } from "./utils/turnTestProcessConfigInt
                             "collectorSignalName": "战车所在纬度",
                             "controllerInfo": {
                                 "controllerName": "hx-04A-1",
+                      
+                      
+                      
+                      
                                 "controllerAddress": "192.168.0.101"
                             },
                             "collectorInfo": {

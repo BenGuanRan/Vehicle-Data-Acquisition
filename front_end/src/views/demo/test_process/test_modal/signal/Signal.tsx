@@ -4,7 +4,7 @@ import {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
 import NewBoardSelect from "@/views/demo/test_process/test_modal/signal/Select.tsx";
-import {Modal} from "antd";
+import {Button, Modal, Descriptions} from "antd";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
@@ -18,19 +18,18 @@ export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat })
             createTestObject.switchCollectorSignal(signal)
         }}>
             <b style={{display: "inline"}}>{signal.collectorSignalName}</b>
-            <button className={"delete-button"} onClick={() => {
-                modal.confirm({
-                    title: '删除采集指标',
-                    content: '确定删除采集指标吗？',
-                    onOk: () => {
-                        createTestObject.deleteCollectorSignal(signal.formatId)
-                    },
-                    onCancel: () => {
-                        console.log('Cancel delete signal');
-                    },
-                });
-            }}>删除采集指标
-            </button>
+            {
+                !createTestObject.isJustSee() ? <Button danger onClick={() => {
+                    modal.confirm({
+                        title: '删除采集指标',
+                        content: '确定删除采集指标吗？',
+                        onOk: () => {
+                            createTestObject.deleteCollectorSignal(signal.formatId)
+                            createTestObject.switchCollectorSignal(createTestObject.collectorSignals[1])
+                        }
+                    });
+                }}>删除</Button> : null
+            }
             {contextHolder}
         </div>
     )
@@ -50,10 +49,11 @@ export const CollectorSignalSelect = () => {
 
     return (
         <section style={{padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '5px', height: '100%'}}>
-            <p style={{marginBottom: '5px', fontSize: '16px'}}>当前{TEST_OBJECT}:<span
-                style={{color: 'blue'}}>{currentObject}</span></p>
-            <p style={{marginBottom: '5px', fontSize: '16px'}}>当前{COLLECT_SIGNAL}:<span
-                style={{color: 'blue'}}>{currentSignal}</span></p>
+
+            <Descriptions title="" layout={"vertical"} bordered contentStyle={{color: "black"}}>
+                <Descriptions.Item label={"当前" + TEST_OBJECT}>{currentObject}</Descriptions.Item>
+                <Descriptions.Item label={"当前" + COLLECT_SIGNAL}>{currentSignal}</Descriptions.Item>
+            </Descriptions>
 
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
                 <NewBoardSelect/>

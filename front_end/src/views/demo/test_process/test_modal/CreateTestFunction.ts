@@ -5,6 +5,7 @@ export const CreateTestContext: React.Context<any> = React.createContext(null);
 
 
 export const CreateTestFunctions = () => {
+    const [mode, setMode] = React.useState<"create" | "edit" | "show">("create")
 
     const [testName, setTestName] = React.useState<string>("");
 
@@ -19,6 +20,8 @@ export const CreateTestFunctions = () => {
     }>>(signalsReducer, []);
 
     const [currentSignal, setCurrentSignal] = React.useState<CollectorSignalFormat | null>(null);
+
+    const isJustSee = () => mode === "show"
 
     const onChangeTestName = (name: string) => {
         console.log("修改测试名称:" + name)
@@ -93,6 +96,8 @@ export const CreateTestFunctions = () => {
         deleteTestObject,
         addCollectorSignal,
         deleteCollectorSignal,
+        setMode,
+        isJustSee
     }
 }
 

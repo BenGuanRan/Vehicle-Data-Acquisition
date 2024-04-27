@@ -3,7 +3,7 @@ import {CollectorSignalFormat, TestObjectsFormat} from "@/apis/standard/test.ts"
 import {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {BOARD_CARD_SELECTION, COLLECT_SIGNAL, TEST_OBJECT} from "@/constants/name.ts";
-import {BoardSelect, BoardType} from "@/views/demo/test_process/test_modal/signal/SignalSelect.tsx";
+import NewBoardSelect from "@/views/demo/test_process/test_modal/signal/Select.tsx";
 
 export const CollectorSignalItem = ({signal}: { signal: CollectorSignalFormat }) => {
     const createTestObject = useContext(CreateTestContext)
@@ -45,9 +45,7 @@ export const CollectorSignalSelect = () => {
 
             <header style={{marginBottom: '5px', fontSize: '16px'}}>{BOARD_CARD_SELECTION}</header>
             <article style={{display: 'flex', justifyContent: 'space-between'}}>
-                <BoardSelect type={BoardType.CORE_CONTROL}/>
-                <BoardSelect type={BoardType.CORE_COLLECT}/>
-                <BoardSelect type={BoardType.SIGNAL}/>
+                <NewBoardSelect/>
             </article>
         </section>
     )

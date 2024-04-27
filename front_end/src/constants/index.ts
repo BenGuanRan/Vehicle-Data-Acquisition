@@ -24,3 +24,7 @@ export const HORIZONTAL_OVERREACH_IS_PROHIBITED = '禁止水平越权'
 export const INSUFFICIENT_AUTHORITY = '非法用户'
 export const USER_EXISTED = '该用户已存在'
 
+//错误提示
+export enum ERROR_MSG {
+    NETWORK_ERROR = '  请检查网络连接后重试',
+}

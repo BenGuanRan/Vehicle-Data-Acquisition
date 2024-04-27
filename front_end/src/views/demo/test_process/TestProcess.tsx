@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import { Button, Flex, Input, Table, TableProps } from "antd";
+import React, {useEffect} from "react";
+import {Button, Flex, Input, Table, TableProps} from "antd";
 import './TestProcess.css';
-import { deleteTest, getTestList } from "@/apis/request/test.ts";
-import { CreateTest } from "@/views/demo/test_process/test_modal/CreateTest.tsx";
-import { CreateTestContext, CreateTestFunctions } from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
-import { SUCCESS_CODE } from "@/constants";
-import { ITestProcess } from "@/apis/standard/test.ts";
-import { request } from "@/utils/request";
-import { ContentType, Method, ResponseType } from "@/apis/standard/all";
+import {deleteTest, getTestList} from "@/apis/request/test.ts";
+import {CreateTest} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
+import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import {SUCCESS_CODE} from "@/constants";
+import {ITestProcess} from "@/apis/standard/test.ts";
+import {request} from "@/utils/request";
+import {ContentType, Method, ResponseType} from "@/apis/standard/all";
 
 export interface TestItem {
     id: string;
@@ -57,6 +57,7 @@ const columns: TableProps<TestItem>['columns'] = [
 const TestProcessPage: React.FC = () => {
     const createTestContext = CreateTestFunctions()
 
+    const [currentSearchValue, setCurrentSearchValue] = React.useState<string>("")
     const [dataList, setDataList] = React.useState([] as TestItem[]);
     const [total, setTotal] = React.useState(0);
     const [modalData, setModalData] = React.useState<ModalData>({
@@ -66,11 +67,11 @@ const TestProcessPage: React.FC = () => {
 
 
     useEffect(() => {
-        getTestList(1).then((response) => {
+        getTestList(1, undefined, currentSearchValue).then((response) => {
             setDataList(response.data.list);
             setTotal(response.data.total);
         });
-    }, []);
+    }, [currentSearchValue]);
 
     const onCreateTest = () => {
         setModalData({
@@ -127,11 +128,12 @@ const TestProcessPage: React.FC = () => {
                 justifyContent: 'space-between',
             }}>
                 <Input.Search size={"large"}
-                    placeholder="搜索测试流程"
-                    onSearch={() => {
-                    }}
-                    style={{ width: '50%' }}
-                    enterButton
+                              placeholder="搜索测试流程"
+                              onSearch={(value) => {
+                                  setCurrentSearchValue(value)
+                              }}
+                              style={{width: '50%'}}
+                              enterButton
                 ></Input.Search>
                 <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
                 <Button type="primary" onClick={async () => {
@@ -147,7 +149,7 @@ const TestProcessPage: React.FC = () => {
 
                         // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
                         // 将二进制ArrayBuffer转换成Blob
-                        const blob = new Blob([response], { type: ContentType.FILE })
+                        const blob = new Blob([response], {type: ContentType.FILE})
 
                         //  创建一个 <a> 元素，并设置其属性
                         const downloadLink = document.createElement('a');
@@ -166,35 +168,35 @@ const TestProcessPage: React.FC = () => {
                     }
                 }}>下载测试配置文件</Button>
             </div>
-            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{ width: '100%' }}
-                pagination={{ pageSize: 7, hideOnSinglePage: true, total: total }}
-                rowKey={(record) => record.id}
-                onChange={(pagination) => {
-                    getTestList(pagination.current!).then((response) => {
-                        setDataList(response.data.list);
-                    });
-                }}
+            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
+                   pagination={{pageSize: 7, hideOnSinglePage: true, total: total}}
+                   rowKey={(record) => record.id}
+                   onChange={(pagination) => {
+                       getTestList(pagination.current!).then((response) => {
+                           setDataList(response.data.list);
+                       });
+                   }}
             />
 
             <CreateTestContext.Provider value={createTestContext}>
                 <CreateTest open={modalData.open}
-                    mode={modalData.mode}
-                    onFinished={(newTest?: ITestProcess) => {
-                        if (!newTest) {
-                            setModalData({
-                                open: false,
-                                mode: "create"
-                            });
-                            return;
-                        }
-                        dataList.push({
-                            id: newTest.testName,
-                            testName: newTest.testName,
-                            createAt: new Date().toLocaleString(),
-                            update: new Date().toLocaleString()
-                        })
-                    }}
-                    testId={modalData.testId}
+                            mode={modalData.mode}
+                            onFinished={(newTest?: ITestProcess) => {
+                                if (!newTest) {
+                                    setModalData({
+                                        open: false,
+                                        mode: "create"
+                                    });
+                                    return;
+                                }
+                                dataList.push({
+                                    id: newTest.testName,
+                                    testName: newTest.testName,
+                                    createAt: new Date().toLocaleString(),
+                                    update: new Date().toLocaleString()
+                                })
+                            }}
+                            testId={modalData.testId}
                 />
             </CreateTestContext.Provider>
         </Flex>

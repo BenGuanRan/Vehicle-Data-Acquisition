@@ -102,6 +102,8 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
                 setOptions(currentOptions.data)
                 setShowOptions(!showOptions)
             }}>{defaultValue}</div>
+
+
             <div className={'options-container' + (showOptions ? ' show' : ' hidden')}>
                 {
                     options.map((item) => {
@@ -118,6 +120,7 @@ export const BoardSelect = ({type}: { type: BoardType }) => {
                     })
                 }
             </div>
+
         </div>
 
     </div>

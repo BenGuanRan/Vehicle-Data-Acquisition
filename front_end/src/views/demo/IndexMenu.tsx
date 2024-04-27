@@ -38,21 +38,22 @@ const itemList = [
         key: '/physical-topology',
         label: '物理拓扑配置',
     },
-    {
-        key: '/user-management',
-        label: '用户管理',
-    }
 ]
+
+const getItemList = () => {
+    if (userUtils.isRootUser()) {
+        itemList.push({
+            key: '/user-management',
+            label: '用户管理',
+        })
+    }
+    return itemList
+}
 
 
 const items: MenuProps['items'] = [
     getItem('车辆信息采集系统', 'grp', null,
-        itemList.map((item) => getItem(item.label, item.key)), 'group'),
-
-    getItem(<h3>当前用户<span>root</span></h3>, 'avatar', null, [
-        getItem('修改密码', 'changePassword', null),
-        getItem(<p style={{color: 'red'}}>退出登录</p>, 'logout', null),
-    ])
+        getItemList().map((item) => getItem(item.label, item.key)), 'group'),
 ];
 
 

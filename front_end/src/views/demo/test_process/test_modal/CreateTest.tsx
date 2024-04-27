@@ -63,6 +63,7 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
         }
     }, [mode])
 
+
     const onAddObjects = () => {
         const objects = prompt("请输入测试对象名称，多个对象用逗号分隔")
         if (objects) {
@@ -142,11 +143,16 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
                       onFinished()
                   }}
                   width={"80vw"}>
+
         <Form.Item>
-            <Input prefix={<div>{TEST_NAME}</div>} onChange={(e) => {
+
+            <Input addonBefore={TEST_NAME + ":"} onChange={(e) => {
                 createTestObject.onChangeTestName(e.target.value)
             }} value={createTestObject.testName}/>
+
         </Form.Item>
+
+
         <div className={"show-content-total"}>
             <div className={"show-container"}>
                 <b style={{display: "inline", marginRight: '10px'}}>{CONFIGURATION}</b>

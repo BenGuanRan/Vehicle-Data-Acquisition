@@ -1,14 +1,15 @@
 import type {TableProps} from 'antd';
 import Search from "antd/es/input/Search";
 import {SubUser} from "@/apis/standard/user.ts"
-import {Button, Form, Input, Modal, Table} from "antd";
+import {Button, Form, Input, Modal, Switch, Table} from "antd";
 import React, {useEffect, useRef} from "react";
-import {user_list_data} from "@/views/demo/user/user_list_data.ts";
-import Managements from "@/views/demo/user/user_managements.tsx";
-import {useUserActions} from "@/views/demo/user/user_function.ts";
+import {userListData} from "@/views/demo/user/UserListData.ts";
+import Managements from "@/views/demo/user/UserManagements.tsx";
+import {useUserActions} from "@/views/demo/user/UserFunction.ts";
 
 
 const UserManage: React.FC = () => {
+    const [currentSearchValue, setCurrentSearchValue] = React.useState<string>("")
     const [open, setOpen] = React.useState(false);
     const hasGetUserListData = useRef(false);
 
@@ -21,7 +22,7 @@ const UserManage: React.FC = () => {
         onCreate,
         onReset,
         contextHolder
-    } = useUserActions(user_list_data);
+    } = useUserActions(userListData);
 
     const [form] = Form.useForm();
 
@@ -38,27 +39,29 @@ const UserManage: React.FC = () => {
             title: 'Disabled',
             dataIndex: 'disabled',
             render: (_, record) => {
-                return <span>{record.disabled ? "Disabled" : "Enabled"}</span>
+                return <Switch checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={!record.disabled}
+                               onClick={
+                                   record.disabled ? () => onOpen(record) : () => onClose(record)
+                               }/>
             }
         },
         {
             title: 'Action',
             dataIndex: 'action',
             render: (_, record) => {
-                return <Managements onOpen={() => onOpen(record)} onClose={() => onClose(record)}
-                                    onDelete={() => onDelete(record)} onReset={() => onReset(record)}/>
+
+                return <Managements
+                    user={record}
+                    onDelete={onDelete} onReset={onReset}/>
             }
         }
     ];
 
-    const onSearch = (value: string) => {
-        console.log(value);
-    }
 
     useEffect(() => {
-        getUserListData();
+        getUserListData(currentSearchValue);
         hasGetUserListData.current = true;
-    }, [getUserListData])
+    }, [currentSearchValue])
 
     return (
         <div style={{padding: "20px"}}>
@@ -68,8 +71,11 @@ const UserManage: React.FC = () => {
                 justifyContent: "space-between",
                 marginBottom: "20px"
             }}>
-                <Search placeholder="input search text" enterButton size={"large"} onSearch={onSearch}
-                        style={{width: "300px"}}/>
+                <Search placeholder="input search text" enterButton size={"large"} onSearch={(value) => {
+                    setCurrentSearchValue(value)
+                }}
+                        style={{width: "300px"}}
+                />
                 <Button type="primary" size={"large"} onClick={() => setOpen(true)}>Add</Button>
             </div>
 
@@ -91,6 +97,7 @@ const UserManage: React.FC = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+
             <Table columns={columns} dataSource={data} key={data.length} style={{marginTop: "20px"}} size={"middle"}
                    pagination={{pageSize: 10}} rowKey={(record) => record.id}/>
         </div>

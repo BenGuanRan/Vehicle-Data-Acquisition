@@ -8,6 +8,7 @@ export interface ISignalModel {
     signalType: string
     remark: string
     collectorId: number
+    innerIndex: number
 }
 
 @Table({
@@ -32,6 +33,9 @@ export default class Signal extends Model<ISignalModel> {
 
     @Column(DataType.STRING)
     remark!: string;
+    
+    @Column(DataType.INTEGER)
+    innerIndex!: string;
 
     @ForeignKey(() => Collector)
     @Column

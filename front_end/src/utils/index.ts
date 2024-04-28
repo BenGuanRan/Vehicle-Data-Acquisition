@@ -31,3 +31,9 @@ export const hasDuplicate = (list: string[]) => {
     console.log("检查 list:" + list)
     return new Set(list).size !== list.length;
 }
+
+export async function sleep(time: number) {
+    return new Promise(res => {
+        setTimeout(res, time)
+    })
+}

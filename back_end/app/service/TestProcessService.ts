@@ -6,6 +6,10 @@ import TestObject from '../model/TestObject.model'
 import TestProcess, { ITestProcessModel } from '../model/TestProcess.model'
 import CollectorSignalService from './CollectorSignalService'
 import TestObjectService from './TestObjectService'
+import Controller from '../model/Controller.model'
+import Collector from '../model/Collector.model'
+import Signal from '../model/Signal.model'
+import { ITestProcessConfig } from '../../utils/turnTestProcessConfigIntoExcel'
 
 export interface ITestProcess {
     testProcessId?: number
@@ -18,7 +22,7 @@ export interface ITestProcess {
             collectorSignalName: string
             controllerId: number
             collectorId: number
-            signal: string
+            signalId: number
         }[]
     }[]
 }
@@ -54,7 +58,7 @@ class TestProcessService {
                     attributes: [['id', 'objectId'], 'objectName'],
                     include: [{
                         model: CollectorSignal,
-                        attributes: [['id', 'collectorSignalId'], 'collectorSignalName', 'controllerId', 'collectorId', 'signal']
+                        attributes: [['id', 'collectorSignalId'], 'collectorSignalName', 'controllerId', 'collectorId', 'signalId']
                     }]
                 }
             })
@@ -118,7 +122,7 @@ class TestProcessService {
                 attributes: {
                     exclude: ['userId']
                 },
-                offset: pageNum !== undefined ? Number(pageNum) - 1 : 0,
+                offset: pageNum !== undefined ? (Number(pageNum) - 1) * Number(pageSize) : 0,
                 limit: Number(pageSize)
             })
             return ({ total, list })
@@ -137,6 +141,39 @@ class TestProcessService {
         } catch (error) {
             console.log(error);
             return false
+        }
+    }
+    // 根据id查询测试配置文件
+    async getTestConfigById(userId: number, id: number): Promise<ITestProcessConfig | null> {
+        try {
+            const testProcessConfig = await TestProcess.findOne({
+                where: { id, userId },
+                attributes: ['testName'],
+                include: {
+                    model: TestObject,
+                    attributes: ['objectName'],
+                    include: [{
+                        model: CollectorSignal,
+                        attributes: ['collectorSignalName'],
+                        include: [
+                            {
+                                model: Controller,
+                                attributes: ['controllerName', 'controllerAddress']
+                            },
+                            {
+                                model: Collector,
+                                attributes: ['collectorName', 'collectorAddress']
+                            }, {
+                                model: Signal,
+                                attributes: ['signalName', 'signalUnit', 'signalType', 'remark', 'innerIndex']
+                            }]
+                    }]
+                }
+            })
+            return testProcessConfig?.dataValues as any
+        } catch (error) {
+            console.log(error);
+            return null
         }
     }
 }

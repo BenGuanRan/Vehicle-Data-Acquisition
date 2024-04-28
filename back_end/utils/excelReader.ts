@@ -21,7 +21,7 @@ export async function excelReader({ path, workSheetName, keys }: {
             if (index !== 0) {
                 const obj: { [key: string]: string } = {}
                 row.forEach((val, i) => {
-                    obj[keys[i]] = val
+                    obj[keys[i]] = val || '-'
                 })
                 data.push(obj)
             }

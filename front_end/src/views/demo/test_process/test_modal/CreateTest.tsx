@@ -1,22 +1,22 @@
-import {Form, Input, Modal} from "antd";
+import {Button, Form, Input, message, Modal} from "antd";
 import React, {useContext, useEffect} from "react";
-import "./create_test.css"
-import {CreateTestContext} from "@/views/demo/test_process/test_modal/create_test_function.ts";
+import "./CreateTest.css"
+import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {hasDuplicate} from "@/utils";
 import {v4 as uuidv4} from 'uuid';
 import {
-    checkValid,
+    checkValid, CollectorSignalFormat,
     getTestProcess, ITestProcess,
     reverseTestProcess,
     TestObjectsFormat
 } from "@/apis/standard/test.ts";
 import {
     CONFIGURATION,
-    TEST_NAME, TEST_OBJECT
+    TEST_NAME
 } from "@/constants/name.ts";
 import {createTest, editTest, fetchTestDetail} from "@/apis/request/test.ts";
 import {SUCCESS_CODE} from "@/constants";
-import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/signal.tsx";
+import {CollectorSignalSelect} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
 import {TestObjectsItem} from "@/views/demo/test_process/test_modal/object/object.tsx";
 
 interface CreateTestProps {
@@ -33,6 +33,7 @@ export const formatInput = (input: string) => {
         .filter(item => item !== "" && item !== " ")
 }
 
+
 export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, testId}) => {
 
     const createTestObject = useContext(CreateTestContext)
@@ -40,20 +41,20 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
     const getTestDetail = (testId: string) => {
         fetchTestDetail(testId as string).then((response) => {
             if (response.code !== SUCCESS_CODE) {
-                alert("获取失败")
+                message.error("获取失败")
                 return
             }
             const {name, objects, signals} = reverseTestProcess(response.data)
             createTestObject.onChangeTestName(name)
             createTestObject.setObjects(objects)
             createTestObject.setCollectorSignal(signals)
+            createTestObject.setCurrentSignal(signals[0])
         }).catch((e) => {
             console.log(e)
-            alert("获取失败")
+            message.error("获取失败")
             onFinished()
         })
     }
-
 
     useEffect(() => {
         if (mode === "edit" || mode === "show") {
@@ -61,6 +62,7 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
         } else if (mode === "create") {
             createTestObject.clearTestProcess()
         }
+        createTestObject.setMode(mode)
     }, [mode])
 
     const onAddObjects = () => {
@@ -99,13 +101,14 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
         editTest(testProcess).then((response) => {
             console.log(response)
             if (response.code !== SUCCESS_CODE) {
-                alert("修改失败")
+                message.error("修改成功")
                 return
             }
-            alert("修改成功")
-            onFinished()
+            message.success("修改成功")
+            onFinished(testProcess)
+
         }).catch(() => {
-            alert("修改失败")
+            message.error("修改成功")
         })
     }
 
@@ -120,43 +123,81 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
         createTest(testProcess).then((response) => {
             console.log(response)
             if (response.code !== SUCCESS_CODE) {
-                alert("创建失败")
+                message.error("创建失败")
                 return
             }
-            alert("创建成功")
+
+            message.success("创建成功")
             onFinished(testProcess)
+
         }).catch(() => {
-            alert("创建失败")
+            message.error("创建失败")
         })
     }
 
-    const onSubmit = () => {
+
+    const onSubmit = async () => {
         console.log(JSON.stringify(createTestObject.currentTestInfo))
-        if (mode === "show") showModalSubmit()
-        if (mode === "create") createModalSubmit()
-        if (mode === "edit") editModalSubmit()
+
+        if (mode === "show") await showModalSubmit()
+        if (!JudgeValid()) return
+        if (mode === "create") await createModalSubmit()
+        if (mode === "edit") await editModalSubmit()
     }
 
-    return <Modal className={"test_modal-modal"} open={open} title={generateTitle(mode)} onOk={onSubmit}
+    const JudgeValid = () => {
+        let result = true;
+
+        createTestObject.collectorSignals.forEach((signal: CollectorSignalFormat) => {
+            if (!signal.collectorId || !signal.signalId || !signal.controllerId) {
+                result = false
+                return
+            }
+        })
+
+        if (!result) {
+            alert("请完善采集指标信息")
+        }
+
+        return result
+    }
+
+    return <Modal className={"test_modal-modal"}
+                  open={open}
+                  title={generateTitle(mode)}
+                  onOk={() => {
+                      onSubmit()
+                  }}
                   onCancel={() => {
                       onFinished()
                   }}
-                  width={"80vw"}>
+                  width={"80vw"}
+                  keyboard={true}
+    >
+
         <Form.Item>
-            <Input prefix={<div>{TEST_NAME}</div>} onChange={(e) => {
+            <Input addonBefore={TEST_NAME + ":"} onChange={(e) => {
                 createTestObject.onChangeTestName(e.target.value)
-            }} value={createTestObject.testName}/>
+            }} value={createTestObject.testName} disabled={createTestObject.isJustSee()}/>
         </Form.Item>
+
+
         <div className={"show-content-total"}>
+
             <div className={"show-container"}>
                 <b style={{display: "inline", marginRight: '10px'}}>{CONFIGURATION}</b>
-                <button className={"add-test-object"} onClick={onAddObjects}>添加{TEST_OBJECT}</button>
+
+                {
+                    !createTestObject.isJustSee() ? <Button onClick={onAddObjects}>添加测试对象</Button> : null
+                }
+
                 <div className={"show-content"}>
                     {createTestObject.testObjects.map((object: TestObjectsFormat, index: number) => {
                         return <TestObjectsItem object={object} key={index}/>
                     })}
                 </div>
             </div>
+
             <div className={"show-container"}>
                 <CollectorSignalSelect/>
             </div>

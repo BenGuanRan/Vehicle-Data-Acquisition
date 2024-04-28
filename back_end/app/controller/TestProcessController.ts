@@ -3,6 +3,11 @@ import { IResBody } from "../types"
 import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
 import TestProcessService, { ITestProcess } from "../service/TestProcessService"
 import { getUserIdFromCtx } from "../../utils/getUserInfoFromCtx"
+import UserService from "../service/UserService";
+import ControllerService from "../service/ControllerService"
+import CollectorService from "../service/CollectorService"
+import SignalService from "../service/SignalService"
+import { sequelize } from "../db"
 
 class TestProcessController {
     // 新建一个测试流程
@@ -142,6 +147,61 @@ class TestProcessController {
                 data: null
             }
 
+        }
+    }
+    // 获取测试配置
+    async getTestProcessConfig(ctx: Context) {
+        try {
+            const { testProcessId } = ctx.request.query as any
+            if (testProcessId === undefined) { throw new Error(QUERY_INCOMPLETENESS); }
+            const userId = getUserIdFromCtx(ctx)
+            const testProcess = await TestProcessService.getTestConfigById(userId, Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            ctx.body = {
+                code: SUCCESS_CODE,
+                msg: SEARCH_SUCCESS_MSG,
+                data: testProcess
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
+
+    // 同步测试预配置文件
+    async syncPreTestConfig(ctx: Context) {
+        try {
+            await UserService.onlyRootCanDo(ctx, async (ctx) => {
+                const transaction = await sequelize.transaction()
+                const { controllersConfig, collectorsConfig, signalsConfig } = ctx.request.body as any
+                // 初始化核心板卡
+                await ControllerService.initControllers(controllersConfig)
+                // 初始化采集板卡
+                await CollectorService.initCollectors(collectorsConfig)
+                // 初始化采集信号
+                await SignalService.initSignals(signalsConfig)
+                await transaction.commit();
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: null
+                }
+            });
+        }
+        catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: WRITE_FAIL_MSG,
+                data: null
+            }
         }
     }
 }

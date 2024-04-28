@@ -9,18 +9,19 @@ export const useUserActions = (initialState: SubUser[]) => {
     const [data, setData] = useReducer(userReducer, initialState);
 
     /// TODO:获取用户列表
-    const getUserListData = useCallback(() => {
+    const getUserListData = useCallback((searchValue: string) => {
         setData({type: CLEAR_USER, payload: {id: 0, username: "", disabled: false}});
-        getUserList().then((e) => {
+        getUserList(1, undefined, searchValue).then((e) => {
             if (e.code === SUCCESS_CODE) {
                 messageApi.success(e.msg);
-                e.data.forEach((item: SubUser) => {
+                e.data.list.forEach((item: SubUser) => {
                     setData({type: CREATE_USER, payload: item});
                 })
             } else {
                 messageApi.error(e.msg);
             }
         })
+
     }, [messageApi])
 
     // TODO:开启用户
@@ -73,7 +74,7 @@ export const useUserActions = (initialState: SubUser[]) => {
                     type: CREATE_USER, payload: {
                         id: e.data.userId,
                         username: e.data.username,
-                        disabled: true
+                        disabled: false
                     }
                 });
             } else {

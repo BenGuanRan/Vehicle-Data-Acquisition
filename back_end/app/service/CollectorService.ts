@@ -25,7 +25,7 @@ class CollectorService {
             return false
         }
     }
-    async getCollectorsData() {
+    async getcollectorsConfig() {
         const data = await Collector.findAll()
         return data
     }

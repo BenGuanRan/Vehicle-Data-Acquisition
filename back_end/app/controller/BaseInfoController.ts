@@ -72,13 +72,13 @@ class BaseInfoController {
     // 获取测试设备信息
     async getTestDevicesInfo(ctx: Context) {
         try {
-            const controllersData = await ControllerService.getControllersData()
-            const collectorsData = await CollectorService.getCollectorsData()
-            const signalsData = await SignalService.getSignalsData();
+            const controllersConfig = await ControllerService.getcontrollersConfig()
+            const collectorsConfig = await CollectorService.getcollectorsConfig()
+            const signalsConfig = await SignalService.getsignalsConfig();
             (ctx.body as IResBody) = {
                 code: SUCCESS_CODE,
                 msg: SEARCH_SUCCESS_MSG,
-                data: { controllersData, collectorsData, signalsData }
+                data: { controllersConfig, collectorsConfig, signalsConfig }
             }
         } catch (error) {
             (ctx.body as IResBody) = {

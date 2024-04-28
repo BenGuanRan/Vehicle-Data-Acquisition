@@ -43,6 +43,7 @@ router.get('/getTestDevicesInfo', BaseInfoController.getTestDevicesInfo)
 
 // 资源下载接口
 router.get('/downloadPreTestConfigFile', AssetsController.downloadPreTestConfigFile)
+router.get('/downloadPreTestConfigFileTemp', AssetsController.downloadPreTestConfigFileTemp)
 router.get('/downloadTestProcessConfigFileById', AssetsController.downloadTestProcessConfigFileById)
 
 export default router

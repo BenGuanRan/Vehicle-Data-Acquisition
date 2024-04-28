@@ -178,8 +178,8 @@ class TestProcessController {
     // 同步测试预配置文件
     async syncPreTestConfig(ctx: Context) {
         try {
-            const transaction = await sequelize.transaction()
             await UserService.onlyRootCanDo(ctx, async (ctx) => {
+                const transaction = await sequelize.transaction()
                 const { controllersConfig, collectorsConfig, signalsConfig } = ctx.request.body as any
                 // 初始化核心板卡
                 await ControllerService.initControllers(controllersConfig)
@@ -187,13 +187,13 @@ class TestProcessController {
                 await CollectorService.initCollectors(collectorsConfig)
                 // 初始化采集信号
                 await SignalService.initSignals(signalsConfig)
+                await transaction.commit();
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: null
+                }
             });
-            await transaction.commit();
-            (ctx.body as IResBody) = {
-                code: SUCCESS_CODE,
-                msg: WRITE_SUCCESS_MSG,
-                data: null
-            }
         }
         catch (error) {
             console.log(error);

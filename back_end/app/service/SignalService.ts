@@ -26,7 +26,7 @@ class SignalService {
                     workSheetName: SIGNAL_WORKSHEET,
                     keys: ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
                 })) as (ISignalModel & { collectorName?: string })[]
-            const collectors = await CollectorService.getCollectorsData()
+            const collectors = await CollectorService.getcollectorsConfig()
             data!.forEach((value) => {
                 const { collectorName: cn } = value
                 // 找到collectorName所对应的id
@@ -44,7 +44,7 @@ class SignalService {
             return false
         }
     }
-    async getSignalsData() {
+    async getsignalsConfig() {
         return await Signal.findAll({
             include: [{
                 model: Collector,

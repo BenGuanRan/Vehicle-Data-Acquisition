@@ -1,8 +1,6 @@
 import { Context } from "koa"
-import fs from 'node:fs'
 import path from "node:path";
-import send from "koa-send";
-import { getPreTestProcessConfigBuffer } from "../../utils/getPreTestProcessConfigBuffer";
+import { getPreTestProcessConfigTempBuffer, getPreTestProcessConfigBuffer } from "../../utils/getPreTestProcessBuffer";
 import { SEARCH_SUCCESS_MSG, SUCCESS_CODE } from "../constants";
 import TestProcessService from "../service/TestProcessService";
 import { getUserIdFromCtx } from "../../utils/getUserInfoFromCtx";
@@ -11,7 +9,16 @@ import { turnTestProcessConfigIntoExcel } from "../../utils/turnTestProcessConfi
 class AssetsController {
     async downloadPreTestConfigFile(ctx: Context) {
         const fileName = 'preTestConfig.xlsx';
-        const buffer = await getPreTestProcessConfigBuffer(path.join(__dirname, `../../assets`))
+        const buffer = await getPreTestProcessConfigBuffer()
+        // 设置响应头，告诉浏览器这是一个文件下载
+        ctx.set('Content-disposition', `attachment; filename=${fileName}`);
+        ctx.set('Content-type', 'application/octet-stream');
+        // 发送文件
+        ctx.body = buffer
+    }
+    async downloadPreTestConfigFileTemp(ctx: Context) {
+        const fileName = 'preTestTempConfig.xlsx';
+        const buffer = await getPreTestProcessConfigTempBuffer(path.join(__dirname, `../../assets`))
         // 设置响应头，告诉浏览器这是一个文件下载
         ctx.set('Content-disposition', `attachment; filename=${fileName}`);
         ctx.set('Content-type', 'application/octet-stream');

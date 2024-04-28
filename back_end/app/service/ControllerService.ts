@@ -31,7 +31,7 @@ class ControllerService {
         })
         return data
     }
-    async getControllersData() {
+    async getcontrollersConfig() {
         const data = await Controller.findAll()
         return data
     }

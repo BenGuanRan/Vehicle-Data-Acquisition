@@ -3,6 +3,11 @@ import { IResBody } from "../types"
 import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
 import TestProcessService, { ITestProcess } from "../service/TestProcessService"
 import { getUserIdFromCtx } from "../../utils/getUserInfoFromCtx"
+import UserService from "../service/UserService";
+import ControllerService from "../service/ControllerService"
+import CollectorService from "../service/CollectorService"
+import SignalService from "../service/SignalService"
+import { sequelize } from "../db"
 
 class TestProcessController {
     // 新建一个测试流程
@@ -167,6 +172,36 @@ class TestProcessController {
                 data: null
             }
 
+        }
+    }
+
+    // 同步测试预配置文件
+    async syncPreTestConfig(ctx: Context) {
+        try {
+            const transaction = await sequelize.transaction()
+            await UserService.onlyRootCanDo(ctx, async (ctx) => {
+                const { controllersConfig, collectorsConfig, signalsConfig } = ctx.request.body as any
+                // 初始化核心板卡
+                await ControllerService.initControllers(controllersConfig)
+                // 初始化采集板卡
+                await CollectorService.initCollectors(collectorsConfig)
+                // 初始化采集信号
+                await SignalService.initSignals(signalsConfig)
+            });
+            await transaction.commit();
+            (ctx.body as IResBody) = {
+                code: SUCCESS_CODE,
+                msg: WRITE_SUCCESS_MSG,
+                data: null
+            }
+        }
+        catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: WRITE_FAIL_MSG,
+                data: null
+            }
         }
     }
 }

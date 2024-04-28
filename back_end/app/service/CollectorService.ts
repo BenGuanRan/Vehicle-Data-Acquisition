@@ -5,15 +5,19 @@ import Collector, { ICollectorModel } from "../model/Collector.model";
 import { sequelize } from "../db";
 
 class CollectorService {
-    async initCollectors(): Promise<boolean> {
+    async initCollectors(data?: ICollectorModel[]): Promise<boolean> {
         try {
             const transaction = await sequelize.transaction()
-            const data = (await excelReader({
-                path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
-                workSheetName: COLLECTOR_WORKSHEET,
-                keys: ['collectorName', 'collectorAddress']
-            })) as ICollectorModel[]
-            Collector.bulkCreate(data)
+            await Collector.destroy({
+                where: {},
+            })
+            if (!data)
+                data = (await excelReader({
+                    path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
+                    workSheetName: COLLECTOR_WORKSHEET,
+                    keys: ['collectorName', 'collectorAddress']
+                })) as ICollectorModel[]
+            await Collector.bulkCreate(data)
             await transaction.commit()
             return true
         } catch (error) {

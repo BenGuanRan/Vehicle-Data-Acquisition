@@ -1,5 +1,4 @@
 import { Context } from "koa"
-import userService from "../service/UserService"
 import tokenUtils from "../../utils/token";
 import { BODY_INCOMPLETENESS, FAIL_CODE, HAS_BEEN_DISABLED, HAS_BEEN_START, HORIZONTAL_OVERREACH_IS_PROHIBITED, INSUFFICIENT_AUTHORITY, LOGIN_FAIL, LOGIN_SUCCESS, PLEASE_BAN_FIRST, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_SUCCESS_MSG, SUCCESS_CODE, USER_EXISTED, USER_UNEXIST, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from '../constants'
 import { IResBody } from "../types";
@@ -11,7 +10,7 @@ class UserController {
     // 用户登录
     async login(ctx: Context) {
         const { username, password } = ctx.request.body as any
-        const res = await userService.findUserByUsernameAndPassword({ username, password })
+        const res = await UserService.findUserByUsernameAndPassword({ username, password })
 
         res && ((ctx.body as IResBody) = {
             code: SUCCESS_CODE,
@@ -41,7 +40,7 @@ class UserController {
                 data: null
             }
         } else {
-            await userService.onlyRootCanDo(ctx, async (ctx) => {
+            await UserService.onlyRootCanDo(ctx, async (ctx) => {
                 const userList = await UserService.getUserList(userId, {
                     keywords, pageNum, pageSize
                 });
@@ -63,11 +62,11 @@ class UserController {
                 data: null
             }
         } else {
-            await userService.onlyRootCanDo(ctx, async (ctx) => {
+            await UserService.onlyRootCanDo(ctx, async (ctx) => {
                 const username = getUsernameFromCtx(ctx)
                 const userId = getUserIdFromCtx(ctx)
                 // 查询该子用户名用户是否已存在
-                if (await userService.checkIfUserExisted(Number(userId), `${username}_${childUsername}`) === false) {
+                if (await UserService.checkIfUserExisted(Number(userId), `${username}_${childUsername}`) === false) {
                     const userInfo = await UserService.createUser({
                         username: `${username}_${childUsername}`,
                         password: childPassword,

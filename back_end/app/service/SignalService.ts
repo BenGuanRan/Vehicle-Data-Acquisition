@@ -14,13 +14,18 @@ class SignalService {
         })
         return data
     }
-    async initSignals(): Promise<boolean> {
+    async initSignals(data?: (ISignalModel & { collectorName?: string })[]): Promise<boolean> {
         try {
-            const data = (await excelReader({
-                path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
-                workSheetName: SIGNAL_WORKSHEET,
-                keys: ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
-            })) as (ISignalModel & { collectorName?: string })[]
+            const transaction = await sequelize.transaction()
+            await Signal.destroy({
+                where: {},
+            })
+            if (!data)
+                data = (await excelReader({
+                    path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
+                    workSheetName: SIGNAL_WORKSHEET,
+                    keys: ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
+                })) as (ISignalModel & { collectorName?: string })[]
             const collectors = await CollectorService.getCollectorsData()
             data!.forEach((value) => {
                 const { collectorName: cn } = value
@@ -32,6 +37,7 @@ class SignalService {
                 }
             })
             Signal.bulkCreate(data)
+            await transaction.commit()
             return true
         } catch (error) {
             console.log(error);

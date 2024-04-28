@@ -122,7 +122,7 @@ class TestProcessService {
                 attributes: {
                     exclude: ['userId']
                 },
-                offset: pageNum !== undefined ? Number(pageNum) - 1 : 0,
+                offset: pageNum !== undefined ? (Number(pageNum) - 1) * Number(pageSize) : 0,
                 limit: Number(pageSize)
             })
             return ({ total, list })

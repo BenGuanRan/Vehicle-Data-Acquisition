@@ -33,6 +33,7 @@ router.post('/editTestProcess', TestProcessController.editTestProcess)
 router.get('/getTestProcessList', TestProcessController.getTestProcessList)
 router.post('/deleteTestProcess', TestProcessController.deleteTestProcess)
 router.get('/getTestProcessConfig', TestProcessController.getTestProcessConfig)
+router.post('/syncPreTestConfig', TestProcessController.syncPreTestConfig)
 
 // 基本信息获取接口
 router.get('/getControllerList', BaseInfoController.getControllerList)

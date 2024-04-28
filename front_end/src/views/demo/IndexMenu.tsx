@@ -1,9 +1,9 @@
-import React from "react";
-import {Form, Menu, MenuProps, Modal, Input} from "antd";
-import {NavigateFunction, useNavigate} from "react-router-dom";
-import {logout} from "@/apis/request/auth.ts";
-import {changePassword} from "@/apis/request/user.ts";
-import {SUCCESS_CODE} from "@/constants";
+import React, { useEffect, useMemo, useState } from "react";
+import { Form, Menu, MenuProps, Modal, Input } from "antd";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import { logout } from "@/apis/request/auth.ts";
+import { changePassword } from "@/apis/request/user.ts";
+import { SUCCESS_CODE } from "@/constants";
 import userUtils from "@/utils/UserUtils.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -40,27 +40,40 @@ const itemList = [
     },
 ]
 
-const getItemList = () => {
-    if (userUtils.isRootUser()) {
-        itemList.push({
-            key: '/user-management',
-            label: '用户管理',
-        })
-    }
-    return itemList
-}
 
-
-const items: MenuProps['items'] = [
-    getItem('车辆信息采集系统', 'grp', null,
-        getItemList().map((item) => getItem(item.label, item.key)), 'group'),
-];
+// const items: MenuProps['items'] = [
+//     getItem('车辆信息采集系统', 'grp', null,
+//         getItemList().map((item) => getItem(item.label, item.key)), 'group'),
+// ];
 
 
 export const HomeMenu = () => {
     const navigate: NavigateFunction = useNavigate()
     const [visible, setVisible] = React.useState(false)
     const [form] = Form.useForm()
+    const [items, setItems] = useState([
+        {
+            key: '/process-management',
+            label: '测试流程管理',
+        },
+        {
+            key: '/data-display',
+            label: '测试数据展示',
+        },
+        {
+            key: '/physical-topology',
+            label: '测试预配置',
+        },
+    ])
+
+    useEffect(() => {
+        if (userUtils.isRootUser())
+            setItems([...items, {
+                key: '/user-management',
+                label: '用户管理',
+            }])
+    }, [])
+
     const onClick: MenuProps['onClick'] = (e) => {
         if (e.key !== 'avatar' && e.key !== 'logout' && e.key !== 'changePassword')
             navigate(e.key as string)
@@ -86,7 +99,7 @@ export const HomeMenu = () => {
             return
         }
 
-        changePassword({password: newPass}).then((response) => {
+        changePassword({ password: newPass }).then((response) => {
             if (response.code === SUCCESS_CODE) {
                 alert("修改成功")
             } else {
@@ -99,27 +112,27 @@ export const HomeMenu = () => {
     return <>
         <Menu
             onClick={onClick}
-            style={{width: '15vw', height: '100vh'}}
+            style={{ width: '15vw', height: '100vh' }}
             defaultSelectedKeys={[window.location.pathname]}
             mode="inline"
             items={items}
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
-            <Form form={form} style={{width: '30vw'}}>
+            <Form form={form} style={{ width: '30vw' }}>
                 <Form.Item
                     name="newPassword"
                     label="New Password"
-                    rules={[{required: true, message: '请输入新密码'}]}
+                    rules={[{ required: true, message: '请输入新密码' }]}
                 >
-                    <Input.Password placeholder="New Password" name="newPassword"/>
+                    <Input.Password placeholder="New Password" name="newPassword" />
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"
                     label="Confirm Password"
-                    rules={[{required: true, message: '请确认输入新密码'}]}
+                    rules={[{ required: true, message: '请确认输入新密码' }]}
                 >
-                    <Input.Password placeholder="Confirm Password" name="confirmPassword"/>
+                    <Input.Password placeholder="Confirm Password" name="confirmPassword" />
                 </Form.Item>
             </Form>
         </Modal>

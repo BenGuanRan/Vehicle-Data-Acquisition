@@ -1,8 +1,8 @@
 import { Table } from "antd";
-import { ICollectorsDataItem } from "../PhyTopology";
+import { IcollectorsConfigItem } from "../PhyTopology";
 
 const CollectorInfoTable: React.FC<{
-    dataSource: ICollectorsDataItem[]
+    dataSource: IcollectorsConfigItem[]
 }> = ({ dataSource }) => {
     const columns = [
         {

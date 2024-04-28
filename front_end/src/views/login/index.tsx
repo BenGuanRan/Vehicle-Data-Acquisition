@@ -1,14 +1,15 @@
-import React from 'react';
-import {Form, Input, Button, message} from 'antd';
+import React, { useMemo } from 'react';
+import { Form, Input, Button, message } from 'antd';
 import './index.css';
-import {useNavigate} from 'react-router-dom';
-import {loginApi} from "@/apis/request/auth.ts";
-import {loginParams} from "@/apis/standard/auth.ts";
-import {throttle} from "@/utils";
-import {useForm} from "antd/es/form/Form";
-import {changePassword} from "@/apis/request/user.ts";
-import {SUCCESS_CODE} from "@/constants";
+import { useNavigate } from 'react-router-dom';
+import { loginApi } from "@/apis/request/auth.ts";
+import { loginParams } from "@/apis/standard/auth.ts";
+import { throttle } from "@/utils";
+import { useForm } from "antd/es/form/Form";
+import { changePassword } from "@/apis/request/user.ts";
+import { SUCCESS_CODE } from "@/constants";
 import UserUtils from "@/utils/UserUtils.ts";
+import userUtils from '@/utils/UserUtils.ts';
 
 interface FormData {
     username: string;
@@ -18,12 +19,16 @@ interface FormData {
 const Login: React.FC = () => {
     const [isLogin, setIsLogin] = React.useState(true)
 
+    useMemo(() => {
+        userUtils.removeUserInfo()
+    }, [])
+
     return (
         <div className="login-container">
             <div className="background-image"></div>
             <div className="login-content">
                 <h1>车辆数据采集系统</h1>
-                {isLogin ? <ToLogin/> : <ChangePassword/>}
+                {isLogin ? <ToLogin /> : <ChangePassword />}
                 <div className="login-footer">
                     <Button type="link" onClick={() => setIsLogin(!isLogin)}>
                         {isLogin ? 'Change Password' : 'Back to Login'}
@@ -44,7 +49,7 @@ const ChangePassword = () => {
             alert("两次输入密码不一致")
             return
         }
-        changePassword({password: newPass}).then((response) => {
+        changePassword({ password: newPass }).then((response) => {
             if (response.code === SUCCESS_CODE) {
                 alert("修改成功")
             } else {
@@ -59,16 +64,16 @@ const ChangePassword = () => {
                 <Form.Item
                     name="newPassword"
                     label="New Password"
-                    rules={[{required: true, message: '请输入新密码'}]}
+                    rules={[{ required: true, message: '请输入新密码' }]}
                 >
-                    <Input.Password placeholder="New Password"/>
+                    <Input.Password placeholder="New Password" />
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"
                     label="Confirm Password"
-                    rules={[{required: true, message: '请确认输入新密码'}]}
+                    rules={[{ required: true, message: '请确认输入新密码' }]}
                 >
-                    <Input.Password placeholder="Confirm Password"/>
+                    <Input.Password placeholder="Confirm Password" />
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-button" onClick={onFinish}>
@@ -88,7 +93,7 @@ const ToLogin = () => {
 
             const response = await loginApi(data)
             if (response.code === SUCCESS_CODE && response.data != null && !response.data.disabled) {
-                navigate('/process-management', {replace: true})
+                navigate('/process-management', { replace: true })
             } else {
 
                 if (response.data?.disabled) {
@@ -116,20 +121,20 @@ const ToLogin = () => {
     return <Form
         name="login-form"
         onFinish={throttle(onFinish, 1000)}
-        initialValues={{remember: true}}
+        initialValues={{ remember: true }}
     >
         {messageHandler}
         <Form.Item
             name="username"
-            rules={[{required: true, message: 'Please input your username!'}]}
+            rules={[{ required: true, message: 'Please input your username!' }]}
         >
-            <Input placeholder="Username"/>
+            <Input placeholder="Username" />
         </Form.Item>
         <Form.Item
             name="password"
-            rules={[{required: true, message: 'Please input your password!'}]}
+            rules={[{ required: true, message: 'Please input your password!' }]}
         >
-            <Input.Password placeholder="Password"/>
+            <Input.Password placeholder="Password" />
         </Form.Item>
         <Form.Item>
             <Button type="primary" htmlType="submit" className="login-button">

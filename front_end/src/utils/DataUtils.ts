@@ -1,4 +1,4 @@
-import {getCollectorList, getControllerList} from "@/apis/request/test.ts";
+import { getCollectorList, getControllerList } from "@/apis/request/test.ts";
 
 const controllerList = "controllerList";
 const collectorList = "collectorList";
@@ -10,11 +10,11 @@ export interface ControllerAndCollector {
 }
 
 const setControllerToLocal = (data: ControllerAndCollector[]) => {
-    localStorage.setItem(controllerList, JSON.stringify(data))
+    sessionStorage.setItem(controllerList, JSON.stringify(data))
 }
 
 const getControllerFromLocal = async (): Promise<ControllerAndCollector[]> => {
-    const data = localStorage.getItem(controllerList);
+    const data = sessionStorage.getItem(controllerList);
     if (!data || JSON.parse(data).length === 0) {
         const response = await getControllerList()
         setControllerToLocal(response.data)
@@ -25,11 +25,11 @@ const getControllerFromLocal = async (): Promise<ControllerAndCollector[]> => {
 }
 
 const setCollectorToLocal = (data: ControllerAndCollector[]) => {
-    localStorage.setItem(collectorList, JSON.stringify(data))
+    sessionStorage.setItem(collectorList, JSON.stringify(data))
 }
 
 const getCollectorFromLocal = async (): Promise<ControllerAndCollector[]> => {
-    const data = localStorage.getItem(collectorList);
+    const data = sessionStorage.getItem(collectorList);
     if (!data || JSON.parse(data).length === 0) {
         const response = await getCollectorList()
         setCollectorToLocal(response.data)

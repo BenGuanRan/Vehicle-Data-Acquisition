@@ -9,17 +9,17 @@ interface UserInfo {
 
 
 const saveUserInfo = (userInfo: UserInfo) => {
-    console.log("在localStorage中保存用户信息", userInfo)
-    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    console.log("在sessionStorage中保存用户信息", userInfo)
+    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
 }
 
 const getUserInfo = (): UserInfo => {
-    const userInfo = localStorage.getItem('userInfo');
+    const userInfo = sessionStorage.getItem('userInfo');
     return userInfo ? JSON.parse(userInfo) : null;
 }
 
 const removeUserInfo = () => {
-    localStorage.removeItem('userInfo');
+    sessionStorage.removeItem('userInfo');
 }
 
 const isLogin = () => {

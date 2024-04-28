@@ -1,14 +1,14 @@
-import React, {useEffect} from "react";
-import {Button, Flex, Input, message, Modal, Table, TableProps} from "antd";
+import React, { useEffect } from "react";
+import { Button, Flex, Input, message, Modal, Table, TableProps } from "antd";
 import './TestProcess.css';
-import {deleteTest, getTestList} from "@/apis/request/test.ts";
-import {CreateTest} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
-import {CreateTestContext, CreateTestFunctions} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
-import {SUCCESS_CODE} from "@/constants";
-import {ITestProcess} from "@/apis/standard/test.ts";
-import {request} from "@/utils/request";
-import {ContentType, Method, ResponseType} from "@/apis/standard/all";
-import {v4 as uuidv4} from 'uuid';
+import { deleteTest, getTestList } from "@/apis/request/test.ts";
+import { CreateTest } from "@/views/demo/test_process/test_modal/CreateTest.tsx";
+import { CreateTestContext, CreateTestFunctions } from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
+import { SUCCESS_CODE } from "@/constants";
+import { ITestProcess } from "@/apis/standard/test.ts";
+import { request } from "@/utils/request";
+import { ContentType, Method, ResponseType } from "@/apis/standard/all";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface TestItem {
     id: string;
@@ -134,7 +134,7 @@ const TestProcessPage: React.FC = () => {
 
             // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
             // 将二进制ArrayBuffer转换成Blob
-            const blob = new Blob([response], {type: ContentType.FILE})
+            const blob = new Blob([response], { type: ContentType.FILE })
 
             //  创建一个 <a> 元素，并设置其属性
             const downloadLink = document.createElement('a');
@@ -189,12 +189,12 @@ const TestProcessPage: React.FC = () => {
                 justifyContent: 'space-between',
             }}>
                 <Input.Search size={"large"}
-                              placeholder="搜索测试流程"
-                              onSearch={(value) => {
-                                  setCurrentSearchValue(value)
-                              }}
-                              style={{width: '50%'}}
-                              enterButton
+                    placeholder="搜索测试流程"
+                    onSearch={(value) => {
+                        setCurrentSearchValue(value)
+                    }}
+                    style={{ width: '50%' }}
+                    enterButton
                 ></Input.Search>
                 <Button type="primary" onClick={refreshDataList}>刷新列表</Button>
                 <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
@@ -211,12 +211,12 @@ const TestProcessPage: React.FC = () => {
 
                         // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
                         // 将二进制ArrayBuffer转换成Blob
-                        const blob = new Blob([response], {type: ContentType.FILE})
+                        const blob = new Blob([response], { type: ContentType.FILE })
 
                         //  创建一个 <a> 元素，并设置其属性
                         const downloadLink = document.createElement('a');
                         downloadLink.href = window.URL.createObjectURL(blob);
-                        downloadLink.download = '测试预配置文件.xlsx';
+                        downloadLink.download = '板卡配置文件.xlsx';
 
                         // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
                         document.body.appendChild(downloadLink);
@@ -228,31 +228,31 @@ const TestProcessPage: React.FC = () => {
                     } catch (error) {
                         console.error('下载文件时出错：', error);
                     }
-                }}>下载测试配置文件</Button>
+                }}>下载板卡配置文件</Button>
             </div>
-            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{width: '100%'}}
-                   pagination={{pageSize: 7, hideOnSinglePage: true, total: total}}
-                   rowKey={(record) => record.id}
-                   onChange={(pagination) => {
-                       getTestList(pagination.current!).then((response) => {
-                           setDataList(response.data.list);
-                       });
-                   }}
+            <Table id={"process_table"} dataSource={dataList} columns={columns} style={{ width: '100%' }}
+                pagination={{ pageSize: 7, hideOnSinglePage: true, total: total }}
+                rowKey={(record) => record.id}
+                onChange={(pagination) => {
+                    getTestList(pagination.current!).then((response) => {
+                        setDataList(response.data.list);
+                    });
+                }}
             />
 
             <CreateTestContext.Provider value={createTestContext}>
                 <CreateTest open={modalData.open}
-                            mode={modalData.mode}
-                            onFinished={(newTest?: ITestProcess) => {
-                                setModalData({
-                                    open: false,
-                                    mode: "create"
-                                });
-                                if (newTest) refreshDataList()
-                            }}
-                            testId={modalData.testId}
+                    mode={modalData.mode}
+                    onFinished={(newTest?: ITestProcess) => {
+                        setModalData({
+                            open: false,
+                            mode: "create"
+                        });
+                        if (newTest) refreshDataList()
+                    }}
+                    testId={modalData.testId}
 
-                            key={modalData.keyValue}
+                    key={modalData.keyValue}
                 />
             </CreateTestContext.Provider>
         </Flex>

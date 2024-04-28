@@ -1,4 +1,4 @@
-import { Button, Card, List, Modal, Tabs, TabsProps, Tag, message } from "antd"
+import { Button, Card, List, Modal, Result, Tabs, TabsProps, Tag, message } from "antd"
 import ControllerInfoTable from "./ControllerInfoTabl"
 import { useMemo, useState } from "react";
 import { request } from "@/utils/request";
@@ -11,18 +11,20 @@ import { InboxOutlined } from "@ant-design/icons";
 import ExcelJs from 'exceljs'
 import { METHODS } from "http";
 import { SUCCESS_CODE } from "@/constants";
+import userUtils from "@/utils/UserUtils";
+import { Navigate, useNavigate } from "react-router-dom";
 
-export interface IControllersDataItem {
+export interface IcontrollersConfigItem {
     id: number
     controllerName: string
     controllerAddress: string
 }
-export interface ICollectorsDataItem {
+export interface IcollectorsConfigItem {
     id: number
     collectorName: string
     collectorAddress: string
 }
-export interface ISignalsDataItem {
+export interface IsignalsConfigItem {
     id: number
     signalName: string
     signalUnit: string
@@ -33,9 +35,9 @@ export interface ISignalsDataItem {
 }
 
 interface ITestData {
-    controllersData: IControllersDataItem[]
-    collectorsData: ICollectorsDataItem[]
-    signalsData: ISignalsDataItem[]
+    controllersConfig: IcontrollersConfigItem[]
+    collectorsConfig: IcollectorsConfigItem[]
+    signalsConfig: IsignalsConfigItem[]
 }
 
 
@@ -49,6 +51,7 @@ const PreTestManager: React.FC = () => {
         collectorsConfig: [] as any,
         signalsConfig: [] as any
     })
+    const navigate = useNavigate()
 
     function reloadData() {
         ; (async () => {
@@ -71,17 +74,17 @@ const PreTestManager: React.FC = () => {
         {
             key: '1',
             label: '核心板卡描述',
-            children: <ControllerInfoTable dataSource={testData?.controllersData || []} />,
+            children: <ControllerInfoTable dataSource={testData?.controllersConfig || []} />,
         },
         {
             key: '2',
             label: '采集板卡描述',
-            children: <CollectorInfoTable dataSource={testData?.collectorsData || []}></CollectorInfoTable>,
+            children: <CollectorInfoTable dataSource={testData?.collectorsConfig || []}></CollectorInfoTable>,
         },
         {
             key: '3',
             label: '信号描述',
-            children: <SignalInfoTable dataSource={testData?.signalsData || []} />,
+            children: <SignalInfoTable dataSource={testData?.signalsConfig || []} />,
         },
     ]
     const itemsTitle = ['核心板卡描述', '采集板卡描述', '信号描述']
@@ -235,7 +238,7 @@ const PreTestManager: React.FC = () => {
         </Modal>
         <Card title='当前板卡配置情况' className="tm_card">
             <Tabs className="tm_tabs" defaultActiveKey="1" items={items} />
-            <Dragger
+            {userUtils.isRootUser() && <Dragger
                 accept=".xlsx"
                 maxCount={1}
                 beforeUpload={() => false}
@@ -244,13 +247,13 @@ const PreTestManager: React.FC = () => {
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                 </p>
-                <p className="ant-upload-text">请点击或拖拽到此区域上传测试预配置文件</p>
+                <p className="ant-upload-text">请点击或拖拽到此区域上传板卡配置文件</p>
                 <p className="ant-upload-hint">
                     <Button style={{ padding: 0 }} type="link" onClick={async () => {
                         try {
                             const response = await request({
                                 api: {
-                                    url: '/downloadPreTestConfigFile',
+                                    url: '/downloadPreTestConfigFileTemp',
                                     method: Method.GET,
                                     responseType: ResponseType.ARRAY_BUFFER,
                                     format: ContentType.FILE
@@ -264,7 +267,7 @@ const PreTestManager: React.FC = () => {
                             //  创建一个 <a> 元素，并设置其属性
                             const downloadLink = document.createElement('a');
                             downloadLink.href = window.URL.createObjectURL(blob);
-                            downloadLink.download = '测试预配置文件模板.xlsx';
+                            downloadLink.download = '板卡配置模板文件.xlsx';
 
                             // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
                             document.body.appendChild(downloadLink);
@@ -276,9 +279,20 @@ const PreTestManager: React.FC = () => {
                         } catch (error) {
                             console.error('下载文件时出错：', error);
                         }
-                    }}>点击此链接</Button>下载测试预配置文件模板
+                    }}>点击此链接</Button>下载板卡配置模板文件
                 </p>
-            </Dragger>
+            </Dragger>}
+            {!userUtils.isRootUser() && <Result
+                style={{ padding: 0, paddingTop: 10 }}
+                title="普通用户无法配置板卡"
+                extra={
+                    <Button type="primary" key="console" onClick={() => {
+                        navigate('/login')
+                    }}>
+                        使用管理员账户登录
+                    </Button>
+                }
+            />}
         </Card>
     </div>
 }

@@ -1,7 +1,16 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { Axios, AxiosRequestConfig } from 'axios';
 import { BASE_URL } from "@/apis/url/myUrl.ts";
 import userUtils from "@/utils/UserUtils.ts";
 import { APIStandard, ContentType, ResponseType } from "@/apis/standard/all.ts";
+import { FAIL_CODE, TOKEN_EXPIRED_CODE, TOKEN_VALID_CODE } from '@/constants';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { sleep } from '.';
+
+const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+    timeout: 5000
+})
 
 //规则
 //1.默认x-www-form-urlencoded,如果不传递format，就是默认的
@@ -19,7 +28,7 @@ export const request = ({ api, params }: {
     const axiosConfig = getAxiosConfig(url, method, params, format || ContentType.WWW_FORM, responseType)
     console.log("正在通过", method + "方法\n", "向", url, "发送请求\n，请求参数为", JSON.stringify(params), "\n格式为", format)
 
-    return axios(axiosConfig).then(response => {
+    return axiosInstance(axiosConfig).then(response => {
         console.log(method, "     response.data", JSON.stringify(response.data))
         return response.data;
     }).catch(error => {
@@ -71,3 +80,16 @@ function getFormatData(format: ContentType, params: any) {
 function shouldUseData(method: string) {
     return method === 'PUT' || method === 'POST' || method === 'DELETE' || method === 'PATCH';
 }
+
+axiosInstance.interceptors.response.use(async res => {
+    if (res.data?.code && res.data.code !== TOKEN_VALID_CODE && res.data.code !== FAIL_CODE) {
+        message.error(res.data.msg)
+        message.loading('即将返回登录页面')
+        userUtils.removeUserInfo()
+        await sleep(3000)
+        window.location.href = '/login'
+    }
+    return res
+}, err => {
+    return err
+})

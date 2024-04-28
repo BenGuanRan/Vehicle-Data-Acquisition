@@ -1,21 +1,23 @@
-import React from "react"
-import {Navigate} from "react-router"
+import React, { useEffect, useState } from "react"
+import { Navigate } from "react-router"
 import userUtils from "@/utils/UserUtils.ts";
+import { Watermark } from "antd";
 
-const RequireAuthRoute: React.FC<React.PropsWithChildren> = ({children}) => {
+const RequireAuthRoute: React.FC<React.PropsWithChildren> = ({ children }) => {
     const token = userUtils.getToken()
-    const lastTokenDate = userUtils.getUserLastLoginTime()
-
-
-    if (!token || !lastTokenDate || Date.now() - parseInt(lastTokenDate) > 6 * 60 * 60 * 1000) {
-        if (lastTokenDate && Date.now() - parseInt(lastTokenDate) > 6 * 60 * 60 * 1000) {
-            userUtils.removeUserInfo()
-        }
-        console.log("token不存在或者token过期")
+    const [content, setContent] = useState('车辆装备数据采集系统')
+    useEffect(() => {
+        setContent(!userUtils.isRootUser() ? userUtils.getUserInfo()?.username || '车辆装备数据采集系统' : '')
+    }, [])
+    if (!token) {
         return <Navigate to="/login"></Navigate>
     }
     //如果存在 则渲染标签中的内容
-    return children
+    return (
+        <Watermark font={{ fontSize: 40, color: '#ececec67' }} content={content}>
+            {children}
+        </Watermark>
+    )
 }
 
 export default RequireAuthRoute

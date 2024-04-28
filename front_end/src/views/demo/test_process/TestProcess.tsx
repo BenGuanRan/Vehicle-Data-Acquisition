@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Button, Flex, Input, Modal, Table, TableProps} from "antd";
+import {Button, Flex, Input, message, Modal, Table, TableProps} from "antd";
 import './TestProcess.css';
 import {deleteTest, getTestList} from "@/apis/request/test.ts";
 import {CreateTest} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
@@ -8,6 +8,7 @@ import {SUCCESS_CODE} from "@/constants";
 import {ITestProcess} from "@/apis/standard/test.ts";
 import {request} from "@/utils/request";
 import {ContentType, Method, ResponseType} from "@/apis/standard/all";
+import {v4 as uuidv4} from 'uuid';
 
 export interface TestItem {
     id: string;
@@ -20,6 +21,7 @@ interface ModalData {
     open: boolean;
     mode: "create" | "edit" | "show";
     testId?: string;
+    keyValue?: string;
 }
 
 const columns: TableProps<TestItem>['columns'] = [
@@ -62,22 +64,21 @@ const TestProcessPage: React.FC = () => {
     const [total, setTotal] = React.useState(0);
     const [modalData, setModalData] = React.useState<ModalData>({
         open: false,
-        mode: "create"
+        mode: "create",
+        keyValue: "",
     });
     const [modal, contextHolder] = Modal.useModal();
 
 
     useEffect(() => {
-        getTestList(1, undefined, currentSearchValue).then((response) => {
-            setDataList(response.data.list);
-            setTotal(response.data.total);
-        });
+        refreshDataList()
     }, [currentSearchValue]);
 
     const onCreateTest = () => {
         setModalData({
             open: true,
-            mode: "create"
+            mode: "create",
+            keyValue: uuidv4()
         });
     }
 
@@ -152,6 +153,17 @@ const TestProcessPage: React.FC = () => {
         }
     }
 
+    //异步刷新
+    const refreshDataList = () => {
+        getTestList(1, undefined, currentSearchValue).then((response) => {
+            if (response.code === SUCCESS_CODE) {
+                setDataList(response.data.list);
+                setTotal(response.data.total);
+                message.success("数据获取成功")
+            }
+        });
+    }
+
 
     columns[columns.length - 1].render = (_, record) => (
         <div>
@@ -184,6 +196,7 @@ const TestProcessPage: React.FC = () => {
                               style={{width: '50%'}}
                               enterButton
                 ></Input.Search>
+                <Button type="primary" onClick={refreshDataList}>刷新列表</Button>
                 <Button type="primary" onClick={onCreateTest}>新建测试流程</Button>
                 <Button type="primary" onClick={async () => {
                     try {
@@ -231,23 +244,15 @@ const TestProcessPage: React.FC = () => {
                 <CreateTest open={modalData.open}
                             mode={modalData.mode}
                             onFinished={(newTest?: ITestProcess) => {
-
-                                if (!newTest) {
-                                    setModalData({
-                                        open: false,
-                                        mode: "create"
-                                    });
-                                    return;
-                                }
-
-                                dataList.push({
-                                    id: newTest.testName,
-                                    testName: newTest.testName,
-                                    createAt: new Date().toLocaleString(),
-                                    update: new Date().toLocaleString()
-                                })
+                                setModalData({
+                                    open: false,
+                                    mode: "create"
+                                });
+                                if (newTest) refreshDataList()
                             }}
                             testId={modalData.testId}
+
+                            key={modalData.keyValue}
                 />
             </CreateTestContext.Provider>
         </Flex>

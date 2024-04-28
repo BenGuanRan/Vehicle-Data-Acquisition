@@ -6,7 +6,7 @@ import React, {useContext} from "react";
 import {CreateTestContext} from "@/views/demo/test_process/test_modal/CreateTestFunction.ts";
 import {CollectorSignalItem} from "@/views/demo/test_process/test_modal/signal/Signal.tsx";
 import {formatInput} from "@/views/demo/test_process/test_modal/CreateTest.tsx";
-import {Modal} from "antd";
+import {Button, Modal} from "antd";
 
 export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object}) => {
     const createTestObject = useContext(CreateTestContext)
@@ -47,25 +47,25 @@ export const TestObjectsItem: React.FC<{ object: TestObjectsFormat }> = ({object
             {contextHolder}
             <div className={"object-item-function"}>
                 <b style={{display: "inline"}}>{object.objectName}</b>
-
-                <button className={"add-test-object"} onClick={() => {
-                    onAddSignals(object.formatId)
-                }} style={{marginRight: "10px"}}>添加采集指标
-                </button>
-
-                <button className={"delete-button"} onClick={() => {
-                    modal.confirm({
-                        title: '删除测试对象',
-                        content: '确定删除测试对象吗？',
-                        onOk: () => {
-                            createTestObject.deleteTestObject(object.formatId)
-                        },
-                        onCancel: () => {
-                            console.log('Cancel delete object');
-                        },
-                    });
-                }}>删除测试对象
-                </button>
+                {
+                    !createTestObject.isJustSee() ? <>
+                        <Button onClick={() => {
+                            onAddSignals(object.formatId)
+                        }} style={{marginRight: "10px"}}>添加采集指标</Button>
+                        <Button danger onClick={() => {
+                            modal.confirm({
+                                title: '删除测试对象',
+                                content: '确定删除测试对象吗？',
+                                onOk: () => {
+                                    createTestObject.deleteTestObject(object.formatId)
+                                },
+                                onCancel: () => {
+                                    console.log('Cancel delete object');
+                                },
+                            });
+                        }}>删除测试对象</Button>
+                    </> : null
+                }
             </div>
             <div className={"show-content"}>
                 {createTestObject.collectorSignals.filter((signal: CollectorSignalFormat) => signal.fatherFormatId === object.formatId).map((signal: CollectorSignalFormat, index: number) => {

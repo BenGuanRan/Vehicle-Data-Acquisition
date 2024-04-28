@@ -127,26 +127,27 @@ const NewBoardSelect: React.FC = () => {
     return <>
         {contextHolder}
         <div>
-
-            <h3 style={{ marginTop: 5 }}>核心板卡设置</h3>
+            <h3 style={{marginTop: 15}}>核心板卡设置</h3>
             <Cascader options={controllerOptions} onChange={onSelectController}
-                style={{ width: '100%' }}
-                defaultValue={[
-                    createTestObject.currentSignal?.controllerId,
-                ]}
-                changeOnSelect
-                key={createTestObject.currentSignal?.controllerId}
+                      style={{width: '100%'}}
+                      defaultValue={[
+                          createTestObject.currentSignal?.controllerId,
+                      ]}
+                      changeOnSelect
+                      key={createTestObject.currentSignal.controllerId}
+                      disabled={createTestObject.isJustSee()}
             />
 
-            <h3 style={{ marginTop: 5 }}>采集板卡-采集项设置</h3>
+            <h3 style={{marginTop: 15}}>采集板卡-采集项设置</h3>
             <Cascader options={collectOptions} onChange={onChange}
-                style={{ width: '100%' }}
-                defaultValue={[
-                    createTestObject.currentSignal?.collectorId,
-                    createTestObject.currentSignal?.signalId
-                ]}
-                changeOnSelect
-                key={createTestObject.currentSignal.formatId}
+                      style={{width: '100%'}}
+                      defaultValue={[
+                          createTestObject.currentSignal?.collectorId,
+                          createTestObject.currentSignal?.signalId
+                      ]}
+                      changeOnSelect
+                      key={createTestObject.currentSignal.collectorId + "" + createTestObject.currentSignal.signalId}
+                      disabled={createTestObject.isJustSee()}
             />
         </div>
     </>

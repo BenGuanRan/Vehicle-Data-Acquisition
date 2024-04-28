@@ -101,13 +101,14 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
         editTest(testProcess).then((response) => {
             console.log(response)
             if (response.code !== SUCCESS_CODE) {
-                alert("修改失败")
+                message.error("修改成功")
                 return
             }
-            alert("修改成功")
-            onFinished()
+            message.success("修改成功")
+            onFinished(testProcess)
+
         }).catch(() => {
-            alert("修改失败")
+            message.error("修改成功")
         })
     }
 
@@ -125,8 +126,10 @@ export const CreateTest: React.FC<CreateTestProps> = ({open, mode, onFinished, t
                 message.error("创建失败")
                 return
             }
-            alert("创建成功")
+
+            message.success("创建成功")
             onFinished(testProcess)
+
         }).catch(() => {
             message.error("创建失败")
         })

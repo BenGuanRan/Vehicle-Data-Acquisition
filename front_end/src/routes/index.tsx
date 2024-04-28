@@ -14,6 +14,7 @@ export const my_router = createBrowserRouter([
             element: <Login/>,
         },
         {
+
             path: "/",
             element: <RequirAuthRoute><SystemTotalPage/></RequirAuthRoute>,
             children: [

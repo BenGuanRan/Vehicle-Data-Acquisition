@@ -5,9 +5,9 @@ import { Watermark } from "antd";
 
 const RequireAuthRoute: React.FC<React.PropsWithChildren> = ({ children }) => {
     const token = userUtils.getToken()
-    const [content, setContent] = useState('车辆装备数据采集系统')
+    const [content, setContent] = useState('')
     useEffect(() => {
-        setContent(!userUtils.isRootUser() ? userUtils.getUserInfo()?.username || '车辆装备数据采集系统' : '')
+        setContent(!userUtils.isRootUser() ? userUtils.getUserInfo()?.username || '请勿泄密' : '')
     }, [])
     if (!token) {
         return <Navigate to="/login"></Navigate>

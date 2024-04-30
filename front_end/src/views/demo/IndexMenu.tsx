@@ -112,7 +112,7 @@ export const HomeMenu = () => {
     return <>
         <Menu
             onClick={onClick}
-            style={{ width: '15vw', height: '100vh' }}
+            style={{ width: '15vw', minHeight: '100vh', height: 'auto' }}
             defaultSelectedKeys={[window.location.pathname]}
             mode="inline"
             items={items}

@@ -1,0 +1,22 @@
+.bc_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.bc_result {
+    display: flex;
+    width: 40%;
+    height: 40%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 600;
+}
+
+.bc_title {
+    font-weight: 700;
+    font-size: 20;
+}

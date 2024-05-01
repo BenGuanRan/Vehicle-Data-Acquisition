@@ -1,5 +1,35 @@
 .dcm_container {
+    overflow: hidden;
     width: 150px;
     height: 150px;
-    background-color: orange;
+    margin: 10px;
+    border: 1px solid #1677ff;
+}
+
+.dcm_container>div {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dcm_container:hover>div {
+    transition: all 0.3s ease-out;
+    /*ease-out 减速、慢慢结束*/
+    -webkit-transition: all 0.3s ease-out;
+    transform: scale(1.2);
+    /*把图片放大1.5倍*/
+    -webkit-transform: scale(1.2);
+}
+
+.dcm_inner--boolean {
+    background-image: url(../../../../assets/boolean.JPG);
+}
+
+.dcm_inner--number {
+    background-image: url(../../../../assets/number.JPG);
+}
+
+.dcm_inner--line {
+    background-image: url(../../../../assets/line.JPG);
 }

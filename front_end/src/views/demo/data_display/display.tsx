@@ -30,6 +30,7 @@ export interface IDragItem {
         during?: number
         min?: number
         max?: number
+        label?: string
     }
 }
 
@@ -63,6 +64,7 @@ const DataDisplay: React.FC = () => {
                     break
                 case DragItemType.LINE:
                     itemConfig['during'] = (extra as ILineChartExtra).defaultDuring
+                    itemConfig['label'] = (extra as ILineChartExtra).defaultLabel
                     break
             }
             setDragItems([...dragItems, {
@@ -103,7 +105,8 @@ const DataDisplay: React.FC = () => {
                 defaultHeight: 400,
                 defaultInterval: 1000,
                 extra: {
-                    defaultDuring: 24 * 60 * 60  // 一天
+                    defaultDuring: 10,  // 10s
+                    defaultLabel: '数值'
                 }
             }} /></>
     }
@@ -231,9 +234,14 @@ const DataDisplay: React.FC = () => {
                     </Form.Item>
                 </>
             case DragItemType.LINE:
-                return <Form.Item style={{ marginBottom: 5 }} name='during' label='数据保留周期（s）' rules={[{ required: true }]} >
-                    <InputNumber min={1} max={24 * 3600} />
-                </Form.Item>
+                return <>
+                    <Form.Item style={{ marginBottom: 5 }} name='label' label='数值标签' rules={[{ required: true }]} >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 5 }} name='during' label='数据保留周期（s）' rules={[{ required: true }]} >
+                        <InputNumber min={1} max={24 * 60 * 60} />
+                    </Form.Item>
+                </>
         }
 
     }

@@ -16,6 +16,7 @@ const NumberGaugeChart: React.FC<{
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const [value, setValue] = useState(0)
     const chartRef = useRef<echarts.ECharts | null>()
+    const numberContainerRef = useRef<HTMLDivElement | null>(null)
 
     useMemo(() => {
         timerRef.current && clearInterval(timerRef.current)
@@ -32,7 +33,7 @@ const NumberGaugeChart: React.FC<{
                 {
                     data: [
                         {
-                            value: +(Math.random() * 100).toFixed(2),
+                            value,
                             name: title
                         }
                     ]
@@ -42,8 +43,7 @@ const NumberGaugeChart: React.FC<{
     }, [value])
 
     useEffect(() => {
-        const gc = document.querySelector('#number-gauge-container') as HTMLDivElement
-        chartRef.current = echarts.init(gc)
+        chartRef.current = echarts.init(numberContainerRef.current)
 
         const option = {
             series: [
@@ -108,7 +108,7 @@ const NumberGaugeChart: React.FC<{
         const resizeObserver = new ResizeObserver(() => {
             chartRef.current && chartRef.current.resize()
         })
-        resizeObserver.observe(gc)
+        numberContainerRef.current && resizeObserver.observe(numberContainerRef.current)
         chartRef.current.setOption(option)
 
         return () => {
@@ -117,7 +117,7 @@ const NumberGaugeChart: React.FC<{
         }
     }, [unit, title, width, height, min, max])
 
-    return <div id="number-gauge-container" style={{ width, height }}></div>
+    return <div ref={numberContainerRef} style={{ width, height }}></div>
 }
 
 export default NumberGaugeChart

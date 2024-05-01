@@ -15,6 +15,7 @@ export interface INumberChartExtra {
 }
 export interface ILineChartExtra {
     defaultDuring: number
+    defaultLabel: string
 }
 
 export interface IDraggleComponent {
@@ -42,8 +43,12 @@ const DraggableComponent: React.FC<IDraggleComponent> = ({ type, draggleConfig }
     drag(ref)
 
     return <div className="dcm_container" ref={ref}>
-        {type}
-    </div>
+        {{
+            [DragItemType.BOOLEAN]: <div className="dcm_inner--boolean"></div>,
+            [DragItemType.LINE]: <div className="dcm_inner--line"></div>,
+            [DragItemType.NUMBER]: <div className="dcm_inner--number"></div>
+        }[type]}
+    </div >
 }
 
 export default DraggableComponent

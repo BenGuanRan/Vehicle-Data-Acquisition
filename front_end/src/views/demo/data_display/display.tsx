@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import './display.css'
-import { Button, Form, Input, InputNumber, Select, Slider, Space, Switch, message } from 'antd';
+import { Button, Form, Input, InputNumber, Result, Select, Slider, Space, Switch, Tooltip, message } from 'antd';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DraggableComponent, { IBooleanChartExtra, IDraggleComponent, ILineChartExtra, INumberChartExtra } from './DraggableComponent';
@@ -8,6 +8,10 @@ import DropContainer from './DropContainer';
 import BooleanChart from '@/components/Charts/BooleanChart';
 import { CloseOutlined } from '@ant-design/icons';
 import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
+import { ContentType, Method, ResponseType } from '@/apis/standard/all';
+import { request } from '@/utils/request';
+import { useNavigate } from 'react-router-dom';
+import { SUCCESS_CODE } from '@/constants';
 
 export enum DragItemType {
     BOOLEAN = 'BOOLEAN',
@@ -34,12 +38,98 @@ export interface IDragItem {
     }
 }
 
+export interface ISignalItem {
+    label: string,
+    value: number,
+    extra: {
+        objectName: string
+        collectorSignalName: string
+        controllerName: string
+        controllerAddress: string
+        collectorName: string
+        collectorAddress: string
+        signalName: string
+        signalUnit: string
+        signalType: string
+        remark: string
+        innerIndex: string
+    }
+}
+
 const DataDisplay: React.FC = () => {
 
+    const [ifSendTestConfig, setIfSendTestConfig] = useState(true)
     const [ifStartGetData, setIfStartGetData] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
     const [dragItems, setDragItems] = useState<IDragItem[]>([])
     const [selectedDragItemId, setSelectedDragItemId] = useState<string | null>(null)
+    const [signals, setSignals] = useState<ISignalItem[]>([])
+    const testProcessIdRef = useRef<number | null>(null)
+    const [ifSwitchLoading, setIfSwitchLoading] = useState(false)
+
+    useMemo(() => {
+        request({
+            api: {
+                url: '/getSendedTestConfig',
+                method: Method.GET
+            }
+        }).then(res => {
+            if (!res.data) {
+                return setIfSendTestConfig(false)
+            }
+            // 获取用户的dashbord配置
+            request({
+                api: {
+                    url: '/getUserTestDashbordConfig',
+                    method: Method.GET
+                }
+            }).then(res => {
+                setDragItems(res.data || [])
+            })
+            const data: ISignalItem[] = []
+            testProcessIdRef.current = res.data?.testProcessId
+            // 提取测试信号
+            res.data?.testObjects.forEach(({ collectorSignals, objectName }: any) => {
+                collectorSignals.forEach(({
+                    collectorSignalName,
+                    signalInfo: { innerIndex, remark, signalType, signalUnit, signalName },
+                    controllerInfo: { controllerName, controllerAddress },
+                    collectorInfo: { collectorName, collectorAddress }
+                }: any) => {
+                    data.push({
+                        label: `${objectName}${collectorSignalName}`,
+                        value: innerIndex,
+                        extra: {
+                            objectName,
+                            collectorSignalName,
+                            controllerName,
+                            controllerAddress,
+                            collectorName,
+                            collectorAddress,
+                            signalName,
+                            signalUnit,
+                            signalType,
+                            remark,
+                            innerIndex,
+                        }
+                    })
+                })
+            })
+            // 对data聚类
+            const dataMap = new Map()
+            data.forEach(({ label, value, extra }) => {
+                const dl = dataMap.get(value)
+                !dl && dataMap.set(value, { label, extra })
+                !!dl && dataMap.set(value, { label: `${dl.label}/${label}`, extra })
+            })
+            const dataRes = []
+            for (let [k, v] of dataMap) {
+                const { label, extra } = v
+                dataRes.push({ label, value: k, extra })
+            }
+            setSignals(dataRes)
+        })
+    }, [])
 
     const [, drop] = useDrop<{ id: string } & IDraggleComponent>({
         accept: 'box',
@@ -186,15 +276,28 @@ const DataDisplay: React.FC = () => {
     function renderBase() {
         return <>
             <Form.Item style={{ marginBottom: 5 }} name='requestSignalId' label='关联测试信号' rules={[{ required: true }]} >
-                <Select
-                    options={[
-                        { value: 1, label: '速度' },
-                        { value: 2, label: '里程' },
-                        { value: 3, label: '经度' },
-                        { value: 4, label: '纬度' }
-                    ]}
-                />
-            </Form.Item>
+                <Select>
+                    {signals.map(({ label, value, extra }) => <Select.Option value={value}>
+                        <Tooltip placement='left' title={
+                            `
+                            <测试对象名称：${extra.objectName}>
+                            <卡内序号：${extra.innerIndex}>
+                            <待关联信号名称：${extra.collectorSignalName}>
+                            <采集器信号名称：${extra.signalName}>
+                            <信号单位：${extra.signalUnit}>
+                            <信号类型：${extra.signalType}>
+                            <核心板卡：${extra.controllerName}>
+                            <核心板卡地址：${extra.controllerAddress}>
+                            <采集板卡：${extra.collectorName}>
+                            <采集板卡地址：${extra.collectorAddress}>
+                            <备注：${extra.remark}>
+                            `
+                        }>
+                            {label}
+                        </Tooltip>
+                    </Select.Option>)}
+                </Select>
+            </Form.Item >
             <Form.Item style={{ marginBottom: 5 }} name='title' label='标题' rules={[{ required: true }]} >
                 <Input />
             </Form.Item>
@@ -246,29 +349,106 @@ const DataDisplay: React.FC = () => {
 
     }
 
-    return (<div className='dd_container' style={{
-        backgroundColor: ifStartGetData ? '#fff' : '#f8f8f8', backgroundImage: ifStartGetData ? 'none' : 'linear-gradient(#e2e2e2 1px, transparent 1px), linear-gradient(90deg, #e2e2e2 1px, transparent 1px)'
-    }}>
-        < div className="dd_header" >
-            数据阀门：<Switch checkedChildren="开启" unCheckedChildren="关闭" checked={ifStartGetData} defaultChecked onChange={() => {
-                // 校验是否全部进行数据关联
-                if (checkDataIntegrity()) {
-                    return setIfStartGetData(!ifStartGetData)
-                } return message.error('存在未关联的信号，无法开启数据阀门！')
-            }} />
+    const navigate = useNavigate()
+
+    function renderUnsendPage() {
+        return <Result
+            style={{ marginTop: '10%' }}
+            title="检测到您并未下发测试配置文件！"
+            extra={
+                <Button type="primary" key="console" onClick={() => navigate('/process-management')}>
+                    前往下发测试配置
+                </Button>
+            }
+        />
+    }
+
+    function renderSendedPage() {
+        return (<div className='dd_container' style={{
+            backgroundColor: ifStartGetData ? '#fff' : '#f8f8f8', backgroundImage: ifStartGetData ? 'none' : 'linear-gradient(#e2e2e2 1px, transparent 1px), linear-gradient(90deg, #e2e2e2 1px, transparent 1px)'
+        }}>
+            < div className="dd_header" >
+                数据阀门：<Switch checkedChildren="开启" loading={ifSwitchLoading} unCheckedChildren="关闭" checked={ifStartGetData} defaultChecked onChange={(value) => {
+                    // 校验是否全部进行数据关联
+                    if (checkDataIntegrity()) {
+                        value && setIfSwitchLoading(true)
+
+                        // 保存当前测试配置
+                        value && request({
+                            api: {
+                                method: Method.POST,
+                                url: '/sendTestConfig',
+                                format: ContentType.JSON,
+                            },
+                            params: {
+                                testProcessId: Number(testProcessIdRef.current),
+                                dashbordConfig: dragItems
+                            }
+                        }).then(res => {
+                            if (res.code === SUCCESS_CODE) {
+                                setIfStartGetData(true)
+                                message.success('已开启数据阀门')
+                            } else {
+                                message.error(res.msg)
+                            }
+                            setIfSwitchLoading(false)
+                        })
+                        !value && setIfStartGetData(false)
+                        !value && message.success('已关闭数据阀门')
+                    } else { return message.error('存在未关联的信号，无法开启数据阀门！') }
+                }
+                } />
+                <Button style={{ marginLeft: 40 }} type='primary' onClick={
+                    async () => {
+                        try {
+                            const response = await request({
+                                api: {
+                                    url: '/downloadUserSendedTestProcessConfig',
+                                    method: Method.GET,
+                                    responseType: ResponseType.ARRAY_BUFFER,
+                                    format: ContentType.FILE
+                                }
+                            })
+                            if (response.byteLength === 0) return message.error('该用户暂未下发配置文件')
+                            // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
+                            // 将二进制ArrayBuffer转换成Blob
+                            const blob = new Blob([response], { type: ContentType.FILE })
+
+                            //  创建一个 <a> 元素，并设置其属性
+                            const downloadLink = document.createElement('a');
+                            downloadLink.href = window.URL.createObjectURL(blob);
+                            downloadLink.download = '已下发的配置文件.xlsx';
+
+                            // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+
+                            // 下载完成后移除 <a> 元素
+                            document.body.removeChild(downloadLink);
+
+                        } catch (error) {
+                            console.error('下载文件时出错：', error);
+                        }
+                    }
+                }>下载当前已下发的测试配置文件</Button>
+            </div >
+            <div className="dd_body">
+                <div className="dd_drop_container" ref={ref}>
+                    <DropContainer ifStartGetData={ifStartGetData} selectedItemId={selectedDragItemId} selectFunc={setSelectedDragItemId} items={dragItems} />
+                </div>
+                <div className="dd_info">
+                    {selectedDragItemId ? renderEDITModeInfo() : renderADDModeInfo()}
+                </div>
+            </div>
         </div >
-        <div className="dd_body">
-            <div className="dd_drop_container" ref={ref}>
-                <DropContainer ifStartGetData={ifStartGetData} selectedItemId={selectedDragItemId} selectFunc={setSelectedDragItemId} items={dragItems} />
-            </div>
-            <div className="dd_info">
-                {selectedDragItemId ? renderEDITModeInfo() : renderADDModeInfo()}
-            </div>
-        </div>
-    </div >
 
 
-    );
+        );
+    }
+
+    return <>
+        {ifSendTestConfig ? renderSendedPage() : renderUnsendPage()}
+    </>
 };
 
 export default DataDisplay;

@@ -153,6 +153,31 @@ const TestProcessPage: React.FC = () => {
         }
     }
 
+    async function onSendTestConfig(id: string) {
+        modal.confirm({
+            title: '下发测试配置',
+            content: '确定下发该测试配置文件吗？',
+            onOk: () => {
+                request({
+                    api: {
+                        method: Method.POST,
+                        url: '/sendTestConfig',
+                        format: ContentType.JSON,
+                    },
+                    params: {
+                        testProcessId: Number(id),
+                        dashbordConfig: []
+                    }
+                }).then(({ code, msg }) => {
+                    message[code === SUCCESS_CODE ? 'success' : 'error'](msg)
+                })
+            },
+            onCancel: () => {
+                console.log('Cancel delete object');
+            },
+        });
+
+    }
     //异步刷新
     const refreshDataList = () => {
         getTestList(1, undefined, currentSearchValue).then((response) => {
@@ -177,6 +202,9 @@ const TestProcessPage: React.FC = () => {
             <Button type={"link"} onClick={async () => {
                 onDownloadTestConfig(record.testName, record.id)
             }}>下载测试文件</Button>
+            <Button type={"link"} onClick={async () => {
+                onSendTestConfig(record.id)
+            }}>下发测试配置</Button>
         </div>
     );
 

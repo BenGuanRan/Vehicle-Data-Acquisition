@@ -34,6 +34,9 @@ router.get('/getTestProcessList', TestProcessController.getTestProcessList)
 router.post('/deleteTestProcess', TestProcessController.deleteTestProcess)
 router.get('/getTestProcessConfig', TestProcessController.getTestProcessConfig)
 router.post('/syncPreTestConfig', TestProcessController.syncPreTestConfig)
+router.post('/sendTestConfig', TestProcessController.sendTestConfig)
+router.get('/getSendedTestConfig', TestProcessController.getSendedTestConfig)
+router.get('/getUserTestDashbordConfig', TestProcessController.getUserTestDashbordConfig)
 
 // 基本信息获取接口
 router.get('/getControllerList', BaseInfoController.getControllerList)
@@ -45,5 +48,6 @@ router.get('/getTestDevicesInfo', BaseInfoController.getTestDevicesInfo)
 router.get('/downloadPreTestConfigFile', AssetsController.downloadPreTestConfigFile)
 router.get('/downloadPreTestConfigFileTemp', AssetsController.downloadPreTestConfigFileTemp)
 router.get('/downloadTestProcessConfigFileById', AssetsController.downloadTestProcessConfigFileById)
+router.get('/downloadUserSendedTestProcessConfig', AssetsController.downloadUserSendedTestProcessConfig)
 
 export default router

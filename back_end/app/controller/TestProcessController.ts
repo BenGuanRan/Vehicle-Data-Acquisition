@@ -1,6 +1,6 @@
 import { Context } from "koa"
 import { IResBody } from "../types"
-import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
+import { BODY_INCOMPLETENESS, FAIL_CODE, QUERY_INCOMPLETENESS, SEARCH_FAIL_MSG, SEARCH_NO_DATA, SEARCH_SUCCESS_MSG, SUCCESS_CODE, USER_UN_SENT, WRITE_FAIL_MSG, WRITE_SUCCESS_MSG } from "../constants"
 import TestProcessService, { ITestProcess } from "../service/TestProcessService"
 import { getUserIdFromCtx } from "../../utils/getUserInfoFromCtx"
 import UserService from "../service/UserService";
@@ -8,6 +8,7 @@ import ControllerService from "../service/ControllerService"
 import CollectorService from "../service/CollectorService"
 import SignalService from "../service/SignalService"
 import { sequelize } from "../db"
+import SendTestConfigRecordService from "../service/SendTestConfigRecordService"
 
 class TestProcessController {
     // 新建一个测试流程
@@ -126,6 +127,7 @@ class TestProcessController {
         }
     }
     // 删除测试流程
+
     async deleteTestProcess(ctx: Context) {
         try {
             const { testProcessId } = ctx.request.body as any
@@ -204,6 +206,76 @@ class TestProcessController {
             }
         }
     }
+
+    // 下发测试配置文件
+    async sendTestConfig(ctx: Context) {
+        try {
+            const { testProcessId, dashbordConfig } = ctx.request.body as any
+            if (testProcessId === undefined) { throw new Error(BODY_INCOMPLETENESS); }
+            const userId = getUserIdFromCtx(ctx)
+            const testProcess = await TestProcessService.getTestConfigById(userId, Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            const res = await SendTestConfigRecordService.addTestConfigRecord(Number(userId), { testProcessId, ...testProcess }, dashbordConfig || [])
+            if (!res) throw new Error(WRITE_FAIL_MSG)
+            ctx.body = {
+                code: SUCCESS_CODE,
+                msg: WRITE_SUCCESS_MSG,
+                data: null
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
+    // 获取当前用户下发的的测试配置详情
+    async getSendedTestConfig(ctx: Context) {
+        try {
+            const userId = getUserIdFromCtx(ctx)
+            const testProcessConfig = await SendTestConfigRecordService.getSendedTestProcessId(Number(userId))
+            if (testProcessConfig === null) throw new Error(USER_UN_SENT)
+            ctx.body = {
+                code: SUCCESS_CODE,
+                msg: SEARCH_SUCCESS_MSG,
+                data: testProcessConfig
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
+    // 获取用户dashbord配置
+    async getUserTestDashbordConfig(ctx: Context) {
+        try {
+            const userId = getUserIdFromCtx(ctx)
+            const dashbordConfig = await SendTestConfigRecordService.getDashbordConfig(Number(userId))
+            ctx.body = {
+                code: SUCCESS_CODE,
+                msg: SEARCH_SUCCESS_MSG,
+                data: dashbordConfig || []
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+
+        }
+    }
+
 }
 
 export default new TestProcessController

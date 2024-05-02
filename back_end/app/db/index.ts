@@ -12,6 +12,7 @@ import SignalService from '../service/SignalService'
 import Controller from '../model/Controller.model'
 import Collector from '../model/Collector.model'
 import Signal from '../model/Signal.model'
+import SendTestConfigRecord from '../model/SendTestConfigRecord'
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = DB_CONFIG
 
@@ -19,7 +20,7 @@ export const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
   port: DB_PORT,
-  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal, Controller, Collector, Signal]
+  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal, Controller, Collector, Signal, SendTestConfigRecord]
 });
 
 const DB_OPT = {

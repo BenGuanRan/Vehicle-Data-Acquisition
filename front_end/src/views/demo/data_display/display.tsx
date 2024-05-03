@@ -1,13 +1,9 @@
 import React, { useMemo, useRef, useState } from 'react';
 import './display.css'
-import { Button, Form, Input, InputNumber, Result, Select, Slider, Space, Switch, Tooltip, message } from 'antd';
-import { DndProvider, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Button, Form, Input, InputNumber, Result, Select, Slider, Switch, Tooltip, message } from 'antd';
+import { useDrop } from 'react-dnd';
 import DraggableComponent, { IBooleanChartExtra, IDraggleComponent, ILineChartExtra, INumberChartExtra } from './DraggableComponent';
 import DropContainer from './DropContainer';
-import BooleanChart from '@/components/Charts/BooleanChart';
-import { CloseOutlined } from '@ant-design/icons';
-import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ContentType, Method, ResponseType } from '@/apis/standard/all';
 import { request } from '@/utils/request';
 import { useNavigate } from 'react-router-dom';
@@ -123,7 +119,7 @@ const DataDisplay: React.FC = () => {
                 !!dl && dataMap.set(value, { label: `${dl.label}/${label}`, extra })
             })
             const dataRes = []
-            for (let [k, v] of dataMap) {
+            for (const [k, v] of dataMap) {
                 const { label, extra } = v
                 dataRes.push({ label, value: k, extra })
             }

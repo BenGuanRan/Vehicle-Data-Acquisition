@@ -18,13 +18,16 @@ const BooleanChart: React.FC<{
         timerRef.current && clearInterval(timerRef.current)
         if (startRequest && requestSignalId !== null) {
             timerRef.current = setInterval(() => {
-                setValue(Math.random() > 0.5 ? true : false)
+                setValue(Math.random() > 0.5)
             }, interval)
         }
     }, [startRequest, interval])
 
     const [value, setValue] = useState(false)
-    return <div className="bc_container" style={{ width, height }}>
+    return <div className="bc_container" style={{
+        width:"100%",
+        height:"100%",
+    }}>
         <div className='bc_title'>{title}</div>
         <div className="bc_result" style={{ backgroundColor: value ? '#52c41a' : '#f5222d' }}>
             {value ? trueLabel : falseLabel}

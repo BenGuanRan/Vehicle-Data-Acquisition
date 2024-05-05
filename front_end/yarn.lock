@@ -3613,7 +3613,7 @@ react-draggable@^4.0.3, react-draggable@^4.4.5:
 
 react-grid-layout@^1.4.4:
   version "1.4.4"
-  resolved "https://registry.npmmirror.com/react-grid-layout/-/react-grid-layout-1.4.4.tgz"
+  resolved "https://registry.npmjs.org/react-grid-layout/-/react-grid-layout-1.4.4.tgz"
   integrity sha512-7+Lg8E8O8HfOH5FrY80GCIR1SHTn2QnAYKh27/5spoz+OHhMmEhU/14gIkRzJOtympDPaXcVRX/nT1FjmeOUmQ==
   dependencies:
     clsx "^2.0.0"

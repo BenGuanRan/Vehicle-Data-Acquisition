@@ -1,5 +1,5 @@
 import * as echarts from "echarts"
-import { useEffect, useMemo, useRef, useState } from "react"
+import {useEffect, useMemo, useRef, useState} from "react"
 
 const NumberGaugeChart: React.FC<{
     min: number
@@ -11,7 +11,7 @@ const NumberGaugeChart: React.FC<{
     width: number
     height: number
     interval: number
-}> = ({ startRequest, requestSignalId, unit, title, width, height, interval, min, max }) => {
+}> = ({startRequest, requestSignalId, unit, title, width, height, interval, min, max}) => {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const [value, setValue] = useState(0)
@@ -117,7 +117,9 @@ const NumberGaugeChart: React.FC<{
         }
     }, [unit, title, width, height, min, max])
 
-    return <div ref={numberContainerRef} style={{ width, height }}></div>
+    return <div ref={numberContainerRef} style={{
+        width: '100%', height: '100%'
+    }}></div>
 }
 
 export default NumberGaugeChart

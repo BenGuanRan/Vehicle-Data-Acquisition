@@ -17,7 +17,8 @@ const DropContainer: React.FC<{
 }> = ({ifStartGetData, items, selectFunc, selectedItemId, onUpdateItems}) => {
 
     return <div className="dc_container" onClick={() => selectFunc(null)}>
-        <GridLayout cols={30} rowHeight={40} width={1200} className="layout" isDraggable={true} isResizable={true}
+        <GridLayout cols={30} rowHeight={40} width={1200} className="layout" isDraggable={!ifStartGetData}
+                    isResizable={!ifStartGetData}
                     onResize={(layout, oldItem, newItem, placeholder, e, element) => {
                         console.log("onResize")
                         console.log(layout, oldItem, newItem, placeholder, e, element)
@@ -58,12 +59,20 @@ const DropContainer: React.FC<{
                     } = item
                     return <div className="dc_item_container" key={id} onClick={(e) => {
                         e.stopPropagation()
+                        console.log("click")
                         if (selectedItemId === id)
                             selectFunc(null)
                         else
                             selectFunc(id)
                     }} style={{border: selectedItemId === id ? '1px solid #1677ff' : '1px solid transparent'}}
                                 data-grid={{x: x, y: y, w: width / 30, h: height / 30, i: id}}
+                                onContextMenu={(e) => {
+                                    e.preventDefault()
+                                    if (selectedItemId === id)
+                                        selectFunc(null)
+                                    else
+                                        selectFunc(id)
+                                }}
                     >
                         {
                             {

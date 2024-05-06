@@ -9,9 +9,7 @@
 
 .dc_item_container {
     background-color: #fff;
-    margin: 20px;
     border-radius: 8px;
     float: left;
     box-sizing: border-box;
-    padding: 20px;
 }

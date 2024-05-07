@@ -1,7 +1,7 @@
-import { animation } from "@antv/g2plot/lib/adaptor/common"
+import {animation} from "@antv/g2plot/lib/adaptor/common"
 import * as echarts from "echarts"
-import { min } from "moment"
-import { useEffect, useMemo, useRef, useState } from "react"
+import {min} from "moment"
+import {useEffect, useMemo, useRef, useState} from "react"
 
 const LineChart: React.FC<{
     startRequest: boolean
@@ -12,7 +12,7 @@ const LineChart: React.FC<{
     interval: number
     during: number
     label: string
-}> = ({ startRequest, requestSignalId, title, width, height, interval, during, label }) => {
+}> = ({startRequest, requestSignalId, title, width, height, interval, during, label}) => {
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const [data, setData] = useState<[number, number][]>([])
     const chartRef = useRef<echarts.ECharts | null>()
@@ -25,12 +25,15 @@ const LineChart: React.FC<{
             timerRef.current = setInterval(() => {
                 const nowTimeStramp = +new Date()
                 while (dataRef.current.length) {
-                    const { name: time } = dataRef.current[0]
+                    const {name: time} = dataRef.current[0]
                     if (nowTimeStramp - time > during * 1000)
                         dataRef.current.shift()
                     else break
                 }
-                dataRef.current.push({ name: nowTimeStramp, value: [nowTimeStramp, Number((Math.random() * 1000).toFixed(2))] })
+                dataRef.current.push({
+                    name: nowTimeStramp,
+                    value: [nowTimeStramp, Number((Math.random() * 1000).toFixed(2))]
+                })
                 chartRef.current?.setOption({
                     series: [
                         {
@@ -95,7 +98,9 @@ const LineChart: React.FC<{
     }, [title, label])
 
 
-    return <div ref={lineContainerRef} style={{ width, height }}></div>
+    return <div ref={lineContainerRef} style={{
+        width: '100%', height: '100%'
+    }}></div>
 }
 
 export default LineChart

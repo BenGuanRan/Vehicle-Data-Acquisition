@@ -1,18 +1,20 @@
-import { useRef } from "react"
-import { useDrag } from 'react-dnd'
+import {useRef} from "react"
+import {useDrag} from 'react-dnd'
 import './index.css'
-import { DragItemType } from "../display"
-import { v4 as uuid } from "uuid"
+import {DragItemType} from "../display"
+import {v4 as uuid} from "uuid"
 
 export interface IBooleanChartExtra {
     defaultTrueLabel: string,
     defaultFalseLabel: string,
 }
+
 export interface INumberChartExtra {
     defaultUnit: string
     defaultMin: number
     defaultMax: number
 }
+
 export interface ILineChartExtra {
     defaultDuring: number
     defaultLabel: string
@@ -22,6 +24,8 @@ export interface IDraggleComponent {
     type: DragItemType,
     draggleConfig: {
         defaultTitle: string
+        defaultX: number
+        defaultY: number
         defaultWidth: number
         defaultHeight: number
         defaultInterval: number
@@ -29,7 +33,7 @@ export interface IDraggleComponent {
     }
 }
 
-const DraggableComponent: React.FC<IDraggleComponent> = ({ type, draggleConfig }) => {
+const DraggableComponent: React.FC<IDraggleComponent> = ({type, draggleConfig}) => {
     const ref = useRef<HTMLDivElement>(null)
 
     const [, drag] = useDrag<{ id: string } & IDraggleComponent>({
@@ -48,7 +52,7 @@ const DraggableComponent: React.FC<IDraggleComponent> = ({ type, draggleConfig }
             [DragItemType.LINE]: <div className="dcm_inner--line"></div>,
             [DragItemType.NUMBER]: <div className="dcm_inner--number"></div>
         }[type]}
-    </div >
+    </div>
 }
 
 export default DraggableComponent

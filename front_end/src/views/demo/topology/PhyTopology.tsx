@@ -1,29 +1,31 @@
-import { Button, Card, List, Modal, Result, Tabs, TabsProps, Tag, message } from "antd"
+import {Button, Card, List, Modal, Result, Tabs, TabsProps, Tag, message} from "antd"
 import ControllerInfoTable from "./ControllerInfoTabl"
-import { useMemo, useState } from "react";
-import { request } from "@/utils/request";
-import { ContentType, Method, ResponseType } from "@/apis/standard/all";
+import {useMemo, useState} from "react";
+import {request} from "@/utils/request";
+import {ContentType, Method, ResponseType} from "@/apis/standard/all";
 import CollectorInfoTable from "./CollectorInfoTable";
 import SignalInfoTable from "./SignalInfoTable";
 import './PhyTopology.css'
 import Dragger from "antd/es/upload/Dragger";
-import { InboxOutlined } from "@ant-design/icons";
+import {InboxOutlined} from "@ant-design/icons";
 import ExcelJs from 'exceljs'
-import { METHODS } from "http";
-import { SUCCESS_CODE } from "@/constants";
+import {METHODS} from "http";
+import {SUCCESS_CODE} from "@/constants";
 import userUtils from "@/utils/UserUtils";
-import { Navigate, useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 
 export interface IcontrollersConfigItem {
     id: number
     controllerName: string
     controllerAddress: string
 }
+
 export interface IcollectorsConfigItem {
     id: number
     collectorName: string
     collectorAddress: string
 }
+
 export interface IsignalsConfigItem {
     id: number
     signalName: string
@@ -54,7 +56,7 @@ const PreTestManager: React.FC = () => {
     const navigate = useNavigate()
 
     function reloadData() {
-        ; (async () => {
+        (async () => {
             const res = await request({
                 api: {
                     url: '/getTestDevicesInfo',
@@ -74,7 +76,7 @@ const PreTestManager: React.FC = () => {
         {
             key: '1',
             label: '核心板卡描述',
-            children: <ControllerInfoTable dataSource={testData?.controllersConfig || []} />,
+            children: <ControllerInfoTable dataSource={testData?.controllersConfig || []}/>,
         },
         {
             key: '2',
@@ -84,7 +86,7 @@ const PreTestManager: React.FC = () => {
         {
             key: '3',
             label: '信号描述',
-            children: <SignalInfoTable dataSource={testData?.signalsConfig || []} />,
+            children: <SignalInfoTable dataSource={testData?.signalsConfig || []}/>,
         },
     ]
     const itemsTitle = ['核心板卡描述', '采集板卡描述', '信号描述']
@@ -99,6 +101,7 @@ const PreTestManager: React.FC = () => {
         ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
     ]
     const sheetKey: ['controllersConfig', 'collectorsConfig', 'signalsConfig'] = ['controllersConfig', 'collectorsConfig', 'signalsConfig']
+
     function verifyWorkBook(wb: ExcelJs.Workbook) {
         // 工作簿前三个必须依次是核心板卡描述，采集板卡描述，采集板卡信号描述
         const wss = wb.worksheets
@@ -141,9 +144,9 @@ const PreTestManager: React.FC = () => {
             data[sheetKey[wsi - 1]] = []
             ws.eachRow((r, ri) => {
                 if (ri === 1) return
-                let item = {} as any
+                const item = {} as any
                 for (let i = 0; i < titlesKey[wsi - 1].length; i++) {
-                    let key = titlesKey[wsi - 1][i]
+                    const key = titlesKey[wsi - 1][i]
                     item[key] = r.getCell(i + 1)?.value
                 }
                 data[sheetKey[wsi - 1]].push(item)
@@ -159,7 +162,7 @@ const PreTestManager: React.FC = () => {
     }
 
     async function handleDragger(info: any) {
-        const { file } = info
+        const {file} = info
         try {
             // 读取上传的excel文件
             const wb = new ExcelJs.Workbook()
@@ -187,7 +190,7 @@ const PreTestManager: React.FC = () => {
             },
             params: preTestConfig,
         }).then((res: any) => {
-            const { code, msg } = res
+            const {code, msg} = res
             if (code === SUCCESS_CODE) {
                 setOpen(false)
                 reloadData()
@@ -230,14 +233,16 @@ const PreTestManager: React.FC = () => {
                             }</b>}
                             bordered
                             dataSource={preTestConfig[sheetKey[index]]}
-                            renderItem={(item) => <List.Item style={{ justifyContent: 'left' }}>{Object.values(item as string).map(i => <Tag>{i || 'NULL'}</Tag>)}</List.Item>}
+                            renderItem={(item) => <List.Item
+                                style={{justifyContent: 'left'}}>{Object.values(item as string).map(i =>
+                                <Tag>{i || 'NULL'}</Tag>)}</List.Item>}
                         />,
                     })
                 })
-            } />
+            }/>
         </Modal>
         <Card title='当前板卡配置情况' className="tm_card">
-            <Tabs className="tm_tabs" defaultActiveKey="1" items={items} />
+            <Tabs className="tm_tabs" defaultActiveKey="1" items={items}/>
             {userUtils.isRootUser() && <Dragger
                 accept=".xlsx"
                 maxCount={1}
@@ -245,11 +250,11 @@ const PreTestManager: React.FC = () => {
                 onChange={handleDragger}
             >
                 <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
+                    <InboxOutlined/>
                 </p>
                 <p className="ant-upload-text">请点击或拖拽到此区域上传板卡配置文件</p>
                 <p className="ant-upload-hint">
-                    <Button style={{ padding: 0 }} type="link" onClick={async () => {
+                    <Button style={{padding: 0}} type="link" onClick={async () => {
                         try {
                             const response = await request({
                                 api: {
@@ -262,7 +267,7 @@ const PreTestManager: React.FC = () => {
 
                             // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
                             // 将二进制ArrayBuffer转换成Blob
-                            const blob = new Blob([response], { type: ContentType.FILE })
+                            const blob = new Blob([response], {type: ContentType.FILE})
 
                             //  创建一个 <a> 元素，并设置其属性
                             const downloadLink = document.createElement('a');
@@ -283,7 +288,7 @@ const PreTestManager: React.FC = () => {
                 </p>
             </Dragger>}
             {!userUtils.isRootUser() && <Result
-                style={{ padding: 0, paddingTop: 10 }}
+                style={{padding: 0, paddingTop: 10}}
                 title="普通用户无法配置板卡"
                 extra={
                     <Button type="primary" key="console" onClick={() => {

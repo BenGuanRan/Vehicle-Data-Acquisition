@@ -6,7 +6,7 @@ import LineChart from "@/components/Charts/LineChart";
 import GridLayout from 'react-grid-layout';
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import React, {useEffect, useState} from "react";
+import React from "react";
 
 const DropContainer: React.FC<{
     ifStartGetData: boolean,
@@ -16,38 +16,9 @@ const DropContainer: React.FC<{
     onUpdateItems: (items: GridLayout.Layout) => void
 }> = ({ifStartGetData, items, selectFunc, selectedItemId, onUpdateItems}) => {
 
-    const [couldDrag, setCouldDrag] = useState(false)
-    const ref = React.useRef<HTMLDivElement>(null)
+    const currentId = React.useRef<string | null>(null)
 
-    const handleMouseMove = () => {
-        setCouldDrag(true);
-    };
-
-    useEffect(() => {
-        const currentRef = ref.current;
-
-        if (currentRef) {
-            currentRef.addEventListener('mousedown', () => {
-                currentRef.addEventListener('mousemove', handleMouseMove);
-            });
-
-            currentRef.addEventListener('mouseup', () => {
-                setCouldDrag(false);
-                currentRef.removeEventListener('mousemove', handleMouseMove);
-            });
-        }
-
-        // 在组件卸载时移除事件监听器
-        return () => {
-            if (currentRef) {
-                currentRef.removeEventListener('mousedown', handleMouseMove);
-                currentRef.removeEventListener('mouseup', handleMouseMove);
-            }
-        };
-    }, [])
-
-
-    return <div className="dc_container" onClick={() => selectFunc(null)} ref={ref}>
+    return <div className="dc_container" onClick={() => selectFunc(null)}>
         <GridLayout cols={30} rowHeight={40} width={1200} className="layout" isDraggable={!ifStartGetData}
                     isResizable={!ifStartGetData}
                     onResize={(layout, oldItem, newItem, placeholder, e, element) => {
@@ -59,11 +30,6 @@ const DropContainer: React.FC<{
                         console.log("onDrop")
                         console.log(layout, item, e)
                         onUpdateItems(item)
-                    }}
-                    onDragStop={(layout, oldItem, newItem, placeholder, e, element) => {
-                        console.log("onDragStop")
-                        console.log(layout, oldItem, newItem, placeholder, e, element)
-                        onUpdateItems(newItem)
                     }}
         >
             {
@@ -89,28 +55,34 @@ const DropContainer: React.FC<{
                         }
                     } = item
 
-                    return <div className="dc_item_container" id={id} key={id} onClick={(e) => {
-                        e.stopPropagation()
-                        console.log("click")
-                        if (selectedItemId === id)
-                            selectFunc(null)
-                        else
-                            selectFunc(id)
-                    }} style={{border: selectedItemId === id ? '1px solid #1677ff' : '1px solid transparent'}}
-                                data-grid={{x: x, y: y, w: width / 30, h: height / 30, i: id, static: !couldDrag}}
+
+                    return <div className="dc_item_container" id={id} key={id}
+                                // onClick={(e) => {
+                                //     e.stopPropagation()
+                                //     console.log("click")
+                                //     if (selectedItemId === id)
+                                //         selectFunc(null)
+                                //     else
+                                //         selectFunc(id)
+                                //
+                                // }}
+                                style={{border: selectedItemId === id ? '1px solid #1677ff' : '1px solid transparent'}}
+                                data-grid={{x: x, y: y, w: width / 30, h: height / 30, i: id}}
+                                onMouseEnter={() => {
+                                    currentId.current = id
+                                }}
                                 onContextMenu={(e) => {
                                     e.preventDefault()
-                                    if (selectedItemId === id)
-                                        selectFunc(null)
-                                    else
-                                        selectFunc(id)
+                                    e.stopPropagation()
+                                    selectFunc(id)
                                 }}
                     >
                         {
                             {
                                 [DragItemType.NUMBER]: <NumberGaugeChart startRequest={ifStartGetData}
                                                                          requestSignalId={requestSignalId}
-                                                                         unit={unit || ''} title={title} width={width}
+                                                                         unit={unit || ''} title={title}
+                                                                         width={width}
                                                                          height={height} interval={interval}
                                                                          min={min || 0} max={max || 100}/>,
                                 [DragItemType.BOOLEAN]: <BooleanChart startRequest={ifStartGetData}
@@ -119,7 +91,8 @@ const DropContainer: React.FC<{
                                                                       falseLabel={falseLabel || '否'} title={title}
                                                                       width={width} height={height}
                                                                       interval={interval}/>,
-                                [DragItemType.LINE]: <LineChart label={label || '数值'} startRequest={ifStartGetData}
+                                [DragItemType.LINE]: <LineChart label={label || '数值'}
+                                                                startRequest={ifStartGetData}
                                                                 requestSignalId={requestSignalId} title={title}
                                                                 width={width} height={height} interval={interval}
                                                                 during={during || 1}/>

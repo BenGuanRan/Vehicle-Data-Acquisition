@@ -1,18 +1,18 @@
-import {Button, Card, List, Modal, Result, Tabs, TabsProps, Tag, message} from "antd"
+import { Button, Card, List, Modal, Popconfirm, Result, Tabs, TabsProps, Tag, message } from "antd"
 import ControllerInfoTable from "./ControllerInfoTabl"
-import {useMemo, useState} from "react";
-import {request} from "@/utils/request";
-import {ContentType, Method, ResponseType} from "@/apis/standard/all";
+import { useMemo, useState } from "react";
+import { request } from "@/utils/request";
+import { ContentType, Method, ResponseType } from "@/apis/standard/all";
 import CollectorInfoTable from "./CollectorInfoTable";
 import SignalInfoTable from "./SignalInfoTable";
 import './PhyTopology.css'
 import Dragger from "antd/es/upload/Dragger";
-import {InboxOutlined} from "@ant-design/icons";
+import { InboxOutlined } from "@ant-design/icons";
 import ExcelJs from 'exceljs'
-import {METHODS} from "http";
-import {SUCCESS_CODE} from "@/constants";
+import { METHODS } from "http";
+import { SUCCESS_CODE } from "@/constants";
 import userUtils from "@/utils/UserUtils";
-import {Navigate, useNavigate} from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export interface IcontrollersConfigItem {
     id: number
@@ -47,7 +47,6 @@ const PreTestManager: React.FC = () => {
     const [testData, setTestData] = useState<ITestData>()
     const [messageApi, contextHolder] = message.useMessage();
     const [open, setOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
     const [preTestConfig, setPreTestConfig] = useState<any>({
         controllersConfig: [] as any,
         collectorsConfig: [] as any,
@@ -76,7 +75,7 @@ const PreTestManager: React.FC = () => {
         {
             key: '1',
             label: '核心板卡描述',
-            children: <ControllerInfoTable dataSource={testData?.controllersConfig || []}/>,
+            children: <ControllerInfoTable dataSource={testData?.controllersConfig || []} />,
         },
         {
             key: '2',
@@ -86,7 +85,7 @@ const PreTestManager: React.FC = () => {
         {
             key: '3',
             label: '信号描述',
-            children: <SignalInfoTable dataSource={testData?.signalsConfig || []}/>,
+            children: <SignalInfoTable dataSource={testData?.signalsConfig || []} />,
         },
     ]
     const itemsTitle = ['核心板卡描述', '采集板卡描述', '信号描述']
@@ -162,7 +161,7 @@ const PreTestManager: React.FC = () => {
     }
 
     async function handleDragger(info: any) {
-        const {file} = info
+        const { file } = info
         try {
             // 读取上传的excel文件
             const wb = new ExcelJs.Workbook()
@@ -181,30 +180,31 @@ const PreTestManager: React.FC = () => {
     }
 
     async function syncPreTestConfig() {
-        setConfirmLoading(true)
-        request({
-            api: {
-                url: '/syncPreTestConfig',
-                method: Method.POST,
-                format: ContentType.JSON
-            },
-            params: preTestConfig,
-        }).then((res: any) => {
-            const {code, msg} = res
-            if (code === SUCCESS_CODE) {
+        return new Promise((resolve => {
+            request({
+                api: {
+                    url: '/syncPreTestConfig',
+                    method: Method.POST,
+                    format: ContentType.JSON
+                },
+                params: preTestConfig,
+            }).then((res: any) => {
+                const { code, msg } = res
+                if (code === SUCCESS_CODE) {
+                    setOpen(false)
+                    reloadData()
+                    messageApi.success('同步配置成功')
+                } else {
+                    throw new Error
+                }
+            }).catch(err => {
+                console.log(err);
                 setOpen(false)
-                reloadData()
-                messageApi.success('同步配置成功')
-            } else {
-                throw new Error
-            }
-        }).catch(err => {
-            console.log(err);
-            setOpen(false)
-            messageApi.success('同步配置失败')
-        }).finally(() => {
-            setConfirmLoading(false)
-        })
+                messageApi.success('同步配置失败')
+            }).finally(() => {
+                resolve(null)
+            })
+        }))
     }
 
     return <div className="tm_container">
@@ -214,8 +214,22 @@ const PreTestManager: React.FC = () => {
             title="excel格式检查通过，是否立即同步测试预配置文件？"
             open={open}
             onOk={() => syncPreTestConfig()}
-            confirmLoading={confirmLoading}
             onCancel={() => setOpen(false)}
+            footer={
+                [
+                    <Popconfirm
+                        title="高危操作"
+                        description="立即同步将清除所有已创建的测试流程，以及下发的测试配置文件！！！"
+                        onConfirm={() => syncPreTestConfig()}
+                        onCancel={() => setOpen(false)}
+                        okText="确认"
+                        cancelText="取消"
+                    >
+                        <Button danger>立即同步</Button>
+                    </Popconfirm>,
+                    <Button onClick={() => setOpen(false)}>取消</Button>
+                ]
+            }
         >
             <Tabs className="tm_tabs" defaultActiveKey="1" items={
                 itemsTitle.map((item, index) => {
@@ -234,15 +248,15 @@ const PreTestManager: React.FC = () => {
                             bordered
                             dataSource={preTestConfig[sheetKey[index]]}
                             renderItem={(item) => <List.Item
-                                style={{justifyContent: 'left'}}>{Object.values(item as string).map(i =>
-                                <Tag>{i || 'NULL'}</Tag>)}</List.Item>}
+                                style={{ justifyContent: 'left' }}>{Object.values(item as string).map(i =>
+                                    <Tag>{i || 'NULL'}</Tag>)}</List.Item>}
                         />,
                     })
                 })
-            }/>
+            } />
         </Modal>
         <Card title='当前板卡配置情况' className="tm_card">
-            <Tabs className="tm_tabs" defaultActiveKey="1" items={items}/>
+            <Tabs className="tm_tabs" defaultActiveKey="1" items={items} />
             {userUtils.isRootUser() && <Dragger
                 accept=".xlsx"
                 maxCount={1}
@@ -250,11 +264,11 @@ const PreTestManager: React.FC = () => {
                 onChange={handleDragger}
             >
                 <p className="ant-upload-drag-icon">
-                    <InboxOutlined/>
+                    <InboxOutlined />
                 </p>
                 <p className="ant-upload-text">请点击或拖拽到此区域上传板卡配置文件</p>
                 <p className="ant-upload-hint">
-                    <Button style={{padding: 0}} type="link" onClick={async () => {
+                    <Button style={{ padding: 0 }} type="link" onClick={async () => {
                         try {
                             const response = await request({
                                 api: {
@@ -267,7 +281,7 @@ const PreTestManager: React.FC = () => {
 
                             // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
                             // 将二进制ArrayBuffer转换成Blob
-                            const blob = new Blob([response], {type: ContentType.FILE})
+                            const blob = new Blob([response], { type: ContentType.FILE })
 
                             //  创建一个 <a> 元素，并设置其属性
                             const downloadLink = document.createElement('a');
@@ -288,7 +302,7 @@ const PreTestManager: React.FC = () => {
                 </p>
             </Dragger>}
             {!userUtils.isRootUser() && <Result
-                style={{padding: 0, paddingTop: 10}}
+                style={{ padding: 0, paddingTop: 10 }}
                 title="普通用户无法配置板卡"
                 extra={
                     <Button type="primary" key="console" onClick={() => {

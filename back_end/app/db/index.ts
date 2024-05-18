@@ -12,7 +12,8 @@ import SignalService from '../service/SignalService'
 import Controller from '../model/Controller.model'
 import Collector from '../model/Collector.model'
 import Signal from '../model/Signal.model'
-import SendTestConfigRecord from '../model/SendTestConfigRecord'
+import SendTestConfigRecord from '../model/SendTestConfigRecord.model'
+import SendTestConfigVeriftCache from '../model/SendTestConfigVerifyCache.model'
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = DB_CONFIG
 
@@ -20,7 +21,8 @@ export const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
   port: DB_PORT,
-  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal, Controller, Collector, Signal, SendTestConfigRecord]
+  logging: false,
+  models: [User, TokenBlackListItem, TestProcess, TestObject, CollectorSignal, Controller, Collector, Signal, SendTestConfigRecord, SendTestConfigVeriftCache]
 });
 
 const DB_OPT = {

@@ -1,7 +1,7 @@
 import TokenBlackListItem from "../model/TokenBlackListItem.model"
 import OT_CONFIG from '../config/ot_config'
 import Sequelize from "sequelize"
-import SendTestConfigRecord, { IDragItem } from "../model/SendTestConfigRecord"
+import SendTestConfigRecord, { IDragItem } from "../model/SendTestConfigRecord.model"
 import { sequelize } from "../db"
 import { ITestProcessConfig } from "../../utils/turnTestProcessConfigIntoExcel"
 

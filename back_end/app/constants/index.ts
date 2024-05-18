@@ -41,4 +41,3 @@ export const CONTROLLER_WORKSHEET = '核心板卡描述'
 export const COLLECTOR_WORKSHEET = '采集板卡描述'
 export const SIGNAL_WORKSHEET = '采集板卡信号描述'
 export const USER_UN_SENT = '该用户暂未下发测试配置文件'
-

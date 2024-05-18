@@ -9,6 +9,9 @@ import CollectorService from "../service/CollectorService"
 import SignalService from "../service/SignalService"
 import { sequelize } from "../db"
 import SendTestConfigRecordService from "../service/SendTestConfigRecordService"
+import BE_CONFIG from '../../app/config/be_config'
+import net from 'node:net'
+import SendTestConfigVerifyCacheService from "../service/SendTestConfigVerifyCacheService"
 
 class TestProcessController {
     // 新建一个测试流程
@@ -36,6 +39,43 @@ class TestProcessController {
             (ctx.body as IResBody) = {
                 code: FAIL_CODE,
                 msg: BODY_INCOMPLETENESS,
+                data: null
+            }
+
+        }
+    }
+    // 拷贝一个测试流程
+    async copyTestProcess(ctx: Context) {
+        try {
+            const { testProcessId } = ctx.request.body as any
+            if (testProcessId === undefined) { throw new Error(BODY_INCOMPLETENESS); }
+            const userId = getUserIdFromCtx(ctx)
+            const testProcess = await TestProcessService.getTestProcessDataById(userId, Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            testProcess.testName = `copy_${testProcess.testName}`
+            console.log(testProcess.toJSON());
+
+            const res = await TestProcessService.createTestProcess(userId, testProcess.toJSON() as any)
+            if (res) {
+                (ctx.body as IResBody) = {
+                    code: SUCCESS_CODE,
+                    msg: WRITE_SUCCESS_MSG,
+                    data: testProcess
+                }
+            } else {
+                (ctx.body as IResBody) = {
+                    code: FAIL_CODE,
+                    msg: WRITE_FAIL_MSG,
+                    data: null
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
                 data: null
             }
 
@@ -182,13 +222,14 @@ class TestProcessController {
         try {
             await UserService.onlyRootCanDo(ctx, async (ctx) => {
                 const transaction = await sequelize.transaction()
+                const userId = getUserIdFromCtx(ctx)
                 const { controllersConfig, collectorsConfig, signalsConfig } = ctx.request.body as any
                 // 初始化核心板卡
-                await ControllerService.initControllers(controllersConfig)
+                await ControllerService.initControllers({ data: controllersConfig, userId })
                 // 初始化采集板卡
-                await CollectorService.initCollectors(collectorsConfig)
+                await CollectorService.initCollectors({ data: collectorsConfig, userId })
                 // 初始化采集信号
-                await SignalService.initSignals(signalsConfig)
+                await SignalService.initSignals({ data: signalsConfig, userId })
                 await transaction.commit();
                 (ctx.body as IResBody) = {
                     code: SUCCESS_CODE,
@@ -206,7 +247,64 @@ class TestProcessController {
             }
         }
     }
-
+    // 进入配置模式
+    async enterConfigurationMode(ctx: Context) {
+        try {
+            const { testProcessId } = ctx.request.body as any
+            const userId = getUserIdFromCtx(ctx)
+            const testProcess = await TestProcessService.getTestConfigById(userId, Number(testProcessId))
+            if (!testProcess) {
+                { throw new Error(SEARCH_NO_DATA); }
+            }
+            // 清除userId所对应的cache
+            await SendTestConfigVerifyCacheService.clearCache(userId)
+            // 将该条记录写入到待对比的数据库记录中
+            testProcess.testObjects.forEach(({ collectorSignals }) => {
+                collectorSignals.forEach(async ({ controllerInfo: { controllerAddress }, collectorInfo: { collectorAddress }, signalInfo: { innerIndex } }) => {
+                    await SendTestConfigVerifyCacheService.addACache({
+                        userId,
+                        controllerAddress,
+                        collectorAddress,
+                        testProcessId,
+                        controllerServerPort: Number(BE_CONFIG.TCP_PORT),
+                    })
+                })
+            });
+            // userId processid 核心卡addr 核心卡端口 板卡addr 采集信号
+            // 向核心板发送数据进入配置模式
+            const client = new net.Socket();
+            client.connect(Number(BE_CONFIG.TCP_PORT!), BE_CONFIG.LOACAL_HOST!, () => {
+                // 向核心控制器下发《进入配置模式》指令
+                client.write(JSON.stringify({ type: 'ORDER', message: 'CM', data: testProcess }));
+            });
+            // 监听来自服务器的数据
+            client.on('data', async res => {
+                if (!Buffer.isBuffer(res)) {
+                    const { type, message, data } = JSON.parse(res)
+                    if (type === 'ORDER' && message === 'CM_BACK') {
+                        await SendTestConfigVerifyCacheService.addACache({
+                            userId,
+                            testProcessId,
+                            controllerAddress: data?.controllerAddress,
+                            controllerServerPort: data?.controllerServerPort,
+                            collectorAddress: data?.collectorAddress
+                        })
+                    }
+                }
+            });
+            // 监听服务器关闭连接
+            client.on('close', () => {
+                console.log('核心控制器关闭');
+            });
+        } catch (error) {
+            console.log(error);
+            (ctx.body as IResBody) = {
+                code: FAIL_CODE,
+                msg: (error as Error).toString(),
+                data: null
+            }
+        }
+    }
     // 下发测试配置文件
     async sendTestConfig(ctx: Context) {
         try {
@@ -219,6 +317,7 @@ class TestProcessController {
             }
             const res = await SendTestConfigRecordService.addTestConfigRecord(Number(userId), { testProcessId, ...testProcess }, dashbordConfig || [])
             if (!res) throw new Error(WRITE_FAIL_MSG)
+
             ctx.body = {
                 code: SUCCESS_CODE,
                 msg: WRITE_SUCCESS_MSG,

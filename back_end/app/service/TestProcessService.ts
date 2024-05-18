@@ -68,6 +68,27 @@ class TestProcessService {
             return null
         }
     }
+    // 通过id查询一个测试流程
+    async getTestProcessDataById(userId: number, id: number): Promise<TestProcess | null> {
+        try {
+            const testProcess = await TestProcess.findOne({
+                where: { id, userId },
+                attributes: ['testName'],
+                include: {
+                    model: TestObject,
+                    attributes: ['objectName'],
+                    include: [{
+                        model: CollectorSignal,
+                        attributes: ['collectorSignalName', 'controllerId', 'collectorId', 'signalId']
+                    }]
+                }
+            })
+            return testProcess
+        } catch (error) {
+            console.log(error);
+            return null
+        }
+    }
     // 通过id编辑一个测试流程
     async editProcessById(userId: number, data: ITestProcess & { testProcessId: number }): Promise<any | null> {
         const { testProcessId, testObjects, testName } = data

@@ -1,10 +1,12 @@
-import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Signal from './Signal.model';
+import User from './User.model';
 
 export interface ICollectorModel {
     id?: number
     collectorName: string
     collectorAddress: string
+    userId: number | null
 }
 
 @Table({
@@ -26,4 +28,14 @@ export default class Collector extends Model<ICollectorModel> {
 
     @HasMany(() => Signal)
     signals!: Signal[]
+
+    @ForeignKey(() => User)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: true
+    })
+    userId!: number
+
+    @BelongsTo(() => User)
+    user!: User
 }

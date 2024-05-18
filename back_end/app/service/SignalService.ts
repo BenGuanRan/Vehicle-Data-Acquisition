@@ -14,23 +14,26 @@ class SignalService {
         })
         return data
     }
-    async initSignals(data?: (ISignalModel & { collectorName?: string })[]): Promise<boolean> {
+    async initSignals(config?: { userId: number, data: (ISignalModel & { collectorName?: string })[] }): Promise<boolean> {
         try {
             const transaction = await sequelize.transaction()
-            await Signal.destroy({
-                where: {},
-            })
-            if (!data)
+            let data = null
+            if (!config) {
                 data = (await excelReader({
                     path: path.join(__dirname, `../../assets/${DEVICE_CONFIG_FILE_NAME}`),
                     workSheetName: SIGNAL_WORKSHEET,
                     keys: ['innerIndex', 'collectorName', 'signalName', 'signalUnit', 'signalType', 'remark']
                 })) as (ISignalModel & { collectorName?: string })[]
-            const collectors = await CollectorService.getcollectorsConfig()
+            } else {
+                const { data: srcData } = config
+                data = srcData
+            }
+
+            const collectors = await CollectorService.getcollectorsConfig(config?.userId || undefined)
             data!.forEach((value) => {
                 const { collectorName: cn } = value
                 // 找到collectorName所对应的id
-                const collectorId = collectors.filter(({ collectorName }) => collectorName === cn)[0]?.id
+                const collectorId = collectors.filter(({ collectorName, userId }) => collectorName === cn && userId === (config?.userId || null))[0]?.id
                 if (collectorId !== undefined) {
                     value['collectorId'] = collectorId
                     delete value['collectorName']
@@ -44,12 +47,13 @@ class SignalService {
             return false
         }
     }
-    async getsignalsConfig() {
+    async getsignalsConfig(userId?: number) {
         return await Signal.findAll({
             include: [{
                 model: Collector,
                 attributes: [],
-                as: 'collector'
+                as: 'collector',
+                where: userId ? { userId } : { userId: null }
             }],
             attributes: [
                 'id',

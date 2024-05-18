@@ -109,6 +109,32 @@ const TestProcessPage: React.FC = () => {
             testId: id
         });
     }
+    const onCopy = (id: string) => {
+        modal.confirm({
+            title: '拷贝测试流程',
+            content: '确定拷贝该测试流程吗？',
+            onOk: () => {
+                request({
+                    api: {
+                        method: Method.POST,
+                        url: '/copyTestProcess',
+                        format: ContentType.JSON,
+                    },
+                    params: {
+                        testProcessId: Number(id)
+                    }
+                }).then(({ code, msg, data }) => {
+                    message[code === SUCCESS_CODE ? 'success' : 'error'](msg)
+                    console.log(data);
+                }).finally(() => {
+                    refreshDataList()
+                })
+            },
+            onCancel: () => {
+                console.log('Cancel delete object');
+            },
+        });
+    }
 
     const onEdit = (id: string) => {
         setModalData({
@@ -196,6 +222,9 @@ const TestProcessPage: React.FC = () => {
             <Button type={"link"} onClick={() => {
                 onShowDetail(record.id)
             }}>详情</Button>
+            <Button type={"link"} onClick={() => {
+                onCopy(record.id)
+            }}>拷贝</Button>
             <Button type={"link"} onClick={() => {
                 onDelete(record.id)
             }}>删除</Button>

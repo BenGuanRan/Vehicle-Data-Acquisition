@@ -203,19 +203,6 @@ const DataDisplay: React.FC = () => {
                     defaultMax: 100,
                 }
             }} />
-            <DraggableComponent type={DragItemType.NUMBER} draggleConfig={{
-                defaultTitle: '请编辑默认标题',
-                defaultX: 0,
-                defaultY: 0,
-                defaultWidth: 300,
-                defaultHeight: 300,
-                defaultInterval: 1000,
-                extra: {
-                    defaultUnit: '单位',
-                    defaultMin: 0,
-                    defaultMax: 100,
-                }
-            }} />
             <DraggableComponent type={DragItemType.LINE} draggleConfig={{
                 defaultTitle: '请编辑默认标题',
                 defaultX: 0,

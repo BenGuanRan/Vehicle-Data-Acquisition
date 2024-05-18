@@ -10,7 +10,7 @@ function RequestBodyVerifyMiddleware(ctx: Context, next: Next) {
     const pass = Object.values(requestBody).every(v => ![null, undefined].includes(v) || (typeof v === 'string' && v.trim() !== ''))
     if (pass) {
         return next()
-    } else {
+    } else { 
         ctx.body = {
             code: FAIL_CODE,
             msg: BODY_INCOMPLETENESS,

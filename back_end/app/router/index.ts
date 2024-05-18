@@ -37,6 +37,7 @@ router.post('/syncPreTestConfig', TestProcessController.syncPreTestConfig)
 router.post('/sendTestConfig', TestProcessController.sendTestConfig)
 router.get('/getSendedTestConfig', TestProcessController.getSendedTestConfig)
 router.get('/getUserTestDashbordConfig', TestProcessController.getUserTestDashbordConfig)
+router.post('/copyTestProcess', TestProcessController.copyTestProcess)
 
 // 基本信息获取接口
 router.get('/getControllerList', BaseInfoController.getControllerList)

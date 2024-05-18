@@ -12,6 +12,8 @@ export interface IDragItem {
     type: DragItemType,
     itemConfig: {
         requestSignalId: number | null
+        x: number
+        y: number
         width: number
         height: number
         title: string

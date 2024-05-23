@@ -24,6 +24,10 @@ const swServer = net.createServer(socket => {
     socket.on('end', () => {
         console.log('上位机断开连接');
     });
+
+    socket.on('error', (err) => {
+        console.log('error:', err);
+    });
 });
 
 

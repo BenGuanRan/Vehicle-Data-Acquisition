@@ -1,51 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Form, Menu, MenuProps, Modal, Input } from "antd";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { logout } from "@/apis/request/auth.ts";
-import { changePassword } from "@/apis/request/user.ts";
-import { SUCCESS_CODE } from "@/constants";
+import React, {useEffect, useState} from "react";
+import {Form, Menu, MenuProps, Modal, Input} from "antd";
+import {NavigateFunction, useNavigate} from "react-router-dom";
+import {logout} from "@/apis/request/auth.ts";
+import {changePassword} from "@/apis/request/user.ts";
+import {SUCCESS_CODE} from "@/constants";
 import userUtils from "@/utils/UserUtils.ts";
-
-type MenuItem = Required<MenuProps>['items'][number];
-
-
-function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group',
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    } as MenuItem;
-}
-
-const itemList = [
-    {
-        key: '/process-management',
-        label: '测试流程管理',
-    },
-    {
-        key: '/data-display',
-        label: '测试数据展示',
-    },
-    {
-        key: '/physical-topology',
-        label: '测试预配置',
-    },
-]
-
-
-// const items: MenuProps['items'] = [
-//     getItem('车辆信息采集系统', 'grp', null,
-//         getItemList().map((item) => getItem(item.label, item.key)), 'group'),
-// ];
-
 
 export const HomeMenu = () => {
     const navigate: NavigateFunction = useNavigate()
@@ -54,15 +13,25 @@ export const HomeMenu = () => {
     const [items, setItems] = useState([
         {
             key: '/process-management',
-            label: '测试流程管理',
+            label: '测试配置生成管理',
         },
         {
             key: '/data-display',
-            label: '测试数据展示',
+            label: '测试数据接收展示',
+            // children: [
+            //     {
+            //         key: '/data-display/online',
+            //         label: '在线数据接收',
+            //     },
+            //     {
+            //         key: '/data-display/offline',
+            //         label: '离线数据展示',
+            //     },
+            // ],
         },
         {
             key: '/physical-topology',
-            label: '测试预配置',
+            label: '测试板卡信息管理',
         },
     ])
 
@@ -99,7 +68,7 @@ export const HomeMenu = () => {
             return
         }
 
-        changePassword({ password: newPass }).then((response) => {
+        changePassword({password: newPass}).then((response) => {
             if (response.code === SUCCESS_CODE) {
                 alert("修改成功")
             } else {
@@ -112,27 +81,27 @@ export const HomeMenu = () => {
     return <>
         <Menu
             onClick={onClick}
-            style={{ width: '15vw', minHeight: '100vh', height: 'auto' }}
+            style={{width: '15vw', minHeight: '100vh', height: 'auto'}}
             defaultSelectedKeys={[window.location.pathname]}
             mode="inline"
             items={items}
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
-            <Form form={form} style={{ width: '30vw' }}>
+            <Form form={form} style={{width: '30vw'}}>
                 <Form.Item
                     name="newPassword"
                     label="New Password"
-                    rules={[{ required: true, message: '请输入新密码' }]}
+                    rules={[{required: true, message: '请输入新密码'}]}
                 >
-                    <Input.Password placeholder="New Password" name="newPassword" />
+                    <Input.Password placeholder="New Password" name="newPassword"/>
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"
                     label="Confirm Password"
-                    rules={[{ required: true, message: '请确认输入新密码' }]}
+                    rules={[{required: true, message: '请确认输入新密码'}]}
                 >
-                    <Input.Password placeholder="Confirm Password" name="confirmPassword" />
+                    <Input.Password placeholder="Confirm Password" name="confirmPassword"/>
                 </Form.Item>
             </Form>
         </Modal>

@@ -1,8 +1,9 @@
-const net = require('net');
 
 // 创建 TCP 客户端
-const client = new net.Socket();
-const client2 = new net.Socket();
+import {Socket} from "net";
+
+const client = new Socket();
+const client2 = new Socket();
 
 // 连接到服务器
 const PORT = 3578;
@@ -33,7 +34,3 @@ client2.on('data', data => {
 client2.on('close', () => {
     console.log('Connection closed');
 });
-
-
-
-

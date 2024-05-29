@@ -11,11 +11,11 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 
 export const my_router = createBrowserRouter([
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
+        {
+            path: "/login",
+            element: <Login/>,
+        },
+        {
 
         path: "/",
         element: <RequirAuthRoute><SystemTotalPage /></RequirAuthRoute>,
@@ -28,7 +28,7 @@ export const my_router = createBrowserRouter([
             {
                 path: "/data-display",
                 element: <DndProvider backend={HTML5Backend}>
-                    <DataDisplay />
+                    <DataDisplay/>
                 </DndProvider>
             },
             {

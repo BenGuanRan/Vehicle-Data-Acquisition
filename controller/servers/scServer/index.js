@@ -3,8 +3,8 @@ import {scSocket} from '../../index.js'
 import handleMessages from "./handleMessages.js";
 
 const scServer = net.createServer(socket => {
-    scSocket.instance = socket
     console.log('采集器连接');
+    scSocket.instance = socket
 
     // 监听采集器断开连接
     socket.on('end', () => {

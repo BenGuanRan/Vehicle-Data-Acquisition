@@ -9,10 +9,9 @@ import './PhyTopology.css'
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import ExcelJs from 'exceljs'
-import { METHODS } from "http";
 import { SUCCESS_CODE } from "@/constants";
 import userUtils from "@/utils/UserUtils";
-import { Navigate, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 export interface IcontrollersConfigItem {
     id: number
@@ -189,7 +188,7 @@ const PreTestManager: React.FC = () => {
                 },
                 params: preTestConfig,
             }).then((res: any) => {
-                const { code, msg } = res
+                const { code} = res
                 if (code === SUCCESS_CODE) {
                     setOpen(false)
                     reloadData()

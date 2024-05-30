@@ -1,4 +1,14 @@
-import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+    AutoIncrement,
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    HasMany,
+    Model,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript'
 import Signal from './Signal.model';
 import User from './User.model';
 
@@ -14,6 +24,12 @@ export interface ICollectorModel {
     tableName: 'collectors',
     timestamps: false
 })
+
+/**
+ * 采集板卡
+ * 采集板卡包含
+ * 1. 采集板卡的信号
+ */
 export default class Collector extends Model<ICollectorModel> {
 
     @PrimaryKey

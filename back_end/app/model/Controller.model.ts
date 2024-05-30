@@ -13,6 +13,9 @@ export interface IControllerModel {
     timestamps: false
 })
 
+/**
+ * 核心控制板卡
+ */
 export default class Controller extends Model<IControllerModel> {
 
     @PrimaryKey

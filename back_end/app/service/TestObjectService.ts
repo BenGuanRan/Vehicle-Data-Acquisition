@@ -1,4 +1,4 @@
-import TestObject, { ITestObjectModel } from '../model/TestObject.model'
+import TestObject, { ITestObjectModel } from '../model/2TestObject.model'
 
 class TestObjectService {
     // 创建测试对象

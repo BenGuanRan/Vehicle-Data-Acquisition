@@ -10,7 +10,7 @@ const HOST = 'localhost';
 client.connect(PORT, HOST, () => {
     console.log('Connected to server');
     //5A A5  AA  00  00  FF
-    client.write(Buffer.from([0x5a, 0xa5, 0xaa, 0x00, 0x00, 0xff]));
+    client.write(Buffer.from([0x5a, 0xa5, 0xbb, 0x00, 0x00, 0xff]));
 });
 
 client.on('data', data => {

@@ -1,6 +1,6 @@
 import React, {useMemo, useRef, useState} from 'react';
 import './display.css'
-import {Button, Form, Input, InputNumber, Result, Select, Slider, Tooltip, message, Upload} from 'antd';
+import {Button, Form, Input, InputNumber, Result, Select, Slider, Tooltip, message, Upload, UploadProps} from 'antd';
 import {useDrop} from 'react-dnd';
 import DraggableComponent, {
     IBooleanChartExtra,
@@ -11,10 +11,11 @@ import DraggableComponent, {
 import DropContainer from './DropContainer';
 import {ContentType, Method} from '@/apis/standard/all';
 import {request} from '@/utils/request';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {SUCCESS_CODE} from '@/constants';
 import GridLayout from "react-grid-layout";
 import {UploadOutlined} from "@ant-design/icons";
+import {RcFile} from "antd/es/upload";
 
 export enum DragItemType {
     BOOLEAN = 'BOOLEAN',
@@ -481,7 +482,7 @@ const DataDisplay: React.FC<IDataDisplay> = () => {
                         }}>切换至{ifStartGetData ? '编辑' : '数据展示'}模式</Button>
 
                     <Button type="primary" onClick={() => {
-                        if (ifStartGetData){
+                        if (ifStartGetData) {
                             return message.error('请先关闭数据展示')
                         }
                         setIsOnline(!isOnline)
@@ -492,9 +493,13 @@ const DataDisplay: React.FC<IDataDisplay> = () => {
                         isOnline ? '离线' : '在线'
                     }模式</Button>
 
-                    {(!isOnline) && <Upload maxCount={1}>
-                        <Button icon={<UploadOutlined/>}>上传离线数据展示文件</Button>
-                    </Upload>}
+                    {(!isOnline) && <Input type={"file"} style={{
+                        display: "inline-block",
+                        width: 200
+                    }} onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                    }}/>}
                 </div>
                 <div className="dd_body">
                     <div className="dd_drop_container" ref={ref}>
@@ -516,77 +521,5 @@ const DataDisplay: React.FC<IDataDisplay> = () => {
         {ifSendTestConfig ? renderSendedPage() : renderUnsendPage()}
     </>
 };
-
-//
-// const oldFamen = () =>{
-//     return
-//     // {isOnline && <>
-//     //     数据阀门：<Switch checkedChildren="开启" loading={ifSwitchLoading} unCheckedChildren="关闭"
-//     //                      checked={ifStartGetData} defaultChecked onChange={(value) => {
-//     //     if (checkDataIntegrity()) {
-//     //         value && setIfSwitchLoading(true)
-//     //
-//     //         // 保存当前测试配置
-//     //         value && request({
-//     //             api: {
-//     //                 method: Method.POST,
-//     //                 url: '/sendTestConfig',
-//     //                 format: ContentType.JSON,
-//     //             },
-//     //             params: {
-//     //                 testProcessId: Number(testProcessIdRef.current),
-//     //                 dashbordConfig: dragItems
-//     //             }
-//     //         }).then(res => {
-//     //             if (res.code === SUCCESS_CODE) {
-//     //                 setIfStartGetData(true)
-//     //                 message.success('已开启数据阀门')
-//     //             } else {
-//     //                 message.error(res.msg)
-//     //             }
-//     //             setIfSwitchLoading(false)
-//     //         })
-//     //         !value && setIfStartGetData(false)
-//     //         !value && message.success('已关闭数据阀门')
-//     //     } else {
-//     //         return message.error('存在未关联的信号，无法开启数据阀门！')
-//     //     }
-//     // }
-//     // }/>
-//     //     <Button style={{marginLeft: 40}} type='primary' onClick={
-//     //         async () => {
-//     //             try {
-//     //                 const response = await request({
-//     //                     api: {
-//     //                         url: '/downloadUserSendedTestProcessConfig',
-//     //                         method: Method.GET,
-//     //                         responseType: ResponseType.ARRAY_BUFFER,
-//     //                         format: ContentType.FILE
-//     //                     }
-//     //                 })
-//     //                 if (response.byteLength === 0) return message.error('该用户暂未下发配置文件')
-//     //                 // const response = await fetch('http://localhost:3000/api/downloadPreTestConfigFile')
-//     //                 // 将二进制ArrayBuffer转换成Blob
-//     //                 const blob = new Blob([response], {type: ContentType.FILE})
-//     //
-//     //                 //  创建一个 <a> 元素，并设置其属性
-//     //                 const downloadLink = document.createElement('a');
-//     //                 downloadLink.href = window.URL.createObjectURL(blob);
-//     //                 downloadLink.download = '已下发的配置文件.xlsx';
-//     //
-//     //                 // 将 <a> 元素添加到 DOM，并模拟点击以触发下载
-//     //                 document.body.appendChild(downloadLink);
-//     //                 downloadLink.click();
-//     //
-//     //                 // 下载完成后移除 <a> 元素
-//     //                 document.body.removeChild(downloadLink);
-//     //
-//     //             } catch (error) {
-//     //                 console.error('下载文件时出错：', error);
-//     //             }
-//     {/*        }*/}
-//     {/*    }>下载当前已下发的测试配置文件</Button>*/}
-//     {/*</>}*/}
-// }
 
 export default DataDisplay;

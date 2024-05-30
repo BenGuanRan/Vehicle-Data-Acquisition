@@ -1,4 +1,4 @@
-import CollectorSignal, { ICollectorSignalModel } from '../model/CollectorSignal.model'
+import CollectorSignal, { ICollectorSignalModel } from '../model/4CollectorSignal.model'
 
 class CollectorSignalService {
 

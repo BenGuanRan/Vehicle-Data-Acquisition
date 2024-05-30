@@ -2,6 +2,7 @@ import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model,
 import Signal from './Signal.model';
 import User from './User.model';
 
+//采集板卡
 export interface ICollectorModel {
     id?: number
     collectorName: string

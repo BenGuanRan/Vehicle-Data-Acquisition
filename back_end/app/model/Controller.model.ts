@@ -12,6 +12,7 @@ export interface IControllerModel {
     tableName: 'controllers',
     timestamps: false
 })
+
 export default class Controller extends Model<IControllerModel> {
 
     @PrimaryKey
@@ -34,5 +35,4 @@ export default class Controller extends Model<IControllerModel> {
 
     @BelongsTo(() => User)
     user!: User
-
 }

@@ -1,5 +1,5 @@
 import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import TestProcess from './TestProcess.model'
+import TestProcess from './1TestProcess.model'
 
 interface IUserModel {
     id?: number

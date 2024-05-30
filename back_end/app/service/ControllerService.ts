@@ -3,7 +3,7 @@ import { excelReader } from "../../utils/excelReader";
 import { CONTROLLER_WORKSHEET, DEVICE_CONFIG_FILE_NAME } from "../constants";
 import Controller, { IControllerModel } from "../model/Controller.model";
 import { sequelize } from "../db";
-import TestProcess from "../model/TestProcess.model";
+import TestProcess from "../model/1TestProcess.model";
 import SendTestConfigRecord from "../model/SendTestConfigRecord.model";
 
 class ControllerService {

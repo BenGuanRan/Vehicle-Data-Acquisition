@@ -1,5 +1,5 @@
 import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import TestObject from './TestObject.model'
+import TestObject from './2TestObject.model'
 import Controller from './Controller.model'
 import Collector from './Collector.model'
 import Signal from './Signal.model'

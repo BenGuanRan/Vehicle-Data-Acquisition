@@ -3,7 +3,7 @@ import { excelReader } from "../../utils/excelReader";
 import { COLLECTOR_WORKSHEET, DEVICE_CONFIG_FILE_NAME } from "../constants";
 import Collector, { ICollectorModel } from "../model/Collector.model";
 import { sequelize } from "../db";
-import TestProcess from "../model/TestProcess.model";
+import TestProcess from "../model/1TestProcess.model";
 import SendTestConfigRecord from "../model/SendTestConfigRecord.model";
 
 class CollectorService {

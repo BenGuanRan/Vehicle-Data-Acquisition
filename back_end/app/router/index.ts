@@ -6,12 +6,13 @@ import RequestBodyVerifyMiddleware from '../middleware/RequestBodyVerifyMiddlewa
 import TestProcessController from '../controller/TestProcessController'
 import BaseInfoController from '../controller/BaseInfoController'
 import AssetsController from '../controller/AssetsController'
+import VehicleController from "../controller/VehicleController";
+import ProjectController from "../controller/ProjectController";
 
 const router = new KoaRouter({
     prefix: ''
 })
 router.use(RequestBodyVerifyMiddleware)
-
 
 
 // 用户权限相关接口
@@ -44,6 +45,20 @@ router.get('/getControllerList', BaseInfoController.getControllerList)
 router.get('/getCollectorList', BaseInfoController.getCollectorList)
 router.get('/getSignalListByCollectorId', BaseInfoController.getSignalListByCollectorId)
 router.get('/getTestDevicesInfo', BaseInfoController.getTestDevicesInfo)
+
+//车辆管理接口
+router.get('/getVehicleList', VehicleController.getVehicles)
+router.post('/createVehicle', VehicleController.createVehicle)
+router.get('/getVehicleById/:id', VehicleController.getVehicleById)
+router.post('/updateVehicle/:id', VehicleController.updateVehicle)
+router.post('/deleteVehicle/:id', VehicleController.deleteVehicle)
+
+//Project管理接口
+router.get('/getProjectList', ProjectController.getProjectList)
+router.post('/createProject', ProjectController.createProject)
+router.post('/updateProject/:id', ProjectController.updateProject)
+router.get('/getProjectById/:id', ProjectController.getProjectById)
+router.post('/deleteProject/:id', ProjectController.deleteProject)
 
 // 资源下载接口
 router.get('/downloadPreTestConfigFile', AssetsController.downloadPreTestConfigFile)

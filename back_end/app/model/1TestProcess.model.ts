@@ -1,5 +1,5 @@
 import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import TestObject from './TestObject.model';
+import TestObject from './2TestObject.model';
 import User from './User.model';
 
 export interface ITestProcessModel {

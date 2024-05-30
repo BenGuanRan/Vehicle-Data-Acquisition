@@ -1,47 +1,22 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Form, Menu, MenuProps, Modal, Input} from "antd";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {logout} from "@/apis/request/auth.ts";
 import {changePassword} from "@/apis/request/user.ts";
 import {SUCCESS_CODE} from "@/constants";
 import userUtils from "@/utils/UserUtils.ts";
+import {routeItems} from "@/routes";
 
 export const HomeMenu = () => {
     const navigate: NavigateFunction = useNavigate()
     const [visible, setVisible] = React.useState(false)
     const [form] = Form.useForm()
-    const [items, setItems] = useState([
-        {
-            key: '/process-management',
-            label: '测试配置生成管理',
-        },
-        {
-            key: '/data-display',
-            label: '测试数据接收展示',
-            // children: [
-            //     {
-            //         key: '/data-display/online',
-            //         label: '在线数据接收',
-            //     },
-            //     {
-            //         key: '/data-display/offline',
-            //         label: '离线数据展示',
-            //     },
-            // ],
-        },
-        {
-            key: '/physical-topology',
-            label: '测试板卡信息管理',
-        },
-    ])
+    const items = routeItems.map(item => ({
+        key: item.key,
+        label: item.label,
+        children: item.children,
+    }));
 
-    useEffect(() => {
-        if (userUtils.isRootUser())
-            setItems([...items, {
-                key: '/user-management',
-                label: '用户管理',
-            }])
-    }, [])
 
     const onClick: MenuProps['onClick'] = (e) => {
         if (e.key !== 'avatar' && e.key !== 'logout' && e.key !== 'changePassword')
@@ -85,6 +60,8 @@ export const HomeMenu = () => {
             defaultSelectedKeys={[window.location.pathname]}
             mode="inline"
             items={items}
+            defaultOpenKeys={items.map(item => item.key)}
+            openKeys={items.map(item => item.key)}
         />
 
         <Modal open={visible} onOk={onFinish} onCancel={() => setVisible(false)}>
